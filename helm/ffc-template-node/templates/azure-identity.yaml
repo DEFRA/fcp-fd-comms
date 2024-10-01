@@ -1,0 +1,5 @@
+{{- if .Values.azureIdentity.enabled }}
+{{- include "ffc-helm-library.azure-identity" (list . "ffc-template-node.azure-identity") -}}
+{{- end }}
+{{- define "ffc-template-node.azure-identity" -}}
+{{- end -}}
