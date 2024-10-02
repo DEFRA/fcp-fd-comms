@@ -41,6 +41,6 @@ readinessProbe:
 
 # Enable if Managed Identity is required, ensure the clientID and resourceID are set in Platform Configuration
 azureIdentity:
-  enabled: false
+  enabled: true
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID
