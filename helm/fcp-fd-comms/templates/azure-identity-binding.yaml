@@ -1,5 +1,5 @@
 {{- if .Values.azureIdentity.enabled }}
-{{- include "ffc-helm-library.azure-identity-binding" (list . "ffc-template-node.azure-identity-binding") -}}
+{{- include "ffc-helm-library.azure-identity-binding" (list . "fcp-fd-comms.azure-identity-binding") -}}
 {{- end }}
-{{- define "ffc-template-node.azure-identity-binding" -}}
+{{- define "fcp-fd-comms.azure-identity-binding" -}}
 {{- end -}}
