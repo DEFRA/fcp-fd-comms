@@ -2,19 +2,19 @@
 # to provide dependencies and expose ports for local testing
 
 services:
-  ffc-template-node:
+  fcp-fd-comms:
     build:
       target: development
-    image: ffc-template-node-development
-    container_name: ffc-template-node-development
+    image: fcp-fd-comms-development
+    container_name: fcp-fd-comms-development
     ports:
-      - "3000:3000"
-      - "9229:9229"
+      - "3023:3023"
+      - "9023:9229"
     volumes:
       - ./app:/home/node/app
       - ./package.json:/home/node/package.json
 
 networks:
-  ffc-template-node:
-    name: ffc-template-node
+  fcp-fd-comms:
+    name: fcp-fd-comms
     driver: bridge

@@ -1,10 +1,10 @@
 # Required values to support CI pipeline
 environment: production
 environmentCode:
-name: ffc-template-node
-namespace: ffc-demo
-workstream: ffc-demo
-image: ffc-template-node
+name: fcp-fd-comms
+namespace: fcp-fd
+workstream: fcp-fd
+image: fcp-fd-comms
 
 appInsights:
   connectionString:
@@ -17,7 +17,7 @@ containerSecret: {}
 
 deployment: {}
 
-port: &port 3000
+port: &port 3023
 
 container:
   resourceTier: M

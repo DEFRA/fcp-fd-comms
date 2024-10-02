@@ -1,8 +1,8 @@
 {
-  "name": "ffc-template-node",
-  "version": "0.1.0",
-  "description": "description-of-project-goes-here",
-  "homepage": "https://github.com/DEFRA/ffc-template-node",
+  "name": "fcp-fd-comms",
+  "version": "0.1.1",
+  "description": "Common communications service for Single Front Door",
+  "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
   "type": "module",
   "scripts": {
@@ -15,7 +15,9 @@
     "start:debug": "nodemon --inspect-brk=0.0.0.0 --ext js --legacy-watch app/index.js"
   },
   "author": "Defra",
-  "contributors": [],
+  "contributors": [
+    "Rana Salem <rana.salem@defra.gov.uk>"
+  ],
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@hapi/hapi": "21.3.2",
