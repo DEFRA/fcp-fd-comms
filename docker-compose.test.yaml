@@ -2,11 +2,11 @@
 # that test output is saved to the host
 
 services:
-  ffc-template-node:
+  fcp-fd-comms:
     build:
       target: development
-    image: ffc-template-node-development
-    container_name: ffc-template-node-test
+    image: fcp-fd-comms-development
+    container_name: fcp-fd-comms-test
     command: npm run test
     volumes:
       - ./app:/home/node/app
