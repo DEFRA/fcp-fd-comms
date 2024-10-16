@@ -1,0 +1,92 @@
+asyncapi: 3.0.0
+info:
+  title: FCP-FD-COMMS
+  version: 1.0.0
+  description: Receive a communication message and route to appropriate channels
+
+channels:
+  sourceSystem-fcp-fd-comms:
+    address: sourceSystem-fcp-fd-comms
+    description: |
+      Accepts POST requests for communication notifications.
+    messages:
+      subscribe.message.0:
+        $ref: '#/components/messages/notifyMessage'
+
+operations:
+  SourceSystem/fcp-fd-comms.subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/sourceSystem-fcp-fd-comms'
+
+components:
+  messages:
+    notifyMessage:
+      title: gov.notify message
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/NotificationPayload'
+
+  schemas:
+    NotificationPayload:
+      type: object
+      properties:
+        CRN:
+          type: number
+          description: Customer Reference Number
+          minimum: 105000000
+          maximum: 999999999
+          example: 123456789
+        SBI:
+          type: number
+          description: Single Business Identifier
+          minimum: 105000000
+          maximum: 999999999
+          example: 123456789
+        sourceSystem:
+          type: string
+          description: The name of the source system that originated the message
+          example: "AHWP"
+        notifyTemplateId:
+          type: string
+          description: Notification template identifier
+          example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
+        commsType:
+          type: string
+          description: Type of communication (e.g., email, SMS)
+          example: "email"
+        data:
+          type: object
+          description: Data object required for gov.notify template.
+          properties:
+            personalisation:
+              type: object
+              description: JSON-formatted variables required for the template.
+              example:
+                email_address: "JohnDoe@theBestEmailCompany.com"
+                caseNUmber: "ACC123456789"
+                expectedPaymentDate: "21.11.2025"
+            reference:
+              type: string
+              description: Unique identifier (UUID) for further operations like status query.
+              example: "abc123-uuid-123456"
+            oneClickUnsubscribeURL:
+              type: string
+              description: URL for one-click unsubscribe option.
+              example: "https://unsubscribe.example.com"
+            emailReplyToId:
+              type: string
+              description: Optional ID for the reply-to email address.
+              example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
+          required:
+            - personalisation
+            - reference
+          additionalProperties: false
+      required:
+        - CRN
+        - sourceSystem
+        - notifyTemplateId
+        - commsType
+        - data
+        - SBI
+      additionalProperties: false
