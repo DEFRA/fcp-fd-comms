@@ -10,8 +10,8 @@ channels:
     description: |
       Accepts requests for communication notifications via Azure service bus.
     messages:
-      notifyMessage:
-        $ref: '#/components/messages/notifyMessage'
+      commsMessage:
+        $ref: '#/components/messages/commsMessage'
       
 
 operations:
@@ -22,8 +22,8 @@ operations:
 
 components:
   messages:
-    notifyMessage:
-      name: gov.notify communications message
+    commsMessage:
+      name: user communications message
       contentType: application/json
       payload:
         $ref: '#/components/schemas/userNotificationMessage'
