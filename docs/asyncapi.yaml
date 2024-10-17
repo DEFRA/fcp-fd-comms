@@ -1,6 +1,6 @@
 asyncapi: 3.0.0
 info:
-  title: API contract book for Single Front Door user communications
+  title: Single front door user communications
   version: 1.0.0
   description: Publish communications to users via the Single Front Door
 
@@ -26,10 +26,10 @@ components:
       title: gov.notify communications message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/govNotifyMessage'
+        $ref: '#/components/schemas/userNotificationMessage'
 
   schemas:
-    govNotifyMessage:
+    userNotificationMessage:
       type: object
       properties:
         id:
@@ -38,8 +38,8 @@ components:
           example: "abc123-uuid-123456"
         source:
           type: string
-          description: URI reference of the event's source.
-          example: "www.github.com/comms-requesting-service/app/routes/createEmail"
+          description: reference of the event's source.
+          example: "ffc-ahwr-claim"
         specversion:
           type: string
           description: Version of the CloudEvents specification.
