@@ -6,9 +6,9 @@ info:
 
 channels:
   fcp-fd-comms:
-    address: fcp-fd-comms
+    address: fcp-fd-comms-request
     description: |
-      Accepts requests for communication notifications.
+      Accepts requests for communication notifications via Azure service bus.
     messages:
       notifyMessage:
         $ref: '#/components/messages/notifyMessage'
