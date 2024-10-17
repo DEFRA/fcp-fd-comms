@@ -26,10 +26,10 @@ components:
       name: user communications message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/userNotificationMessage'
+        $ref: '#/components/schemas/commsSchema'
 
   schemas:
-    userNotificationMessage:
+    commsSchema:
       type: object
       required:
         - id
