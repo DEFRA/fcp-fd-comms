@@ -1,6 +1,6 @@
 {
   "name": "fcp-fd-comms",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Common communications service for Single Front Door",
   "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
@@ -16,7 +16,8 @@
   },
   "author": "Defra",
   "contributors": [
-    "Rana Salem <rana.salem@defra.gov.uk>"
+    "Rana Salem <rana.salem@defra.gov.uk>",
+    "Amirs Ishmuhametovs <amirs.ishmuhametovs@defra.gov.uk>"
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {

@@ -1,0 +1,177 @@
+asyncapi: 3.0.0
+info:
+  title: Single Front Door User Communications
+  version: 1.0.0
+  description: Publish communications to users via the Single Front Door
+
+channels:
+  fcp-fd-comms:
+    address: fcp-fd-comms-request
+    description: |
+      Accepts requests for communication notifications via Azure service bus.
+    messages:
+      commsMessage:
+        $ref: '#/components/messages/commsMessage'
+      
+
+operations:
+  fcp-fd-comms.subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/fcp-fd-comms'
+
+components:
+  messages:
+    commsMessage:
+      name: user communications message
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/commsSchema'
+
+  schemas:
+    commsSchema:
+      type: object
+      required:
+        - id
+        - source
+        - specversion
+        - type
+        - data
+      properties:
+        id:
+          $ref: '#/components/schemas/Id'
+        source:
+          $ref: '#/components/schemas/Source'
+        specversion:
+          $ref: '#/components/schemas/Specversion'
+        type:
+          $ref: '#/components/schemas/Type'
+        datacontenttype:
+          $ref: '#/components/schemas/Datacontenttype'
+        time:
+          $ref: '#/components/schemas/Time'
+        data:
+          $ref: '#/components/schemas/commsData'
+
+    commsData:
+      type: object
+      required:
+        - CRN
+        - sourceSystem
+        - notifyTemplateId
+        - personalisation
+        - SBI
+        - reference
+      properties:
+        CRN:
+          $ref: '#/components/schemas/CRN'
+        SBI:
+          $ref: '#/components/schemas/SBI'
+        sourceSystem:
+          $ref: '#/components/schemas/SourceSystem'
+        notifyTemplateId:
+          $ref: '#/components/schemas/NotifyTemplateId'
+        commsType:
+          $ref: '#/components/schemas/CommsType'
+        commsAddress:
+          $ref: '#/components/schemas/CommsAddress'
+        personalisation:
+          $ref: '#/components/schemas/Personalisation'
+        reference:
+          $ref: '#/components/schemas/Reference'
+        oneClickUnsubscribeURL:
+          $ref: '#/components/schemas/OneClickUnsubscribeURL'
+        emailReplyToId:
+          $ref: '#/components/schemas/EmailReplyToId'
+
+    CRN:
+      type: number
+      description: Customer Reference Number
+      minimum: 105000000
+      maximum: 999999999
+      example: 123456789
+
+    SBI:
+      type: number
+      description: Single Business Identifier
+      minimum: 105000000
+      maximum: 999999999
+      example: 123456789
+
+    SourceSystem:
+      type: string
+      description: The name of the source system that originated the message
+      example: "AHWP"
+
+    NotifyTemplateId:
+      type: string
+      description: Notification template identifier
+      example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
+
+    CommsType:
+      type: string
+      description: Type of communication (e.g., email, SMS)
+      default: "email"
+      example: "email"
+
+    CommsAddress:
+      type: string
+      description: The user's contact email address
+      example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+
+    Personalisation:
+      type: object
+      description: JSON-formatted variables required for the template
+      example:
+        caseNumber: "ACC123456789"
+        expectedPaymentDate: "21.11.2025"
+        adminName: "Jessica Lrrr"
+      default: {}
+
+    Reference:
+      type: string
+      description: Unique identifier (UUID) for further operations like status query
+      example: "abc123-uuid-123456"
+
+    OneClickUnsubscribeURL:
+      type: string
+      description: URL for one-click unsubscribe option
+      example: "https://unsubscribe.example.com"
+
+    EmailReplyToId:
+      type: string
+      description: Optional ID for the reply-to email address
+      example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
+
+    Specversion:
+      type: string
+      description: The version of the CloudEvents specification that the event uses
+      example: '1.0'
+
+    Type:
+      type: string
+      description: The type of event in reverse DNS notation
+      example: uk.gov.fcp.sfd.notification.request
+
+    Source:
+      type: string
+      description: The service publishing the event
+      example: ffc-ahwr-claim
+
+    Id:
+      type: string
+      format: uuid
+      description: The unique ID of the event
+      example: 123e4567-e89b-12d3-a456-426655440000
+
+    Time:
+      type: string
+      format: date-time
+      description: The time the event occurred
+      example: '2023-10-17T14:48:00Z'
+
+    Datacontenttype:
+      type: string
+      description: The format of the event data
+      default: "application/json"
+      example: "application/json"
