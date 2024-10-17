@@ -51,9 +51,9 @@ components:
         time:
           $ref: '#/components/schemas/Time'
         data:
-          $ref: '#/components/schemas/Data'
+          $ref: '#/components/schemas/commsData'
 
-    Data:
+    commsData:
       type: object
       required:
         - CRN
