@@ -1,71 +1,102 @@
 asyncapi: 3.0.0
 info:
-  title: FCP-FD-COMMS
+  title: API contract book for Single Front Door user communications
   version: 1.0.0
-  description: Receive a communication message and route to appropriate channels
+  description: Publish communications to users via the Single Front Door
 
 channels:
-  sourceSystem-fcp-fd-comms:
-    address: sourceSystem-fcp-fd-comms
+  fcp-fd-comms:
+    address: fcp-fd-comms
     description: |
-      Accepts POST requests for communication notifications.
+      Accepts requests for communication notifications.
     messages:
-      subscribe.message.0:
+      notifyMessage:
         $ref: '#/components/messages/notifyMessage'
 
 operations:
   SourceSystem/fcp-fd-comms.subscribe:
     action: receive
     channel:
-      $ref: '#/channels/sourceSystem-fcp-fd-comms'
+      $ref: '#/channels/fcp-fd-comms'
+    
 
 components:
   messages:
     notifyMessage:
-      title: gov.notify message
+      title: gov.notify communications message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/NotificationPayload'
+        $ref: '#/components/schemas/govNotifyMessage'
 
   schemas:
-    NotificationPayload:
+    govNotifyMessage:
       type: object
       properties:
-        CRN:
-          type: number
-          description: Customer Reference Number
-          minimum: 105000000
-          maximum: 999999999
-          example: 123456789
-        SBI:
-          type: number
-          description: Single Business Identifier
-          minimum: 105000000
-          maximum: 999999999
-          example: 123456789
-        sourceSystem:
+        id:
           type: string
-          description: The name of the source system that originated the message
-          example: "AHWP"
-        notifyTemplateId:
+          description: Unique identifier for the event.
+          example: "abc123-uuid-123456"
+        source:
           type: string
-          description: Notification template identifier
-          example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
-        commsType:
+          description: URI reference of the event's source.
+          example: "www.github.com/comms-requesting-service/app/routes/createEmail"
+        specversion:
           type: string
-          description: Type of communication (e.g., email, SMS)
-          example: "email"
+          description: Version of the CloudEvents specification.
+          example: "1.0"
+        type:
+          type: string
+          description: Type of the event
+          example: "com.sfd.notification.request"
+        datacontenttype:
+          type: string
+          description: The format of the event data.
+          default: "application/json"
+        time:
+          type: string
+          format: date-time
+          description: The time the event occurred.
+          example: "2023-10-17T14:48:00Z"
         data:
           type: object
-          description: Data object required for gov.notify template.
+          description: Business-specific data for the notification event.
           properties:
+            CRN:
+              type: number
+              description: Customer Reference Number
+              minimum: 105000000
+              maximum: 999999999
+              example: 123456789
+            SBI:
+              type: number
+              description: Single Business Identifier
+              minimum: 105000000
+              maximum: 999999999
+              example: 123456789
+            sourceSystem:
+              type: string
+              description: The name of the source system that originated the message
+              example: "AHWP"
+            notifyTemplateId:
+              type: string
+              description: Notification template identifier
+              example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
+            commsType:
+              type: string
+              description: Type of communication (e.g., email, SMS)
+              default: "email"
+              example: "email"
+            commsAddress:
+              type: string
+              description: user's contact email
             personalisation:
               type: object
               description: JSON-formatted variables required for the template.
               example:
                 email_address: "JohnDoe@theBestEmailCompany.com"
-                caseNUmber: "ACC123456789"
+                caseNumber: "ACC123456789"
                 expectedPaymentDate: "21.11.2025"
+              default: {}
             reference:
               type: string
               description: Unique identifier (UUID) for further operations like status query.
@@ -79,14 +110,17 @@ components:
               description: Optional ID for the reply-to email address.
               example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
           required:
+            - CRN
+            - sourceSystem
+            - notifyTemplateId
             - personalisation
+            - SBI
             - reference
           additionalProperties: false
       required:
-        - CRN
-        - sourceSystem
-        - notifyTemplateId
-        - commsType
+        - id
+        - source
+        - specversion
+        - type
         - data
-        - SBI
       additionalProperties: false
