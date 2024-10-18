@@ -12,9 +12,15 @@ services:
       - "9039:9229"
     volumes:
       - ./app:/home/node/app
+      - ./test:/home/node/test
+      - ./scripts:/home/node/scripts
       - ./package.json:/home/node/package.json
 
-networks:
-  fcp-fd-comms:
-    name: fcp-fd-comms
-    driver: bridge
+  fcp-fd-comms-postgres:
+    ports:
+      - "5039:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
