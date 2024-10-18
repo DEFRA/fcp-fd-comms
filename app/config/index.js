@@ -1,5 +1,5 @@
 import databaseConfig from './database.js'
 
-export default {
+export {
   databaseConfig
 }

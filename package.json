@@ -29,7 +29,9 @@
     "convict-format-with-validator": "6.2.0",
     "hapi-pino": "12.1.0",
     "joi": "17.13.3",
-    "log-timestamp": "0.3.0"
+    "log-timestamp": "0.3.0",
+    "pg": "8.13.0",
+    "sequelize": "6.37.4"
   },
   "devDependencies": {
     "jest": "29.7.0",
