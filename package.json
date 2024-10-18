@@ -16,7 +16,8 @@
   },
   "author": "Defra",
   "contributors": [
-    "Rana Salem <rana.salem@defra.gov.uk>"
+    "Rana Salem <rana.salem@defra.gov.uk>",
+    "Amirs Ishmuhametovs <amirs.ishmuhametovs@defra.gov.uk>"
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {
