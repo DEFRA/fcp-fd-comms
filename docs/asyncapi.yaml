@@ -39,87 +39,87 @@ components:
         - data
       properties:
         id:
-          $ref: '#/components/schemas/Id'
+          $ref: '#/components/schemas/id'
         source:
-          $ref: '#/components/schemas/Source'
+          $ref: '#/components/schemas/source'
         specversion:
-          $ref: '#/components/schemas/Specversion'
+          $ref: '#/components/schemas/specversion'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/type'
         datacontenttype:
-          $ref: '#/components/schemas/Datacontenttype'
+          $ref: '#/components/schemas/datacontenttype'
         time:
-          $ref: '#/components/schemas/Time'
+          $ref: '#/components/schemas/time'
         data:
           $ref: '#/components/schemas/commsData'
 
     commsData:
       type: object
       required:
-        - CRN
-        - sourceSystem
-        - notifyTemplateId
+        - crn
+        - sourcesystem
+        - notifytemplateid
         - personalisation
-        - SBI
+        - sbi
         - reference
       properties:
-        CRN:
-          $ref: '#/components/schemas/CRN'
-        SBI:
-          $ref: '#/components/schemas/SBI'
-        sourceSystem:
-          $ref: '#/components/schemas/SourceSystem'
-        notifyTemplateId:
-          $ref: '#/components/schemas/NotifyTemplateId'
-        commsType:
-          $ref: '#/components/schemas/CommsType'
-        commsAddress:
-          $ref: '#/components/schemas/CommsAddress'
+        crn:
+          $ref: '#/components/schemas/crn'
+        sbi:
+          $ref: '#/components/schemas/sbi'
+        sourcesystem:
+          $ref: '#/components/schemas/sourcesystem'
+        notifytemplateid:
+          $ref: '#/components/schemas/notifytemplateid'
+        commstype:
+          $ref: '#/components/schemas/commstype'
+        commsaddress:
+          $ref: '#/components/schemas/commsaddress'
         personalisation:
-          $ref: '#/components/schemas/Personalisation'
+          $ref: '#/components/schemas/personalisation'
         reference:
-          $ref: '#/components/schemas/Reference'
-        oneClickUnsubscribeURL:
-          $ref: '#/components/schemas/OneClickUnsubscribeURL'
-        emailReplyToId:
-          $ref: '#/components/schemas/EmailReplyToId'
+          $ref: '#/components/schemas/reference'
+        oneclickunsubsurl:
+          $ref: '#/components/schemas/oneclickunsubsurl'
+        emailreplytoid:
+          $ref: '#/components/schemas/emailreplytoid'
 
-    CRN:
+    crn:
       type: number
-      description: Customer Reference Number
+      description: Customer reference Number
       minimum: 105000000
       maximum: 999999999
       example: 123456789
 
-    SBI:
+    sbi:
       type: number
       description: Single Business Identifier
       minimum: 105000000
       maximum: 999999999
       example: 123456789
 
-    SourceSystem:
+    sourcesystem:
       type: string
       description: The name of the source system that originated the message
       example: "AHWP"
 
-    NotifyTemplateId:
+    notifytemplateid:
       type: string
       description: Notification template identifier
       example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
 
-    CommsType:
+    commstype:
       type: string
       description: Type of communication (e.g., email, SMS)
       default: "email"
       example: "email"
 
-    CommsAddress:
+    commsaddress:
       type: string
       description: The user's contact email address
       example: "mrMegaFarmer@strawberryFortFarm.co.uk"
 
-    Personalisation:
+    personalisation:
       type: object
       description: JSON-formatted variables required for the template
       example:
@@ -128,49 +128,49 @@ components:
         adminName: "Jessica Lrrr"
       default: {}
 
-    Reference:
+    reference:
       type: string
       description: Unique identifier (UUID) for further operations like status query
       example: "abc123-uuid-123456"
 
-    OneClickUnsubscribeURL:
+    oneclickunsubsurl:
       type: string
       description: URL for one-click unsubscribe option
       example: "https://unsubscribe.example.com"
 
-    EmailReplyToId:
+    emailreplytoid:
       type: string
       description: Optional ID for the reply-to email address
       example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
 
-    Specversion:
+    specversion:
       type: string
       description: The version of the CloudEvents specification that the event uses
       example: '1.0'
 
-    Type:
+    type:
       type: string
       description: The type of event in reverse DNS notation
       example: uk.gov.fcp.sfd.notification.request
 
-    Source:
+    source:
       type: string
       description: The service publishing the event
       example: ffc-ahwr-claim
 
-    Id:
+    id:
       type: string
       format: uuid
       description: The unique ID of the event
       example: 123e4567-e89b-12d3-a456-426655440000
 
-    Time:
+    time:
       type: string
       format: date-time
       description: The time the event occurred
       example: '2023-10-17T14:48:00Z'
 
-    Datacontenttype:
+    datacontenttype:
       type: string
       description: The format of the event data
       default: "application/json"
