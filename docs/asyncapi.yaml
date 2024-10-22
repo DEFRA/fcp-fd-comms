@@ -127,7 +127,9 @@ components:
           minLength: 1
           maxLength: 100
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+          title: accepts a single string
         - type: array
+          title: accepts an array of strings
           items:
             type: string
             description: A list of contact email addresses
