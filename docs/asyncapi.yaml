@@ -102,7 +102,7 @@ components:
       type: string
       description: The name of the source system that originated the message
       example: "AHWP"
-      minleght: 3
+      minlength: 3
       maxlength: 100
       pattern: "^[a-z0-9-_]+$"
 
@@ -123,7 +123,7 @@ components:
       type: string
       description: The user's contact email address
       example: "mrMegaFarmer@strawberryFortFarm.co.uk"
-      minleght: 3
+      minlength: 3
       maxlength: 100
       pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
@@ -139,14 +139,14 @@ components:
       type: string
       description: Unique identifier for further operations like status query, must be prefixed with the source system
       example: "ffc-ahwr-whatever-format-is-needed"
-      minleght: 1
+      minlength: 1
       maxlength: 100
 
     oneclickunsubsurl:
       type: string
       description: URL for one-click unsubscribe option
       example: "https://unsubscribe.example.com"
-      minleght: 1
+      minlength: 1
 
     emailreplytoid:
       type: string
@@ -158,21 +158,21 @@ components:
       type: string
       description: The version of the CloudEvents specification that the event uses
       example: '1.0'
-      minleght: 3
+      minlength: 3
       maxlength: 10
 
     type:
       type: string
       description: The type of event in reverse DNS notation
       example: uk.gov.fcp.sfd.notification.request
-      minleght: 3
+      minlength: 3
       maxlength: 250
 
     source:
       type: string
       description: The service publishing the event
       example: ffc-ahwr-claim
-      minleght: 1
+      minlength: 1
       maxlength: 100
 
     id:
