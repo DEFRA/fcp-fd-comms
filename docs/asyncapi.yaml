@@ -120,12 +120,21 @@ components:
       enum: ["email"]
 
     commsaddress:
-      type: string
-      description: The user's contact email address
-      example: "mrMegaFarmer@strawberryFortFarm.co.uk"
-      minlength: 3
-      maxlength: 100
-      pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+      oneOf:
+        - type: string
+          description: The user's contact email address
+          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+          minLength: 1
+          maxLength: 100
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+        - type: array
+          items:
+            type: string
+            description: A list of contact email addresses
+            example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+            minLength: 1
+            maxLength: 100
+            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
       type: object
