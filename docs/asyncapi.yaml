@@ -125,7 +125,7 @@ components:
           description: The user's contact email address
           example: "mrMegaFarmer@strawberryFortFarm.co.uk"
           minLength: 1
-          maxLength: 100
+          maxLength: 320
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
           title: accepts a single string
         - type: array
@@ -135,7 +135,7 @@ components:
             description: A list of contact email addresses
             example: "mrMegaFarmer@strawberryFortFarm.co.uk"
             minLength: 1
-            maxLength: 100
+            maxLength: 320
             pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
