@@ -53,8 +53,6 @@ describe('Service Bus Configuration', () => {
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
-    console.log(messageConfig)
-
     expect(messageConfig).toEqual({
       host: 'mock-dev-message-host',
       username: 'mock-dev-user',
@@ -67,6 +65,19 @@ describe('Service Bus Configuration', () => {
       type: 'subscription'
     })
   })
+
+  test('should throw an error if the configuration is invalid', async () => {
+    process.env.NODE_ENV = environments.PRODUCTION
+    process.env.MESSAGE_HOST = undefined
+
+    const { messageConfig } = await import('../../../app/config/index.js')
+
+    const validateMessageConfig = () => {
+      if (!messageConfig.host || !messageConfig.username || !messageConfig.password) {
+        throw new Error('The message config is invalid.')
+      }
+    }
+
+    expect(validateMessageConfig).toThrow('The message config is invalid.')
+  })
 })
-
-
