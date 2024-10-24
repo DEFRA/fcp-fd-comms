@@ -79,8 +79,8 @@ components:
           $ref: '#/components/schemas/personalisation'
         reference:
           $ref: '#/components/schemas/reference'
-        oneClickUnsubscribeURL:
-          $ref: '#/components/schemas/oneClickUnsubscribeURL'
+        oneClickUnsubscribeUrl:
+          $ref: '#/components/schemas/oneClickUnsubscribeUrl'
         emailReplyToId:
           $ref: '#/components/schemas/emailReplyToId'
 
@@ -153,7 +153,7 @@ components:
       minlength: 1
       maxlength: 100
 
-    oneClickUnsubscribeURL:
+    oneClickUnsubscribeUrl:
       type: string
       description: URL for one-click unsubscribe option
       example: "https://unsubscribe.example.com"
