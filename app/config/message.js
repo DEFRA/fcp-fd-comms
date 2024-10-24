@@ -26,7 +26,7 @@ const config = {
     managedIdentityClientId: process.env.COMMS_AZURE_CLIENT_ID,
     appInsights:
       process.env.NODE_ENV === environments.PRODUCTION
-        ? require('applicationinsights')
+        ? await import('applicationinsights')
         : undefined
   },
   receiverSubscription: {
