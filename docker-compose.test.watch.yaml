@@ -1,6 +1,6 @@
 services:
   fcp-fd-comms:
     command: >
-      sh -c "npm run test:watch"
+      sh -c "git config --global --add safe.directory /home/node && npm run test:watch"
     volumes:
       - ./.git:/home/node/.git
