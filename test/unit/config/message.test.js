@@ -69,6 +69,11 @@ describe('Service Bus Configuration', () => {
   test('should throw an error if the configuration is invalid', async () => {
     process.env.NODE_ENV = environments.PRODUCTION
     process.env.MESSAGE_HOST = undefined
+    process.env.MESSAGE_USER = undefined
+    process.env.MESSAGE_PASSWORD = undefined
+    process.env.COMMS_AZURE_CLIENT_ID = undefined
+    process.env.MESSAGES_SUBSCRIPTION_ADDRESS = undefined
+    process.env.MESSAGES_TOPIC_ADDRESS = undefined
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
