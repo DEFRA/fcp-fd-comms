@@ -9,7 +9,7 @@ const handleMessage = async (message, receiver) => {
     await farmerApply(message)
     await receiver.completeMessage(message)
   } catch (error) {
-    console.error('Message error', util.inspect(error.message, false, null, true))
+    throw new Error('Message error', util.inspect(error.message, false, null, true))
   }
 }
 
