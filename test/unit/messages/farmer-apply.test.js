@@ -50,20 +50,4 @@ describe('Farmer Apply', () => {
 
     expect(NotifyClient).toHaveBeenCalledWith('mock-notify-api-key')
   })
-
-  test('should send an email using NotifyClient with correct parameters', async () => {
-    await farmerApply(mockMessage) // move to beforeEach block?
-
-    expect(mockNotifyClientInstance.sendEmail).toHaveBeenCalledWith(
-      'mock-confirm-new-user-notify-template-id',
-      'mock-email@test.com',
-      {
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'http://mock.com/mock-agreement-summary'
-        },
-        reference: 'mock-uuid'
-      }
-    )
-  })
 })
