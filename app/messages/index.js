@@ -5,7 +5,6 @@ import { farmerApply } from './farmer-apply.js'
 
 const handleMessage = async (message, receiver) => {
   try {
-    console.log('Received message: ', message.body)
     await farmerApply(message)
     await receiver.completeMessage(message)
   } catch (error) {
