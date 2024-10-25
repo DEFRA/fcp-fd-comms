@@ -19,7 +19,6 @@ describe('Farmer Apply', () => {
   process.env.NOTIFY_TEST_EMAIL = 'mock-email@test.com'
 
   let mockMessage
-  const mockNotifyClientInstance = new NotifyClient(process.env.NOTIFY_API_KEY)
 
   beforeEach(() => {
     mockMessage = {
