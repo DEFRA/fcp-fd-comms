@@ -7,7 +7,7 @@ const init = async () => {
   const server = await createServer()
   await server.start()
   await startMessaging()
-  console.log('Server running on %s', server.info.uri)
+  console.log('fcp-fd-comms is ready')
 }
 
 process.on('unhandledRejection', (err) => {

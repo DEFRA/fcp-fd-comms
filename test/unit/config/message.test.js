@@ -23,7 +23,7 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_HOST = 'mock-prd-message-host'
     process.env.MESSAGE_USER = 'mock-prd-user'
     process.env.MESSAGE_PASSWORD = 'mock-prd-password'
-    process.env.COMMS_AZURE_CLIENT_ID = 'mock-prd-client-id'
+    process.env.AZURE_CLIENT_ID = 'mock-prd-client-id'
     process.env.MESSAGES_SUBSCRIPTION_ADDRESS = 'mock-prd-subscription-address'
     process.env.MESSAGES_TOPIC_ADDRESS = 'mock-prd-topic-address'
 
@@ -47,7 +47,7 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_HOST = 'mock-dev-message-host'
     process.env.MESSAGE_USER = 'mock-dev-user'
     process.env.MESSAGE_PASSWORD = 'mock-dev-password'
-    process.env.COMMS_AZURE_CLIENT_ID = 'mock-dev-client-id'
+    process.env.AZURE_CLIENT_ID = 'mock-dev-client-id'
     process.env.MESSAGES_SUBSCRIPTION_ADDRESS = 'mock-dev-subscription-address'
     process.env.MESSAGES_TOPIC_ADDRESS = 'mock-dev-topic-address'
 
@@ -71,7 +71,7 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_HOST = undefined
     process.env.MESSAGE_USER = undefined
     process.env.MESSAGE_PASSWORD = undefined
-    process.env.COMMS_AZURE_CLIENT_ID = undefined
+    process.env.AZURE_CLIENT_ID = undefined
     process.env.MESSAGES_SUBSCRIPTION_ADDRESS = undefined
     process.env.MESSAGES_TOPIC_ADDRESS = undefined
 

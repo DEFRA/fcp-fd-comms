@@ -32,7 +32,7 @@ const config = convict({
       doc: 'Managed identity client ID.',
       format: String,
       default: null,
-      env: 'COMMS_AZURE_CLIENT_ID',
+      env: 'AZURE_CLIENT_ID',
       nullable: true
     },
     appInsights: {
@@ -55,7 +55,7 @@ const config = convict({
       env: 'MESSAGES_TOPIC_ADDRESS'
     },
     type: {
-      doc: 'Type of subscription',
+      doc: 'Type of subscription (value is "subscription" by default as it is a receiver).',
       format: String,
       default: 'subscription'
     }

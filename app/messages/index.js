@@ -26,7 +26,7 @@ const startMessaging = async () => {
     receiverAction
   )
   await commsReceiver.subscribe()
-  console.info('fcp-fd-comms is ready to consume messages')
+  console.info('Service is ready to consume messages')
 }
 
 export { startMessaging }
