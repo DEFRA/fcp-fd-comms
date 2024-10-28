@@ -24,8 +24,7 @@ const config = convict({
     useCredentialChain: {
       doc: 'Use of credential chain for authentication.',
       format: Boolean,
-      default: false,
-      env: 'USE_CREDENTIAL_CHAIN'
+      default: process.env.NODE_ENV === environments.PRODUCTION
     },
     managedIdentityClientId: {
       doc: 'Client ID of the managed identity for the service.',
