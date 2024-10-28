@@ -9,16 +9,17 @@ const sendNotification = async (message) => {
     : [message.body.data.commsAddress]
 
   for (const emailAddress of emailAddresses) {
-    await notifyClient.sendEmail(
-      message.body.data.notifyTemplateId,
-      emailAddress, {
-        personalisation: {
-          reference: message.body.data.personalisation.reference,
-          agreementSummaryLink: message.body.data.personalisation.agreementSummaryLink
-        },
-        reference: crypto.randomUUID()
-      }
-    )
+    try {
+      await notifyClient.sendEmail(
+        message.body.data.notifyTemplateId,
+        emailAddress, {
+          personalisation: message.body.data.personalisation,
+          reference: crypto.randomUUID()
+        }
+      )
+    } catch (error) {
+      throw new Error('Error sending email: ', error)
+    }
   }
 }
 
