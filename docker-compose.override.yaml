@@ -16,5 +16,5 @@ services:
 
 networks:
   fcp-fd-comms:
-    name: fcp-fd-comms
+    name: fcp-fd
     driver: bridge

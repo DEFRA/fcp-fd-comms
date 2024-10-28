@@ -25,6 +25,7 @@ const startMessaging = async () => {
     config,
     receiverAction
   )
+
   await commsReceiver.subscribe()
   console.info('Service is ready to consume messages')
 }

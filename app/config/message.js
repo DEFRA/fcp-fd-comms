@@ -23,13 +23,13 @@ const config = convict({
       sensitive: true
     },
     useCredentialChain: {
-      doc: 'Use credential chain for authentication.',
+      doc: 'Use of credential chain for authentication.',
       format: Boolean,
       default: false,
       env: 'USE_CREDENTIAL_CHAIN'
     },
     managedIdentityClientId: {
-      doc: 'Managed identity client ID.',
+      doc: 'Client ID of the managed identity for the service.',
       format: String,
       default: null,
       env: 'AZURE_CLIENT_ID',
