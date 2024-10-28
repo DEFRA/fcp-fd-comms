@@ -29,17 +29,23 @@ describe('Service Bus Configuration', () => {
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
-    expect(messageConfig).toEqual({
-      host: 'mock-prd-message-host',
-      username: 'mock-prd-user',
-      password: 'mock-prd-password',
-      useCredentialChain: true,
-      managedIdentityClientId: 'mock-prd-client-id',
-      appInsights: expect.any(Object),
-      address: 'mock-prd-subscription-address',
-      topic: 'mock-prd-topic-address',
-      type: 'subscription'
-    })
+    const expectedConfig = {
+      messageQueue: {
+        host: 'mock-prd-message-host',
+        username: 'mock-prd-user',
+        password: 'mock-prd-password',
+        useCredentialChain: true,
+        managedIdentityClientId: 'mock-prd-client-id',
+        appInsights: expect.any(Object)
+      },
+      receiverSubscription: {
+        address: 'mock-prd-subscription-address',
+        topic: 'mock-prd-topic-address',
+        type: 'subscription'
+      }
+    }
+
+    expect(messageConfig.getProperties()).toEqual(expectedConfig)
   })
 
   test('should validate configuration correctly in non-production environment without managed identity', async () => {
@@ -53,17 +59,23 @@ describe('Service Bus Configuration', () => {
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
-    expect(messageConfig).toEqual({
-      host: 'mock-dev-message-host',
-      username: 'mock-dev-user',
-      password: 'mock-dev-password',
-      useCredentialChain: false,
-      managedIdentityClientId: 'mock-dev-client-id',
-      appInsights: undefined,
-      address: 'mock-dev-subscription-address',
-      topic: 'mock-dev-topic-address',
-      type: 'subscription'
-    })
+    const expectedConfig = {
+      messageQueue: {
+        host: 'mock-dev-message-host',
+        username: 'mock-dev-user',
+        password: 'mock-dev-password',
+        useCredentialChain: false,
+        managedIdentityClientId: 'mock-dev-client-id',
+        appInsights: undefined
+      },
+      receiverSubscription: {
+        address: 'mock-dev-subscription-address',
+        topic: 'mock-dev-topic-address',
+        type: 'subscription'
+      }
+    }
+
+    expect(messageConfig.getProperties()).toEqual(expectedConfig)
   })
 
   test('should throw an error if the configuration is invalid', async () => {
@@ -78,11 +90,9 @@ describe('Service Bus Configuration', () => {
     const { messageConfig } = await import('../../../app/config/index.js')
 
     const validateMessageConfig = () => {
-      if (!messageConfig.host || !messageConfig.username || !messageConfig.password) {
-        throw new Error('The message config is invalid.')
-      }
+      messageConfig.validate({ allowed: 'strict' })
     }
 
-    expect(validateMessageConfig).toThrow('The message config is invalid.')
+    expect(validateMessageConfig).toThrow('must be of type')
   })
 })

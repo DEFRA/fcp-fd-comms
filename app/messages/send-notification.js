@@ -18,7 +18,7 @@ const sendNotification = async (message) => {
         }
       )
     } catch (error) {
-      throw new Error('Error sending email: ', error)
+      console.log('Error sending email: ', error)
     }
   }
 }

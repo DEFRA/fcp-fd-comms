@@ -5,7 +5,7 @@ const config = convict({
   messageQueue: {
     host: {
       doc: 'Message queue host.',
-      format: 'url',
+      format: String,
       default: null,
       env: 'MESSAGE_HOST'
     },
@@ -19,8 +19,7 @@ const config = convict({
       doc: 'Message queue password.',
       format: String,
       default: null,
-      env: 'MESSAGE_PASSWORD',
-      sensitive: true
+      env: 'MESSAGE_PASSWORD'
     },
     useCredentialChain: {
       doc: 'Use of credential chain for authentication.',
@@ -32,8 +31,7 @@ const config = convict({
       doc: 'Client ID of the managed identity for the service.',
       format: String,
       default: null,
-      env: 'AZURE_CLIENT_ID',
-      nullable: true
+      env: 'AZURE_CLIENT_ID'
     },
     appInsights: {
       doc: 'App Insights client instance.',
