@@ -1,6 +1,6 @@
 import util from 'util'
-import { messageConfig } from '../config/index.js'
 import { MessageReceiver } from 'ffc-messaging'
+import { messageConfig } from '../config/index.js'
 import { sendNotification } from './send-notification.js'
 
 const handleMessage = async (message, receiver) => {
