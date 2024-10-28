@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid'
 import { NotifyClient } from 'notifications-node-client'
 
-const farmerApply = async (message) => {
+const sendNotification = async (message) => {
   const notifyClient = new NotifyClient(process.env.NOTIFY_API_KEY)
 
   await notifyClient.sendEmail(
-    process.env.CONFIRM_NEW_USER_NOTIFY_TEMPLATE_ID,
-    process.env.NOTIFY_TEST_EMAIL, {
+    message.body.data.notifyTemplateId,
+    message.body.data.commsAddress, {
       personalisation: {
         reference: message.body.data.personalisation.reference,
         agreementSummaryLink: message.body.data.personalisation.agreementSummaryLink
@@ -15,4 +15,4 @@ const farmerApply = async (message) => {
     })
 }
 
-export { farmerApply }
+export { sendNotification }

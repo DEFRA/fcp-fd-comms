@@ -11,7 +11,7 @@ jest.mock('notifications-node-client', () => ({
 }))
 
 const { NotifyClient } = await import('notifications-node-client')
-const { farmerApply } = await import('../../../app/messages/farmer-apply.js')
+const { farmerApply } = await import('../../../app/messages/send-notification.js')
 
 describe('Farmer Apply', () => {
   let mockMessage
