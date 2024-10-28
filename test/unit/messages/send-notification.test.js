@@ -11,9 +11,9 @@ jest.mock('notifications-node-client', () => ({
 }))
 
 const { NotifyClient } = await import('notifications-node-client')
-const { farmerApply } = await import('../../../app/messages/send-notification.js')
+const { sendNotification } = await import('../../../app/messages/send-notification.js')
 
-describe('Farmer Apply', () => {
+describe('Send Notification', () => {
   let mockMessage
   process.env.NOTIFY_API_KEY = 'mock-notify-api-key'
 
@@ -36,13 +36,13 @@ describe('Farmer Apply', () => {
 
   test('should call uuid to create a reference', async () => {
     const { v4: uuidv4 } = await import('uuid')
-    await farmerApply(mockMessage)
+    await sendNotification(mockMessage)
 
     expect(uuidv4).toHaveBeenCalled()
   })
 
   test('should create a new NotifyClient instance with the current Notify API key', async () => {
-    await farmerApply(mockMessage)
+    await sendNotification(mockMessage)
 
     expect(NotifyClient).toHaveBeenCalledWith('mock-notify-api-key')
   })
