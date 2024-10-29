@@ -1,6 +1,7 @@
 {{- include "ffc-helm-library.container-config-map" (list . "fcp-fd-comms.config-map") -}}
 {{- define "fcp-fd-comms.config-map" -}}
 data:
+  MESSAGE_QUEUE_HOST: {{ .Values.container.messageQueueHost | quote }}
   NODE_ENV: {{ .Values.environment | quote }}
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
