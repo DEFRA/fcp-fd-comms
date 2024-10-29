@@ -32,6 +32,7 @@ const config = convict({
       doc: 'Client ID of the managed identity for the service.',
       format: String,
       default: null,
+      nullable: true,
       env: 'AZURE_CLIENT_ID'
     },
     appInsights: {
