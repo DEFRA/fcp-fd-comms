@@ -20,7 +20,7 @@ describe('Service Bus Configuration', () => {
 
   test('should validate configuration correctly in production environment with managed identity', async () => {
     process.env.NODE_ENV = environments.PRODUCTION
-    process.env.MESSAGE_HOST = 'mock-prd-message-host'
+    process.env.MESSAGE_QUEUE_HOST = 'mock-prd-message-host'
     process.env.MESSAGE_USER = 'mock-prd-user'
     process.env.MESSAGE_PASSWORD = 'mock-prd-password'
     process.env.AZURE_CLIENT_ID = 'mock-prd-client-id'
@@ -50,7 +50,7 @@ describe('Service Bus Configuration', () => {
 
   test('should validate configuration correctly in non-production environment without managed identity', async () => {
     process.env.NODE_ENV = environments.DEVELOPMENT
-    process.env.MESSAGE_HOST = 'mock-dev-message-host'
+    process.env.MESSAGE_QUEUE_HOST = 'mock-dev-message-host'
     process.env.MESSAGE_USER = 'mock-dev-user'
     process.env.MESSAGE_PASSWORD = 'mock-dev-password'
     process.env.AZURE_CLIENT_ID = 'mock-dev-client-id'
