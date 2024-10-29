@@ -22,6 +22,7 @@ port: &port 3039
 container:
   resourceTier: M
   port: *port
+  messageQueueHost: namespace.servicebus.windows.net
 
 livenessProbe:
   path: /healthz
