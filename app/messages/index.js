@@ -1,16 +1,6 @@
-import util from 'util'
 import { MessageReceiver } from 'ffc-messaging'
+import { handleMessage } from './handle-message.js'
 import { messageConfig } from '../config/index.js'
-import { sendNotification } from './send-notification.js'
-
-const handleMessage = async (message, receiver) => {
-  try {
-    await sendNotification(message)
-    await receiver.completeMessage(message)
-  } catch (error) {
-    throw new Error('Message error', util.inspect(error.message, false, null, true))
-  }
-}
 
 const startMessaging = async () => {
   let commsReceiver // eslint-disable-line
