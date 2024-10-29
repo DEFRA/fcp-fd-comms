@@ -24,8 +24,7 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_QUEUE_USER = 'mock-prd-user'
     process.env.MESSAGE_QUEUE_PASSWORD = 'mock-prd-password'
     process.env.AZURE_CLIENT_ID = 'mock-prd-client-id'
-    process.env.MESSAGES_SUBSCRIPTION_ADDRESS = 'mock-prd-subscription-address'
-    process.env.MESSAGES_TOPIC_ADDRESS = 'mock-prd-topic-address'
+    process.env.MESSAGE_QUEUE_SUFFIX = 'mock-prd-topic-subscription-address'
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
@@ -39,8 +38,8 @@ describe('Service Bus Configuration', () => {
         appInsights: expect.any(Object)
       },
       receiverSubscription: {
-        address: 'mock-prd-subscription-address',
-        topic: 'mock-prd-topic-address',
+        address: 'mock-prd-topic-subscription-address',
+        topic: 'mock-prd-topic-subscription-address',
         type: 'subscription'
       }
     }
@@ -54,8 +53,7 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_QUEUE_USER = 'mock-dev-user'
     process.env.MESSAGE_QUEUE_PASSWORD = 'mock-dev-password'
     process.env.AZURE_CLIENT_ID = 'mock-dev-client-id'
-    process.env.MESSAGES_SUBSCRIPTION_ADDRESS = 'mock-dev-subscription-address'
-    process.env.MESSAGES_TOPIC_ADDRESS = 'mock-dev-topic-address'
+    process.env.MESSAGE_QUEUE_SUFFIX = 'mock-dev-topic-subscription-address'
 
     const { messageConfig } = await import('../../../app/config/index.js')
 
@@ -69,8 +67,8 @@ describe('Service Bus Configuration', () => {
         appInsights: undefined
       },
       receiverSubscription: {
-        address: 'mock-dev-subscription-address',
-        topic: 'mock-dev-topic-address',
+        address: 'mock-dev-topic-subscription-address',
+        topic: 'mock-dev-topic-subscription-address',
         type: 'subscription'
       }
     }

@@ -1,7 +1,7 @@
 import convict from 'convict'
 import environments from '../constants/environments.js'
 
-const message = convict({
+const config = convict({
   messageQueue: {
     host: {
       doc: 'Message queue host.',
@@ -46,13 +46,13 @@ const message = convict({
       doc: 'Receiver subscription address (i.e. name of subscription).',
       format: String,
       default: null,
-      env: 'MESSAGES_SUBSCRIPTION_ADDRESS'
+      env: 'MESSAGE_QUEUE_SUFFIX'
     },
     topic: {
       doc: 'Receiver topic address (i.e. name of topic corresponding to the subscription).',
       format: String,
       default: null,
-      env: 'MESSAGES_TOPIC_ADDRESS'
+      env: 'MESSAGE_QUEUE_SUFFIX'
     },
     type: {
       doc: 'Type of subscription (value is "subscription" by default as it is a receiver).',
@@ -62,6 +62,6 @@ const message = convict({
   }
 })
 
-message.validate({ allowed: 'strict' })
+config.validate({ allowed: 'strict' })
 
-export default message
+export default config
