@@ -3,17 +3,14 @@ import { handleMessage } from './handle-message.js'
 import { messageConfig } from '../config/index.js'
 
 const startMessaging = async () => {
-  let commsReceiver // eslint-disable-line
-  const receiverAction = (message) => handleMessage(message, commsReceiver)
-
   const config = {
     ...messageConfig.get('messageQueue'),
     ...messageConfig.get('receiverSubscription')
   }
 
-  commsReceiver = new MessageReceiver(
+  const commsReceiver = new MessageReceiver(
     config,
-    receiverAction
+    (message) => handleMessage(message, commsReceiver)
   )
 
   await commsReceiver.subscribe()
