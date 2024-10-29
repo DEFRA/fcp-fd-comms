@@ -9,9 +9,6 @@ async function registerPlugins (server) {
     router
   ]
 
-  console.log(process.env.NODE_ENV)
-  console.log(config.get('isDev'))
-
   if (config.get('isDev')) {
     plugins.push(Blipp)
   }
