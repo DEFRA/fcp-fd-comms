@@ -13,7 +13,7 @@ const { sendNotification } = await import('../../../app/messages/send-notificati
 console.log = jest.fn()
 
 describe('Send Notification', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.clearAllMocks()
   })
 
