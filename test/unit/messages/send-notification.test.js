@@ -1,9 +1,5 @@
 import { jest } from '@jest/globals'
-import { sendNotification } from '../../../app/messages/send-notification.js'
-
-jest.mock('crypto', () => ({
-  randomUUID: jest.fn().mockReturnValue('mock-uuid')
-}))
+import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
 
@@ -13,21 +9,27 @@ jest.mock('notifications-node-client', () => ({
   }))
 }))
 
+const { sendNotification } = await import('../../../app/messages/send-notification.js')
+console.log = jest.fn()
+
 describe('Send Notification', () => {
   afterEach(() => {
     jest.clearAllMocks()
   })
 
-  test('sends an email to a single address', async () => {
+  test('should send an email with the correct arguments to a single email address', async () => {
+    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
+
     const message = {
       body: {
         data: {
-          commsAddress: 'mock-email@test.com',
           notifyTemplateId: 'mock-notify-template-id',
+          commsAddress: 'mock-email@test.com',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          }
+          },
+          reference: 'mock-uuid'
         }
       }
     }
@@ -46,18 +48,23 @@ describe('Send Notification', () => {
         reference: 'mock-uuid'
       }
     )
+
+    uuidSpy.mockRestore()
   })
 
-  test('sends emails to multiple addresses', async () => {
+  test('should send emails with the correct arguments to multiple email addresses', async () => {
+    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
+
     const message = {
       body: {
         data: {
-          commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
           notifyTemplateId: 'mock-notify-template-id',
+          commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          }
+          },
+          reference: 'mock-uuid'
         }
       }
     }
@@ -89,5 +96,30 @@ describe('Send Notification', () => {
         reference: 'mock-uuid'
       }
     )
+
+    uuidSpy.mockRestore()
+  })
+
+  test('should log an error message when sendEmail fails', async () => {
+    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
+
+    const message = {
+      body: {
+        data: {
+          notifyTemplateId: 'mock-notify-template-id',
+          commsAddress: 'mock-email@test.com',
+          personalisation: {
+            reference: 'mock-reference',
+            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+          },
+          reference: 'mock-uuid'
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(console.log('Email failed to send.'))
+    await sendNotification(message)
+    expect(console.log).toHaveBeenCalledWith('Error sending email: ', console.log('Email failed to send.'))
+    uuidSpy.mockRestore()
   })
 })
