@@ -1,7 +1,7 @@
 import convict from 'convict'
 import environments from '../constants/environments.js'
 
-const messageConfig = convict({
+const config = convict({
   messageQueue: {
     host: {
       doc: 'Message queue host.',
@@ -62,6 +62,6 @@ const messageConfig = convict({
   }
 })
 
-messageConfig.validate({ allowed: 'strict' })
+config.validate({ allowed: 'strict' })
 
-export default messageConfig
+export default config
