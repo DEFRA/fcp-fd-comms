@@ -11,9 +11,12 @@ appInsights:
 
 labels: {}
 
-containerConfigMap: {}
+containerConfigMap:
+  name: fcp-fd-comms-documents-config-map
 
-containerSecret: {}
+containerSecret:
+  name: fcp-fd-comms-container-secret
+  type: Opaque
 
 deployment: {}
 
