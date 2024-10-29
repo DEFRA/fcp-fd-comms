@@ -7,19 +7,21 @@ const config = convict({
       doc: 'Message queue host.',
       format: String,
       default: null,
-      env: 'MESSAGE_HOST'
+      env: 'MESSAGE_QUEUE_HOST'
     },
     username: {
       doc: 'Message queue username.',
       format: String,
       default: null,
-      env: 'MESSAGE_USER'
+      nullable: true,
+      env: 'MESSAGE_QUEUE_USER'
     },
     password: {
       doc: 'Message queue password.',
       format: String,
       default: null,
-      env: 'MESSAGE_PASSWORD'
+      nullable: true,
+      env: 'MESSAGE_QUEUE_PASSWORD'
     },
     useCredentialChain: {
       doc: 'Use of credential chain for authentication.',
