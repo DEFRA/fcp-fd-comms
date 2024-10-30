@@ -5,8 +5,6 @@ services:
       target: production
     image: fcp-fd-comms
     container_name: fcp-fd-comms
-    depends_on: 
-      - fcp-fd-comms-postgres
     environment:
       APPINSIGHTS_CLOUDROLE: fcp-fd-comms-local
       APPINSIGHTS_CONNECTIONSTRING: ${APPINSIGHTS_CONNECTIONSTRING}
@@ -17,3 +15,10 @@ services:
       COMMS_SUBSCRIPTION_ADDRESS: ${MESSAGE_QUEUE_SUFFIX}-${MESSAGE_DEV_SUFFIX}
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
       NOTIFY_API_KEY: ${NOTIFY_API_KEY}
+
+  fcp-fd-comms-postgres:
+    image: postgres:16.4-alpine
+    environment:
+      POSTGRES_DB: fcp-fd-comms
+      POSTGRES_PASSWORD: ppp
+      POSTGRES_USERNAME: postgres
