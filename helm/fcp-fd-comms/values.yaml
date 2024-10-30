@@ -11,7 +11,8 @@ appInsights:
 
 labels: {}
 
-containerConfigMap: {}
+containerConfigMap:
+  name: fcp-fd-comms-documents-config-map
 
 containerSecret:
   name: fcp-fd-comms-container-secret
@@ -24,22 +25,9 @@ port: &port 3039
 container:
   resourceTier: M
   port: *port
-
-livenessProbe:
-  path: /healthz
-  port: *port
-  initialDelaySeconds: 20
-  periodSeconds: 10
-  failureThreshold: 3
-  timeoutSeconds: 5
-
-readinessProbe:
-  path: /healthy
-  port: *port
-  initialDelaySeconds: 30
-  periodSeconds: 10
-  failureThreshold: 3
-  timeoutSeconds: 5
+  messageQueueHost: namespace.servicebus.windows.net
+  messagesSubscriptionAddress: fcp-fd-comms
+  messagesTopicAddress: fcp-fd-comms
 
 postgresService:
   postgresDb: fcp_fd_comms

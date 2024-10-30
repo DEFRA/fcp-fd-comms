@@ -24,3 +24,7 @@ services:
 
 volumes:
   postgres_data:
+networks:
+  fcp-fd-comms:
+    name: fcp-fd
+    driver: bridge

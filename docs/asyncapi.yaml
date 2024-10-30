@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door User Communications
-  version: 1.0.0
+  version: 1.0.2
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -39,138 +39,168 @@ components:
         - data
       properties:
         id:
-          $ref: '#/components/schemas/Id'
+          $ref: '#/components/schemas/id'
         source:
-          $ref: '#/components/schemas/Source'
+          $ref: '#/components/schemas/source'
         specversion:
-          $ref: '#/components/schemas/Specversion'
+          $ref: '#/components/schemas/specversion'
         type:
-          $ref: '#/components/schemas/Type'
+          $ref: '#/components/schemas/type'
         datacontenttype:
-          $ref: '#/components/schemas/Datacontenttype'
+          $ref: '#/components/schemas/datacontenttype'
         time:
-          $ref: '#/components/schemas/Time'
+          $ref: '#/components/schemas/time'
         data:
           $ref: '#/components/schemas/commsData'
 
     commsData:
       type: object
       required:
-        - CRN
+        - crn
         - sourceSystem
         - notifyTemplateId
         - personalisation
-        - SBI
+        - sbi
         - reference
       properties:
-        CRN:
-          $ref: '#/components/schemas/CRN'
-        SBI:
-          $ref: '#/components/schemas/SBI'
+        crn:
+          $ref: '#/components/schemas/crn'
+        sbi:
+          $ref: '#/components/schemas/sbi'
         sourceSystem:
-          $ref: '#/components/schemas/SourceSystem'
+          $ref: '#/components/schemas/sourceSystem'
         notifyTemplateId:
-          $ref: '#/components/schemas/NotifyTemplateId'
+          $ref: '#/components/schemas/notifyTemplateId'
         commsType:
-          $ref: '#/components/schemas/CommsType'
+          $ref: '#/components/schemas/commsType'
         commsAddress:
-          $ref: '#/components/schemas/CommsAddress'
+          $ref: '#/components/schemas/commsAddress'
         personalisation:
-          $ref: '#/components/schemas/Personalisation'
+          $ref: '#/components/schemas/personalisation'
         reference:
-          $ref: '#/components/schemas/Reference'
-        oneClickUnsubscribeURL:
-          $ref: '#/components/schemas/OneClickUnsubscribeURL'
+          $ref: '#/components/schemas/reference'
+        oneClickUnsubscribeUrl:
+          $ref: '#/components/schemas/oneClickUnsubscribeUrl'
         emailReplyToId:
-          $ref: '#/components/schemas/EmailReplyToId'
+          $ref: '#/components/schemas/emailReplyToId'
 
-    CRN:
+    crn:
       type: number
-      description: Customer Reference Number
+      description: Customer reference Number
       minimum: 105000000
       maximum: 999999999
       example: 123456789
 
-    SBI:
+    sbi:
       type: number
       description: Single Business Identifier
       minimum: 105000000
       maximum: 999999999
       example: 123456789
 
-    SourceSystem:
+    sourceSystem:
       type: string
       description: The name of the source system that originated the message
       example: "AHWP"
+      minlength: 3
+      maxlength: 100
+      pattern: "^[a-z0-9-_]+$"
 
-    NotifyTemplateId:
+    notifyTemplateId:
       type: string
       description: Notification template identifier
       example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
+      format: uuid
 
-    CommsType:
+    commsType:
       type: string
       description: Type of communication (e.g., email, SMS)
       default: "email"
       example: "email"
+      enum: ["email"]
 
-    CommsAddress:
-      type: string
-      description: The user's contact email address
-      example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+    commsAddress:
+      oneOf:
+        - type: string
+          description: The user's contact email address
+          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+          minLength: 1
+          maxLength: 320
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+          title: accepts a single string
+        - type: array
+          title: accepts an array of strings
+          items:
+            type: string
+            description: A list of contact email addresses
+            example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+            minLength: 1
+            maxLength: 320
+            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
-    Personalisation:
+    personalisation:
       type: object
       description: JSON-formatted variables required for the template
       example:
         caseNumber: "ACC123456789"
         expectedPaymentDate: "21.11.2025"
         adminName: "Jessica Lrrr"
-      default: {}
 
-    Reference:
+    reference:
       type: string
-      description: Unique identifier (UUID) for further operations like status query
-      example: "abc123-uuid-123456"
+      description: Unique identifier for further operations like status query, must be prefixed with the source system
+      example: "ffc-ahwr-whatever-format-is-needed"
+      minlength: 1
+      maxlength: 100
 
-    OneClickUnsubscribeURL:
+    oneClickUnsubscribeUrl:
       type: string
       description: URL for one-click unsubscribe option
       example: "https://unsubscribe.example.com"
+      minlength: 1
 
-    EmailReplyToId:
+    emailReplyToId:
       type: string
+      format: uuid
       description: Optional ID for the reply-to email address
       example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
 
-    Specversion:
+    specversion:
       type: string
       description: The version of the CloudEvents specification that the event uses
       example: '1.0'
+      minlength: 3
+      maxlength: 10
 
-    Type:
+    type:
       type: string
       description: The type of event in reverse DNS notation
       example: uk.gov.fcp.sfd.notification.request
+      minlength: 3
+      maxlength: 250
 
-    Source:
+    source:
       type: string
       description: The service publishing the event
       example: ffc-ahwr-claim
+      minlength: 1
+      maxlength: 100
 
-    Id:
+    id:
       type: string
       format: uuid
       description: The unique ID of the event
       example: 123e4567-e89b-12d3-a456-426655440000
+      minlength: 1
+      uniqueItems: true
 
-    Time:
+    time:
       type: string
       format: date-time
       description: The time the event occurred
       example: '2023-10-17T14:48:00Z'
 
-    Datacontenttype:
+    datacontenttype:
       type: string
       description: The format of the event data
       default: "application/json"
