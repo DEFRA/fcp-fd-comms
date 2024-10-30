@@ -1,17 +1,15 @@
 import { MessageReceiver } from 'ffc-messaging'
 import { handleMessage } from './handle-message.js'
-import config from '../config/index.js'
+import { messageConfig } from '../config/index.js'
 
 const startMessaging = async () => {
-  const messageConfig = {
-    ...config.get('messaging.sharedConfig'),
-    ...config.get('messaging.receiverSubscription')
+  const config = {
+    ...messageConfig.get('messageQueue'),
+    ...messageConfig.get('receiverSubscription')
   }
 
-  console.log('Starting messaging service with config:', messageConfig)
-
   const commsReceiver = new MessageReceiver(
-    messageConfig,
+    config,
     (message) => handleMessage(message, commsReceiver)
   )
 

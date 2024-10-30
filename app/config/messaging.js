@@ -1,7 +1,8 @@
+import convict from 'convict'
 import environments from '../constants/environments.js'
 
-const messaging = {
-  sharedConfig: {
+const messaging = convict({
+  messageQueue: {
     host: {
       doc: 'Message queue host.',
       format: String,
@@ -45,13 +46,13 @@ const messaging = {
       doc: 'Receiver subscription address (i.e. name of subscription).',
       format: String,
       default: null,
-      env: 'MESSAGE_QUEUE_SUFFIX'
+      env: 'COMMS_SUBSCRIPTION_ADDRESS'
     },
     topic: {
       doc: 'Receiver topic address (i.e. name of topic corresponding to the subscription).',
       format: String,
       default: null,
-      env: 'MESSAGE_QUEUE_SUFFIX'
+      env: 'COMMS_TOPIC_ADDRESS'
     },
     type: {
       doc: 'Type of subscription (value is "subscription" by default as it is a receiver).',
@@ -59,6 +60,6 @@ const messaging = {
       default: 'subscription'
     }
   }
-}
+})
 
 export default messaging

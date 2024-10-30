@@ -24,14 +24,13 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_QUEUE_USER = 'mock-prd-user'
     process.env.MESSAGE_QUEUE_PASSWORD = 'mock-prd-password'
     process.env.AZURE_CLIENT_ID = 'mock-prd-client-id'
-    process.env.MESSAGE_QUEUE_SUFFIX = 'mock-prd-topic-subscription-address'
+    process.env.COMMS_SUBSCRIPTION_ADDRESS = 'mock-prd-subscription-address'
+    process.env.COMMS_TOPIC_ADDRESS = 'mock-prd-topic-address'
 
-    const { default: config } = await import('../../../app/config/index.js')
-
-    const messageConfig = config.get('messaging')
+    const { messageConfig } = await import('../../../app/config/index.js')
 
     const expectedConfig = {
-      sharedConfig: {
+      messageQueue: {
         host: 'mock-prd-message-host',
         username: 'mock-prd-user',
         password: 'mock-prd-password',
@@ -40,13 +39,13 @@ describe('Service Bus Configuration', () => {
         appInsights: expect.any(Object)
       },
       receiverSubscription: {
-        address: 'mock-prd-topic-subscription-address',
-        topic: 'mock-prd-topic-subscription-address',
+        address: 'mock-prd-subscription-address',
+        topic: 'mock-prd-topic-address',
         type: 'subscription'
       }
     }
 
-    expect(messageConfig).toEqual(expectedConfig)
+    expect(messageConfig.getProperties()).toEqual(expectedConfig)
   })
 
   test('should validate configuration correctly in non-production environment without managed identity', async () => {
@@ -55,14 +54,13 @@ describe('Service Bus Configuration', () => {
     process.env.MESSAGE_QUEUE_USER = 'mock-dev-user'
     process.env.MESSAGE_QUEUE_PASSWORD = 'mock-dev-password'
     process.env.AZURE_CLIENT_ID = 'mock-dev-client-id'
-    process.env.MESSAGE_QUEUE_SUFFIX = 'mock-dev-topic-subscription-address'
+    process.env.COMMS_SUBSCRIPTION_ADDRESS = 'mock-dev-subscription-address'
+    process.env.COMMS_TOPIC_ADDRESS = 'mock-dev-topic-address'
 
-    const { default: config } = await import('../../../app/config/index.js')
-
-    const messageConfig = config.get('messaging')
+    const { messageConfig } = await import('../../../app/config/index.js')
 
     const expectedConfig = {
-      sharedConfig: {
+      messageQueue: {
         host: 'mock-dev-message-host',
         username: 'mock-dev-user',
         password: 'mock-dev-password',
@@ -71,12 +69,12 @@ describe('Service Bus Configuration', () => {
         appInsights: undefined
       },
       receiverSubscription: {
-        address: 'mock-dev-topic-subscription-address',
-        topic: 'mock-dev-topic-subscription-address',
+        address: 'mock-dev-subscription-address',
+        topic: 'mock-dev-topic-address',
         type: 'subscription'
       }
     }
 
-    expect(messageConfig).toEqual(expectedConfig)
+    expect(messageConfig.getProperties()).toEqual(expectedConfig)
   })
 })

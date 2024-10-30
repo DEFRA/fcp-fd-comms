@@ -3,11 +3,11 @@
 data:
   MESSAGE_QUEUE_HOST: {{ .Values.container.messageQueueHost | quote }}
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
-  MESSAGES_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}-{{ .Values.environmentCode }}
-  MESSAGES_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}-{{ .Values.environmentCode }}
+  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}-{{ .Values.environmentCode }}
+  COMMS_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}-{{ .Values.environmentCode }}
   {{ else }}
-  MESSAGES_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}
-  MESSAGES_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}
+  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}
+  COMMS_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}
   {{- end }}
   NODE_ENV: {{ .Values.environment | quote }}
   PORT: {{ .Values.container.port | quote }}
