@@ -3,7 +3,7 @@ import convictFormatWithValidator from 'convict-format-with-validator'
 
 convict.addFormats(convictFormatWithValidator)
 
-const config = convict({
+const server = convict({
   env: {
     doc: 'The application environment.',
     format: ['production', 'development', 'test'],
@@ -30,6 +30,6 @@ const config = convict({
   }
 })
 
-config.validate({ allowed: 'strict' })
+server.validate({ allowed: 'strict' })
 
-export default config
+export default server

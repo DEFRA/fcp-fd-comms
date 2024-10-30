@@ -62,4 +62,6 @@ const messaging = convict({
   }
 })
 
+messaging.validate({ allowed: 'strict' })
+
 export default messaging

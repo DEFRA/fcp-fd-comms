@@ -1,7 +1,7 @@
 import Blipp from 'blipp'
 import logging from './logging.js'
 import router from './router.js'
-import config from '../config.js'
+import { serverConfig } from '../config/index.js'
 
 async function registerPlugins (server) {
   const plugins = [
@@ -9,7 +9,7 @@ async function registerPlugins (server) {
     router
   ]
 
-  if (config.get('isDev')) {
+  if (serverConfig.get('isDev')) {
     plugins.push(Blipp)
   }
 

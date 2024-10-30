@@ -1,12 +1,12 @@
 import Hapi from '@hapi/hapi'
 import Joi from 'joi'
 import { registerPlugins } from './plugins/index.js'
-import config from './config.js'
+import { serverConfig } from './config/index.js'
 
 async function createServer () {
   const server = Hapi.server({
-    host: config.get('host'),
-    port: config.get('port'),
+    host: serverConfig.get('host'),
+    port: serverConfig.get('port'),
     routes: {
       validate: {
         options: {
