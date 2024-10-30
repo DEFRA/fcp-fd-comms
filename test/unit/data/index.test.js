@@ -51,7 +51,6 @@ describe('Data Module Tests', () => {
   test('should return a value of "initial" for db.sequelize', async () => {
     const dbModule = await import('../../../app/data/index.js')
     const db = dbModule.default
-    console.log(db)
     expect(db.initial).toEqual({ name: 'initial', associate: expect.any(Function) })
   })
 })
