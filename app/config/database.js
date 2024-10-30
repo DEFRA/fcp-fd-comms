@@ -24,7 +24,7 @@ const retry = {
   timeout: 60000
 }
 
-const config = {
+const database = {
   database: process.env.POSTGRES_DB || 'fcp_fd_comms',
   dialect: 'postgres',
   dialectOptions: {
@@ -40,4 +40,4 @@ const config = {
   username: process.env.POSTGRES_USERNAME
 }
 
-export default config
+export default database
