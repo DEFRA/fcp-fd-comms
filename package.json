@@ -1,6 +1,6 @@
 {
   "name": "fcp-fd-comms",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "description": "Common communications service for Single Front Door",
   "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
@@ -8,7 +8,7 @@
   "scripts": {
     "pretest": "npm run test:lint",
     "test": "jest --runInBand --forceExit",
-    "test:watch": "jest --coverage=false --onlyChanged --watch --runInBand",
+    "test:watch": "jest --coverage=false --onlyChanged --watch --runInBand --silent=false",
     "test:lint": "standard",
     "test:debug": "node --inspect-brk=0.0.0.0 ./node_modules/jest/bin/jest.js --coverage=false --onlyChanged --watch --runInBand --no-cache",
     "start:watch": "nodemon --inspect=0.0.0.0 --ext js --legacy-watch app/index.js",
@@ -17,7 +17,9 @@
   "author": "Defra",
   "contributors": [
     "Rana Salem <rana.salem@defra.gov.uk>",
-    "Amirs Ishmuhametovs <amirs.ishmuhametovs@defra.gov.uk>"
+    "Amirs Ishmuhametovs <amirs.ishmuhametovs@defra.gov.uk>",
+    "Fay Toward <fay.toward@defra.gov.uk>",
+    "Shaun Fitzsimons <shaun.fitzsimmons@defra.gov.uk>"
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {
@@ -26,9 +28,11 @@
     "blipp": "4.0.2",
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
+    "ffc-messaging": "2.10.1",
     "hapi-pino": "12.1.0",
     "joi": "17.13.3",
-    "log-timestamp": "0.3.0"
+    "log-timestamp": "0.3.0",
+    "notifications-node-client": "8.2.1"
   },
   "devDependencies": {
     "jest": "29.7.0",
