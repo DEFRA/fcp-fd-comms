@@ -1,8 +1,7 @@
-import convict from 'convict'
 import environments from '../constants/environments.js'
 
-const config = convict({
-  messageQueue: {
+const messaging = {
+  sharedConfig: {
     host: {
       doc: 'Message queue host.',
       format: String,
@@ -60,8 +59,6 @@ const config = convict({
       default: 'subscription'
     }
   }
-})
+}
 
-config.validate({ allowed: 'strict' })
-
-export default config
+export default messaging

@@ -26,10 +26,12 @@ describe('Service Bus Configuration', () => {
     process.env.AZURE_CLIENT_ID = 'mock-prd-client-id'
     process.env.MESSAGE_QUEUE_SUFFIX = 'mock-prd-topic-subscription-address'
 
-    const { messageConfig } = await import('../../../app/config/index.js')
+    const { default: config } = await import('../../../app/config/index.js')
+
+    const messageConfig = config.get('messaging')
 
     const expectedConfig = {
-      messageQueue: {
+      sharedConfig: {
         host: 'mock-prd-message-host',
         username: 'mock-prd-user',
         password: 'mock-prd-password',
@@ -44,7 +46,7 @@ describe('Service Bus Configuration', () => {
       }
     }
 
-    expect(messageConfig.getProperties()).toEqual(expectedConfig)
+    expect(messageConfig).toEqual(expectedConfig)
   })
 
   test('should validate configuration correctly in non-production environment without managed identity', async () => {
@@ -55,10 +57,12 @@ describe('Service Bus Configuration', () => {
     process.env.AZURE_CLIENT_ID = 'mock-dev-client-id'
     process.env.MESSAGE_QUEUE_SUFFIX = 'mock-dev-topic-subscription-address'
 
-    const { messageConfig } = await import('../../../app/config/index.js')
+    const { default: config } = await import('../../../app/config/index.js')
+
+    const messageConfig = config.get('messaging')
 
     const expectedConfig = {
-      messageQueue: {
+      sharedConfig: {
         host: 'mock-dev-message-host',
         username: 'mock-dev-user',
         password: 'mock-dev-password',
@@ -73,6 +77,6 @@ describe('Service Bus Configuration', () => {
       }
     }
 
-    expect(messageConfig.getProperties()).toEqual(expectedConfig)
+    expect(messageConfig).toEqual(expectedConfig)
   })
 })
