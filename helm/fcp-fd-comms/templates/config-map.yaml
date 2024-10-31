@@ -11,4 +11,5 @@ data:
   NODE_ENV: {{ .Values.environment | quote }}
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
+  CHECK_NOTIFY_STATUS_CRON_PATTERN: {{ .Values.container.checkNotifyStatusCronPattern | quote }}
 {{- end -}}
