@@ -25,7 +25,7 @@ const handler = async () => {
         updates += 1
       }
     } catch (error) {
-      console.error(`Error checking notification ${notfication.id}: `, error)
+      console.error(`Error checking notification ${notfication.id}:`, error.message)
     }
   }
 
