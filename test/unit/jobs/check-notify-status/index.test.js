@@ -14,7 +14,7 @@ const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-stat
 
 const { handler } = await import('../../../../app/jobs/check-notify-status/index.js')
 
-describe('Check Notify Status Job', () => {
+describe('Check notify status job handler', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
