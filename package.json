@@ -1,6 +1,6 @@
 {
   "name": "fcp-fd-comms",
-  "version": "0.2.1",
+  "version": "0.4.0",
   "description": "Common communications service for Single Front Door",
   "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
@@ -28,11 +28,12 @@
     "blipp": "4.0.2",
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
+    "cron": "^3.1.8",
     "ffc-messaging": "2.10.1",
     "hapi-pino": "12.1.0",
     "joi": "17.13.3",
     "log-timestamp": "0.3.0",
-    "notifications-node-client": "8.2.1"
+    "notifications-node-client": "^8.2.1"
   },
   "devDependencies": {
     "jest": "29.7.0",
