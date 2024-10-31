@@ -9,7 +9,12 @@ const dirname = path.dirname(filename)
 const modelPath = path.join(dirname, 'models')
 
 const db = {}
-const sequelize = new Sequelize(databaseConfig.database, databaseConfig.username, databaseConfig.password, databaseConfig)
+
+const sequelize = new Sequelize(
+  databaseConfig.database,
+  databaseConfig.username,
+  databaseConfig.password,
+  databaseConfig)
 
 const files = fs.readdirSync(modelPath)
   .filter(file => {

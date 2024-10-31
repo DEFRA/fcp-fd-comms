@@ -15,6 +15,12 @@ services:
       COMMS_SUBSCRIPTION_ADDRESS: ${MESSAGE_QUEUE_SUFFIX}-${MESSAGE_DEV_SUFFIX}
       AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
       NOTIFY_API_KEY: ${NOTIFY_API_KEY}
+      POSTGRES_DB: fcp-fd-comms
+      POSTGRES_HOST: ${POSTGRES_HOST:-fcp-fd-comms-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_SCHEMA_PASSWORD:-ppp}
+      POSTGRES_PORT: 5432
+      POSTGRES_SCHEMA_NAME: ${POSTGRES_SCHEMA_NAME:-public}
+      POSTGRES_USERNAME: ${POSTGRES_SCHEMA_USERNAME:-postgres}
 
   fcp-fd-comms-postgres:
     image: postgres:16.4-alpine

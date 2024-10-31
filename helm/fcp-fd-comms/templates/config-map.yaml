@@ -3,12 +3,11 @@
 data:
   MESSAGE_QUEUE_HOST: {{ .Values.container.messageQueueHost | quote }}
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
-  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}-{{ .Values.environmentCode }}
-  COMMS_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}-{{ .Values.environmentCode }}
+  COMMS_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress }}-{{ .Values.environmentCode }}
   {{ else }}
-  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress | quote }}
   COMMS_TOPIC_ADDRESS: {{ .Values.container.messagesTopicAddress | quote }}
   {{- end }}
+  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.messagesSubscriptionAddress }}
   NODE_ENV: {{ .Values.environment | quote }}
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
