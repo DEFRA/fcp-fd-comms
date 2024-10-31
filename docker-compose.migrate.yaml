@@ -7,7 +7,7 @@ x-common-migration: &common-migration
 
 x-common-postgres: &common-postgres
   POSTGRES_PORT: 5432
-  POSTGRES_DB: ${POSTGRES_DB:-fcp-fd-comms}
+  POSTGRES_DB: ${POSTGRES_DB:-fcp_fd_comms}
   POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:-ppp}
   POSTGRES_USERNAME: ${POSTGRES_ADMIN_USERNAME:-postgres}
 
