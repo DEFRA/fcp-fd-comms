@@ -1,5 +1,5 @@
 import { getPendingNotifications, updateNotificationStatus } from '../../repos/notfication-log.js'
-import { getNotifyStatus } from './get-notification-statuses.js'
+import { getNotifyStatus } from './get-notify-status.js'
 
 const PATTERN = '*/30 * * * * *'
 
@@ -19,7 +19,7 @@ const handler = async () => {
     try {
       const { status } = await getNotifyStatus(notfication.id)
 
-      if (status !== pending.status) {
+      if (status !== notfication.status) {
         updateNotificationStatus(notfication, status)
 
         updates += 1
