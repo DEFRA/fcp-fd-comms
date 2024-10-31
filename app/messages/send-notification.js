@@ -1,9 +1,8 @@
 import crypto from 'crypto'
-import { NotifyClient } from 'notifications-node-client'
+
+import notifyClient from '../clients/notify-client.js'
 
 const sendNotification = async (message) => {
-  const notifyClient = new NotifyClient(process.env.NOTIFY_API_KEY)
-
   const emailAddresses = Array.isArray(message.body.data.commsAddress)
     ? message.body.data.commsAddress
     : [message.body.data.commsAddress]

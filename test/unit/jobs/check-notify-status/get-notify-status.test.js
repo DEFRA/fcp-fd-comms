@@ -2,10 +2,10 @@ import { jest } from '@jest/globals'
 
 const mockGetNotificationById = jest.fn()
 
-jest.mock('notifications-node-client', () => ({
-  NotifyClient: jest.fn().mockImplementation(() => ({
+jest.unstable_mockModule('../../../../app/clients/notify-client.js', () => ({
+  default: {
     getNotificationById: mockGetNotificationById
-  }))
+  }
 }))
 
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')

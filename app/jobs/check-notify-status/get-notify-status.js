@@ -1,8 +1,6 @@
-import { NotifyClient } from 'notifications-node-client'
+import notifyClient from '../../clients/notify-client.js'
 
 const getNotifyStatus = async (id) => {
-  const notifyClient = new NotifyClient(process.env.NOTIFY_API_KEY)
-
   const { data } = await notifyClient.getNotificationById(id)
 
   return {

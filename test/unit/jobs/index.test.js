@@ -1,9 +1,9 @@
 import { beforeEach, expect, jest } from '@jest/globals'
 
-import { checkNotifyStatusHandler } from '../../../app/jobs/check-notify-status'
-
 const mockStartJob = jest.fn()
 const mockStopJob = jest.fn()
+
+const mockCheckNotifyStatusHandler = jest.fn()
 
 const mockCronJob = jest.fn().mockImplementation(() => ({
   start: mockStartJob,
@@ -12,6 +12,10 @@ const mockCronJob = jest.fn().mockImplementation(() => ({
 
 jest.unstable_mockModule('cron', () => ({
   CronJob: mockCronJob
+}))
+
+jest.unstable_mockModule('../../../app/jobs/check-notify-status', () => ({
+  checkNotifyStatusHandler: mockCheckNotifyStatusHandler
 }))
 
 describe('Cron job setup', () => {
@@ -27,7 +31,7 @@ describe('Cron job setup', () => {
     await import('../../../app/jobs/index.js')
 
     expect(mockCronJob).toHaveBeenCalledTimes(1)
-    expect(mockCronJob).toHaveBeenCalledWith('*/30 * * * * *', checkNotifyStatusHandler)
+    expect(mockCronJob).toHaveBeenCalledWith('*/30 * * * * *', mockCheckNotifyStatusHandler)
   })
 
   test('start jobs should start jobs', async () => {
