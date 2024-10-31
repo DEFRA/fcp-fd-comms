@@ -1,9 +1,7 @@
 import { getPendingNotifications, updateNotificationStatus } from '../../repos/notfication-log.js'
 import { getNotifyStatus } from './get-notify-status.js'
 
-const PATTERN = '*/30 * * * * *'
-
-const handler = async () => {
+const checkNotifyStatusHandler = async () => {
   console.log('Checking notify status')
 
   const pending = getPendingNotifications()
@@ -32,4 +30,4 @@ const handler = async () => {
   console.log(`Updated ${updates} notifications`)
 }
 
-export { PATTERN, handler }
+export { checkNotifyStatusHandler }

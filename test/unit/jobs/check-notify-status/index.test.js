@@ -12,7 +12,7 @@ jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-st
 const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notfication-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
 
-const { handler } = await import('../../../../app/jobs/check-notify-status/index.js')
+const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
 
 describe('Check notify status job handler', () => {
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Check notify status job handler', () => {
     getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
     getNotifyStatus.mockReturnValue({ id: 2, status: 'delivered' })
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(getNotifyStatus).toHaveBeenCalledTimes(2)
     expect(getNotifyStatus).toHaveBeenCalledWith(1)
@@ -46,7 +46,7 @@ describe('Check notify status job handler', () => {
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('Updated 3 notifications')
 
@@ -60,7 +60,7 @@ describe('Check notify status job handler', () => {
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(updateNotificationStatus).toHaveBeenCalledWith({ id: 1, status: 'sending' }, 'delivered')
   })
@@ -72,7 +72,7 @@ describe('Check notify status job handler', () => {
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'sending' })
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(updateNotificationStatus).not.toHaveBeenCalled()
   })
@@ -80,7 +80,7 @@ describe('Check notify status job handler', () => {
   test('should not call get notify status if there are no pending notifications', async () => {
     getPendingNotifications.mockReturnValue([])
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(getNotifyStatus).not.toHaveBeenCalled()
   })
@@ -88,7 +88,7 @@ describe('Check notify status job handler', () => {
   test('should not call update notification status if there are no pending notifications', async () => {
     getPendingNotifications.mockReturnValue([])
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(updateNotificationStatus).not.toHaveBeenCalled()
   })
@@ -98,7 +98,7 @@ describe('Check notify status job handler', () => {
 
     getPendingNotifications.mockReturnValue([])
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(consoleLogSpy).toHaveBeenCalledWith('No pending notifications')
 
@@ -116,7 +116,7 @@ describe('Check notify status job handler', () => {
       throw new Error('Request failed with status code 404')
     })
 
-    await handler()
+    await checkNotifyStatusHandler()
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error checking notification 1:', 'Request failed with status code 404')
 
