@@ -46,4 +46,22 @@ describe('Notification log repository', () => {
       { id: '3', status: 'delivered' }
     ])
   })
+
+  test('should throw error if notification not found', async () => {
+    const mockData = [
+      { id: '1', status: 'sending' },
+      { id: '2', status: 'created' },
+      { id: '3', status: 'delivered' }
+    ]
+
+    jest.unstable_mockModule('../../../app/constants/mock-notification-log.js', () => ({
+      default: mockData
+    }))
+
+    const { updateNotificationStatus } = await import('../../../app/repos/notfication-log.js')
+
+    expect(() => {
+      updateNotificationStatus({ id: '4', status: 'created' }, 'delivered')
+    }).toThrow('Notification 4 not found in data')
+  })
 })

@@ -14,9 +14,7 @@ const updateNotificationStatus = (notification, status) => {
   const org = data.find(({ id }) => id === notification.id)
 
   if (!org) {
-    console.log(`Notification ${notification.id} not found in data`)
-
-    return
+    throw new Error(`Notification ${notification.id} not found in data`)
   }
 
   org.status = status
