@@ -26,8 +26,9 @@ container:
   resourceTier: M
   port: *port
   messageQueueHost: namespace.servicebus.windows.net
-  messagesSubscriptionAddress: fcp-fd-comms
-  messagesTopicAddress: fcp-fd-comms
+  commsSubscriptionAddress: fcp-fd-comms
+  commsTopicAddress: fcp-fd-comms
+  notifyApiKey:
 
 postgresService:
   postgresDb: fcp_fd_comms
