@@ -26,8 +26,9 @@ container:
   resourceTier: M
   port: *port
   messageQueueHost: namespace.servicebus.windows.net
-  messagesSubscriptionAddress: fcp-fd-comms
-  messagesTopicAddress: fcp-fd-comms
+  commsSubscriptionAddress: fcp-fd-comms
+  commsTopicAddress: fcp-fd-comms
+  notifyApiKey:
 
 # Enable if Managed Identity is required, ensure the clientID and resourceID are set in Platform Configuration
 azureIdentity:
