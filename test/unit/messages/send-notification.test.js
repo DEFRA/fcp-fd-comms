@@ -9,7 +9,7 @@ jest.mock('notifications-node-client', () => ({
   }))
 }))
 
-const { sendNotification } = await import('../../../app/messages/send-notification.js')
+const { sendNotification } = await import('../../../app/messages/inbound/send-notification.js')
 console.log = jest.fn()
 
 describe('Send Notification', () => {

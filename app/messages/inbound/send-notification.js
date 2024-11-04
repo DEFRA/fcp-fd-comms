@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 import { NotifyClient } from 'notifications-node-client'
-import { notifyConfig } from '../config/index.js'
+import { notifyConfig } from '../../config/index.js'
 
 const sendNotification = async (message) => {
   const notifyClient = new NotifyClient(notifyConfig.get('notifyApiKey'))

@@ -1,6 +1,6 @@
 import { setup } from './insights.js'
 import 'log-timestamp'
-import { startMessaging } from './messages/index.js'
+import { startMessaging } from './messages/outbound/index.js'
 
 const init = async () => {
   await startMessaging()
