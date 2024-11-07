@@ -5,5 +5,5 @@ import notifyConfig from './notify.js'
 export {
   messageConfig,
   databaseConfig,
-  notifyConfig,
+  notifyConfig
 }

@@ -1,0 +1,63 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.9.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <changeSet author="Defra" id="1">
+      <tagDatabase tag="v1.1.0"/>
+    </changeSet>
+
+    <changeSet author="Defra" id="2">
+      <sql>
+        CREATE TYPE status_enum AS ENUM ('created', 'sending', 'delivered', 'permanent-failure', 'temporary-failure', 'technical-failure');
+      </sql>
+    </changeSet>
+
+    <changeSet author="Defra" id="3">
+      <sql 
+      dbms="postgresql" endDelimiter=";" splitStatements="true" stripComments="true">CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
+      <comment>Install UUID Extension</comment>
+      </sql>
+    </changeSet>
+
+    <changeSet author="Defra" id="4">
+    <dropTable  cascadeConstraints="true"
+            tableName="initial"/>
+
+    <createTable tableName="notify_api_request_success">
+      <column name="correlation_id" type="UUID" defaultValueComputed="public.uuid_generate_v4()">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="notify_api_request_success_pkey"/>
+      </column>
+      <column name="created_at" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="notify_response_id" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message" type="JSONB">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status" type="status_enum">
+        <constraints nullable="false"/>
+      </column>
+      <column name="status_updated_at" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="completed" type="TIMESTAMP">
+        <constraints nullable="true"/>
+      </column>
+    </createTable>
+
+    <createTable tableName="notify_api_request_failure">
+      <column name="correlation_id" type="UUID" defaultValueComputed="public.uuid_generate_v4()">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="notify_api_request_failure_pkey"/>
+      </column>
+      <column name="created_at" type="TIMESTAMP">
+        <constraints nullable="false"/>
+      </column>
+      <column name="message" type="JSONB">
+        <constraints nullable="false"/>
+      </column>
+      <column name="error" type="JSONB">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+</databaseChangeLog>
