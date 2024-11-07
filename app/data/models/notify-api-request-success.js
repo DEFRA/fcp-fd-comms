@@ -1,9 +1,9 @@
 export default (sequelize, DataTypes) => {
-  return sequelize.define('notify_api_request_success', {
-    correlation_id: { type: DataTypes.UUID, primaryKey: true },
-    created_at: { type: DataTypes.DATE },
-    notify_response_id: { type: DataTypes.STRING },
-    message: { type: DataTypes.JSONB },
+  return sequelize.define('notifyApiRequestSuccess', {
+    correlationId: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, allowNull: false },
+    createdAt: { type: DataTypes.DATE, allowNull: false },
+    notifyResponseId: { type: DataTypes.STRING, allowNull: false },
+    message: { type: DataTypes.JSONB, allowNull: false },
     status: {
       type: DataTypes.ENUM(
         'created',
@@ -12,13 +12,14 @@ export default (sequelize, DataTypes) => {
         'permanent-failure',
         'temporary-failure',
         'technical-failure'
-      )
+      ),
+      allowNull: false
     },
-    status_updated_at: { type: DataTypes.DATE },
-    completed: { type: DataTypes.DATE }
+    statusUpdatedAt: { type: DataTypes.DATE, allowNull: false },
+    completed: { type: DataTypes.DATE, allowNull: true }
   },
   {
-    tableName: 'notify_api_request_success',
+    tableName: 'notifyApiRequestSuccess',
     freezeTableName: true,
     timestamps: false
   })

@@ -1,12 +1,12 @@
 export default (sequelize, DataTypes) => {
-  return sequelize.define('notify_api_request_failure', {
-    correlation_id: { type: DataTypes.UUID, primaryKey: true },
-    created_at: { type: DataTypes.DATE },
-    message: { type: DataTypes.JSONB },
-    error: { type: DataTypes.JSONB }
+  return sequelize.define('notifyApiRequestFailure', {
+    correlationId: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, allowNull: false },
+    createdAt: { type: DataTypes.DATE, allowNull: false },
+    message: { type: DataTypes.JSONB, allowNull: false },
+    error: { type: DataTypes.JSONB, allowNull: false }
   },
   {
-    tableName: 'notify_api_request_failure',
+    tableName: 'notifyApiRequestFailure',
     freezeTableName: true,
     timestamps: false
   })

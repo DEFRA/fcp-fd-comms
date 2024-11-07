@@ -11,24 +11,17 @@
     </changeSet>
 
     <changeSet author="Defra" id="3">
-      <sql 
-      dbms="postgresql" endDelimiter=";" splitStatements="true" stripComments="true">CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
-      <comment>Install UUID Extension</comment>
-      </sql>
-    </changeSet>
-
-    <changeSet author="Defra" id="4">
     <dropTable  cascadeConstraints="true"
             tableName="initial"/>
 
-    <createTable tableName="notify_api_request_success">
-      <column name="correlation_id" type="UUID" defaultValueComputed="public.uuid_generate_v4()">
-        <constraints nullable="false" primaryKey="true" primaryKeyName="notify_api_request_success_pkey"/>
+    <createTable tableName="notifyApiRequestSuccess">
+      <column name="correlationId" type="UUID">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="notifyApiRequestSuccess_pkey"/>
       </column>
-      <column name="created_at" type="TIMESTAMP">
+      <column name="createdAt" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
-      <column name="notify_response_id" type="VARCHAR(255)">
+      <column name="notifyResponseId" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="message" type="JSONB">
@@ -37,7 +30,7 @@
       <column name="status" type="status_enum">
         <constraints nullable="false"/>
       </column>
-      <column name="status_updated_at" type="TIMESTAMP">
+      <column name="statusUpdatedAt" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
       <column name="completed" type="TIMESTAMP">
@@ -45,11 +38,11 @@
       </column>
     </createTable>
 
-    <createTable tableName="notify_api_request_failure">
-      <column name="correlation_id" type="UUID" defaultValueComputed="public.uuid_generate_v4()">
-        <constraints nullable="false" primaryKey="true" primaryKeyName="notify_api_request_failure_pkey"/>
+    <createTable tableName="notifyApiRequestFailure">
+      <column name="correlationId" type="UUID">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="notifyApiRequestFailure_pkey"/>
       </column>
-      <column name="created_at" type="TIMESTAMP">
+      <column name="createdAt" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
       <column name="message" type="JSONB">
