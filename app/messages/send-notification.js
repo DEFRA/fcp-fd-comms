@@ -16,9 +16,6 @@ const sendNotification = async (message) => {
           reference: crypto.randomUUID()
         }
       )
-      console.log('Notify response id: ', response.data.id)
-      console.log('Notfiy response: ', response.data)
-      console.log('Message body: ', message.body)
       await saveToDatabase(message, response, null)
     } catch (error) {
       console.log('Error sending email: ', error)
