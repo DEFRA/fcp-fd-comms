@@ -19,7 +19,7 @@ const sendNotification = async (message) => {
       await saveToDatabase(message, response, null)
     } catch (error) {
       console.log('Error sending email: ', error)
-      await saveToDatabase(message, error, null)
+      await saveToDatabase(message, null, error)
     }
   }
 }
