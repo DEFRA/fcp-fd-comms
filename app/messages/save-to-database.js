@@ -2,10 +2,22 @@ import db from '../data/index.js'
 
 const saveToDatabase = async (message) => {
   try {
-    await db.initial.create({
-      id: message.body.id,
-      message: message.body.message
-    })
+    if (message.body.notifyResponseId) {
+      await db.notifyApiRequestSuccess.create({
+        createdAt: new Date(),
+        notifyResponseId: message.body.notifyResponseId,
+        message: message.body,
+        status: message.body.status,
+        statusUpdatedAt: new Date(),
+        completed: null
+      })
+    } else {
+      await db.notifyApiRequestFailure.create({
+        createdAt: new Date(),
+        message: message.body,
+        error: message.body.error
+      })
+    }
   } catch (error) {
     console.error(error)
   }

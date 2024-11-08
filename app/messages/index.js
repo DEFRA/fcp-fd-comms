@@ -1,6 +1,6 @@
 import { MessageReceiver } from 'ffc-messaging'
-import { handleMessage } from './handle-message.js'
 import { messageConfig } from '../config/index.js'
+import { handleMessage } from './handle-message.js'
 
 const startMessaging = async () => {
   const config = {
@@ -14,7 +14,7 @@ const startMessaging = async () => {
   )
 
   await commsReceiver.subscribe()
-  console.log('Service is ready to consume messages')
+  console.log('fcp-fd-comms is ready to consume messages')
 }
 
 export { startMessaging }

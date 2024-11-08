@@ -14,21 +14,17 @@ const dbConfig = databaseConfig.getProperties()
 
 const sequelize = new Sequelize(dbConfig)
 
+const fileExtensionLength = '.js'.length
+
 const files = fs.readdirSync(modelPath)
   .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-3) === '.js')
+    return (file.indexOf('.') !== 0) && (file !== 'index.js') && (file.slice(-fileExtensionLength) === '.js')
   })
 
 for (const file of files) {
   const model = (await import(path.join(modelPath, file))).default(sequelize, DataTypes)
   db[model.name] = model
 }
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db)
-  }
-})
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
