@@ -1,10 +1,10 @@
 import health from '../routes/health.js'
 import notifyCallback from '../routes/notify-callback.js'
 
-const plugin = {
+const router = {
   plugin: {
     name: 'router',
-    register: (server, options) => {
+    register: (server, _options) => {
       server.route([].concat(
         health,
         notifyCallback
@@ -13,4 +13,4 @@ const plugin = {
   }
 }
 
-export default plugin
+export default router

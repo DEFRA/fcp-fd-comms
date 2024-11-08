@@ -1,6 +1,6 @@
 import HapiPino from 'hapi-pino'
 
-const plugin = {
+const logging = {
   plugin: HapiPino,
   options: {
     logPayload: true,
@@ -8,4 +8,4 @@ const plugin = {
   }
 }
 
-export default plugin
+export default logging

@@ -1,13 +1,13 @@
 const health = [{
   method: 'GET',
   path: '/healthy',
-  handler: (request, h) => {
+  handler: (_request, h) => {
     return h.response('ok')
   }
 }, {
   method: 'GET',
   path: '/healthz',
-  handler: (request, h) => {
+  handler: (_request, h) => {
     return h.response('ok')
   }
 }]
