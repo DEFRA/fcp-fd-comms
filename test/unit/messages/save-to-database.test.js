@@ -9,7 +9,6 @@ db.notifyApiRequestFailure = { create: jest.fn() }
 describe('saveToDatabase', () => {
   const message = { body: 'Mock message body' }
   const response = { data: { id: 'mock-notify-response-id' } }
-  const err = { response: { data: 'Mock error message' } }
 
   afterEach(() => {
     jest.clearAllMocks()
