@@ -12,7 +12,7 @@ const saveToDatabase = async (message, response, err) => {
         statusUpdatedAt: new Date(),
         completed: null
       })
-    } else if (err) {
+    } else {
       await db.notifyApiRequestFailure.create({
         createdAt: new Date(),
         message: message.body,
