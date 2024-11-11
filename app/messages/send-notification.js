@@ -22,7 +22,7 @@ const sendNotification = async (message) => {
     } catch (error) {
       console.log('Error sending email: ', error)
 
-      await logRejectedNotification(message, error)
+      await logRejectedNotification(message, error.response.data)
     }
   }
 }
