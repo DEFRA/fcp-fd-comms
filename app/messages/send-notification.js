@@ -1,6 +1,7 @@
 import crypto from 'crypto'
+
 import notifyClient from '../clients/notify-client.js'
-import { saveToDatabase } from './save-to-database.js'
+import { logCreatedNotification, logFailedNotification } from '../repos/notification-log.js'
 
 const sendNotification = async (message) => {
   const emailAddresses = Array.isArray(message.body.data.commsAddress)
@@ -16,10 +17,12 @@ const sendNotification = async (message) => {
           reference: crypto.randomUUID()
         }
       )
-      await saveToDatabase(message, response, null)
+
+      await logCreatedNotification(message, response)
     } catch (error) {
       console.log('Error sending email: ', error)
-      await saveToDatabase(message, null, error)
+
+      await logFailedNotification(message, error)
     }
   }
 }
