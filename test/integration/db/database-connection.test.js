@@ -5,7 +5,7 @@ beforeEach(async () => {
 
   await db.notifyApiRequestSuccess.create({
     createdAt: new Date(),
-    notifyResponseId: 'test-notify-response-id',
+    notifyResponseId: crypto.randomUUID(),
     message: { text: 'Hello World!' },
     status: 'created',
     statusUpdatedAt: new Date(),

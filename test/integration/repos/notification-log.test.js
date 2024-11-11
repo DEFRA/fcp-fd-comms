@@ -1,5 +1,4 @@
 import { jest } from '@jest/globals'
-
 import db from '../../../app/data/index.js'
 import { logCreatedNotification, logRejectedNotification } from '../../../app/repos/notification-log.js'
 
@@ -14,7 +13,7 @@ describe('Notification log repository', () => {
 
   test('log notfication created should create a new record', async () => {
     const message = { body: 'Hello World!' }
-    const notificationId = 'test-notify-response-id'
+    const notificationId = crypto.randomUUID()
     jest.setSystemTime(new Date('2021-01-01'))
 
     await logCreatedNotification(message, notificationId)
@@ -25,7 +24,7 @@ describe('Notification log repository', () => {
     const record = result[0]
 
     expect(record.createdAt).toEqual(new Date('2021-01-01T00:00:00.000Z'))
-    expect(record.notifyResponseId).toEqual('test-notify-response-id')
+    expect(record.notifyResponseId).toEqual(notificationId)
     expect(record.message).toEqual('Hello World!')
     expect(record.status).toEqual('created')
     expect(record.statusUpdatedAt).toEqual(new Date('2021-01-01T00:00:00.000Z'))
