@@ -21,7 +21,7 @@ const logRejectedNotification = async (message, notifyError) => {
     await db.notifyApiRequestFailure.create({
       createdAt: new Date(),
       message: message.body,
-      error: notifyError
+      error: notifyError.response.data
     })
   } catch (error) {
     console.error('Error logging rejected notification: ', error)
