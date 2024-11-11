@@ -87,9 +87,9 @@ components:
     crn:
       type: number
       description: Customer reference Number
-      minimum: 105000000
-      maximum: 999999999
-      example: 123456789
+      minimum: 1050000000
+      maximum: 9999999999
+      example: 1234567890
 
     sbi:
       type: number
