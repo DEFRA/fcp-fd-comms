@@ -1,4 +1,4 @@
-import db from '../../app/data/index.js'
+import db from '../../../app/data/index.js'
 
 beforeEach(async () => {
   await db.sequelize.truncate({ cascade: true })

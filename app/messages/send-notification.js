@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 import notifyClient from '../clients/notify-client.js'
-import { logCreatedNotification, logFailedNotification } from '../repos/notification-log.js'
+import { logCreatedNotification, logRejectedNotification } from '../repos/notification-log.js'
 
 const sendNotification = async (message) => {
   const emailAddresses = Array.isArray(message.body.data.commsAddress)
@@ -18,11 +18,11 @@ const sendNotification = async (message) => {
         }
       )
 
-      await logCreatedNotification(message, response)
+      await logCreatedNotification(message, response.data.id)
     } catch (error) {
       console.log('Error sending email: ', error)
 
-      await logFailedNotification(message, error)
+      await logRejectedNotification(message, error)
     }
   }
 }

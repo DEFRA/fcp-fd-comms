@@ -4,7 +4,7 @@ import notifyStatus from '../constants/notify-statuses.js'
 const logCreatedNotification = async (message, notificationId) => {
   await db.notifyApiRequestSuccess.create({
     createdAt: new Date(),
-    notificationId,
+    notifyResponseId: notificationId,
     message: message.body,
     status: notifyStatus.CREATED,
     statusUpdatedAt: new Date(),
@@ -12,7 +12,7 @@ const logCreatedNotification = async (message, notificationId) => {
   })
 }
 
-const logFailedNotification = async (message, error) => {
+const logRejectedNotification = async (message, error) => {
   await db.notifyApiRequestFailure.create({
     createdAt: new Date(),
     message: message.body,
@@ -20,4 +20,4 @@ const logFailedNotification = async (message, error) => {
   })
 }
 
-export { logCreatedNotification, logFailedNotification }
+export { logCreatedNotification, logRejectedNotification }
