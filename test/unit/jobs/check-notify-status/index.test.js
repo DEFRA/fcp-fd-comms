@@ -1,6 +1,6 @@
 import { beforeEach, jest, test } from '@jest/globals'
 
-jest.unstable_mockModule('../../../../app/repos/notfication-log', () => ({
+jest.unstable_mockModule('../../../../app/repos/notification-log', () => ({
   getPendingNotifications: jest.fn(),
   updateNotificationStatus: jest.fn()
 }))
@@ -9,7 +9,7 @@ jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-st
   getNotifyStatus: jest.fn()
 }))
 
-const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notfication-log.js')
+const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
 
 const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
@@ -62,7 +62,7 @@ describe('Check notify status job handler', () => {
 
     await checkNotifyStatusHandler()
 
-    expect(updateNotificationStatus).toHaveBeenCalledWith({ id: 1, status: 'sending' }, 'delivered')
+    expect(updateNotificationStatus).toHaveBeenCalledWith(1, 'delivered')
   })
 
   test('should not update notification status if status has not changed', async () => {

@@ -1,10 +1,10 @@
-import { getPendingNotifications, updateNotificationStatus } from '../../repos/notfication-log.js'
+import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
 import { getNotifyStatus } from './get-notify-status.js'
 
 const checkNotifyStatusHandler = async () => {
   console.log('Checking notify status')
 
-  const pending = getPendingNotifications()
+  const pending = await getPendingNotifications()
 
   if (pending.length === 0) {
     console.log('No pending notifications')
@@ -18,7 +18,7 @@ const checkNotifyStatusHandler = async () => {
       const { status } = await getNotifyStatus(notfication.id)
 
       if (status !== notfication.status) {
-        updateNotificationStatus(notfication, status)
+        await updateNotificationStatus(notfication.id, status)
 
         updates += 1
       }

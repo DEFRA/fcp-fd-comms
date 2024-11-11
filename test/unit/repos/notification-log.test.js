@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { jest, test } from '@jest/globals'
-
-describe('Notification log repository', () => {
-=======
 import { jest } from '@jest/globals'
 const mockCreate = jest.fn()
 
@@ -20,79 +15,18 @@ jest.unstable_mockModule('../../../app/data/index.js', () => ({
 const { logCreatedNotification, logRejectedNotification } = await import('../../../app/repos/notification-log.js')
 
 describe('Notification Log Repository', () => {
->>>>>>> 434930-setup-db
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-<<<<<<< HEAD
-  test('should return sending and created notifications', async () => {
-    jest.unstable_mockModule('../../../app/constants/mock-notification-log.js', () => ({
-      default: [
-        { id: '1', status: 'sending' },
-        { id: '2', status: 'created' },
-        { id: '3', status: 'delivered' }
-      ]
-    }))
-
-    const { getPendingNotifications } = await import('../../../app/repos/notfication-log.js')
-
-    const pending = getPendingNotifications()
-
-    expect(pending).toEqual([
-      { id: '1', status: 'sending' },
-      { id: '2', status: 'created' }
-    ])
-  })
-
-  test('should update notification status', async () => {
-    const mockData = [
-      { id: '1', status: 'sending' },
-      { id: '2', status: 'created' },
-      { id: '3', status: 'delivered' }
-    ]
-
-    jest.unstable_mockModule('../../../app/constants/mock-notification-log.js', () => ({
-      default: mockData
-    }))
-
-    const { default: data } = await import('../../../app/constants/mock-notification-log.js')
-    const { updateNotificationStatus } = await import('../../../app/repos/notfication-log.js')
-
-    updateNotificationStatus({ id: '2', status: 'created' }, 'delivered')
-
-    expect(data).toEqual([
-      { id: '1', status: 'sending' },
-      { id: '2', status: 'delivered' },
-      { id: '3', status: 'delivered' }
-    ])
-  })
-
-  test('should throw error if notification not found', async () => {
-    const mockData = [
-      { id: '1', status: 'sending' },
-      { id: '2', status: 'created' },
-      { id: '3', status: 'delivered' }
-    ]
-
-    jest.unstable_mockModule('../../../app/constants/mock-notification-log.js', () => ({
-      default: mockData
-    }))
-
-    const { updateNotificationStatus } = await import('../../../app/repos/notfication-log.js')
-
-    expect(() => {
-      updateNotificationStatus({ id: '4', status: 'created' }, 'delivered')
-    }).toThrow('Notification 4 not found in data')
-=======
   test('should log created notification', async () => {
     const message = { body: 'test message' }
 
-    await logCreatedNotification(message, '123456789')
+    await logCreatedNotification(message, 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66')
 
     expect(mockCreate).toHaveBeenCalledWith({
       createdAt: expect.any(Date),
-      notifyResponseId: '123456789',
+      notifyResponseId: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
       message: message.body,
       status: 'created',
       statusUpdatedAt: expect.any(Date),
@@ -117,7 +51,7 @@ describe('Notification Log Repository', () => {
     const message = { body: 'test message' }
     mockCreate.mockRejectedValue(new Error('test error'))
 
-    await logCreatedNotification(message, '123456789')
+    await logCreatedNotification(message, 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66')
 
     expect(consoleSpy).toHaveBeenCalledTimes(1)
 
@@ -134,6 +68,5 @@ describe('Notification Log Repository', () => {
     expect(consoleSpy).toHaveBeenCalledTimes(1)
 
     consoleSpy.mockRestore()
->>>>>>> 434930-setup-db
   })
 })
