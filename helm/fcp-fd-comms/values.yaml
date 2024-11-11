@@ -31,6 +31,16 @@ container:
   notifyApiKey:
   checkNotifyStatusCronPattern: '*/30 * * * * *'
 
+postgresService:
+  postgresDb: fcp_fd_comms
+  postgresExternalName:
+  postgresHost: fcp-fd-comms-postgres
+  postgresPort: 5432
+  postgresSchema: public
+  postgresUser: postgres
+
+usePodIdentity: true
+
 # Enable if Managed Identity is required, ensure the clientID and resourceID are set in Platform Configuration
 azureIdentity:
   enabled: true

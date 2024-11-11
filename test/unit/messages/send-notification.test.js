@@ -9,7 +9,18 @@ jest.unstable_mockModule('../../../app/clients/notify-client.js', () => ({
   }
 }))
 
+jest.unstable_mockModule('../../../app/repos/notification-log.js', () => ({
+  logCreatedNotification: jest.fn(),
+  logRejectedNotification: jest.fn()
+}))
+
+const {
+  logCreatedNotification,
+  logRejectedNotification
+} = await import('../../../app/repos/notification-log.js')
+
 const { sendNotification } = await import('../../../app/messages/send-notification.js')
+
 console.log = jest.fn()
 
 describe('Send Notification', () => {
@@ -118,8 +129,61 @@ describe('Send Notification', () => {
     }
 
     mockSendEmail.mockRejectedValue(console.log('Email failed to send.'))
+
     await sendNotification(message)
+
     expect(console.log).toHaveBeenCalledWith('Error sending email: ', console.log('Email failed to send.'))
+
     uuidSpy.mockRestore()
+  })
+
+  test('should call logCreatedNotification when sendEmail is successful', async () => {
+    const message = {
+      body: {
+        data: {
+          notifyTemplateId: 'mock-notify-template-id',
+          commsAddress: 'mock-email@test.com',
+          personalisation: {
+            reference: 'mock-reference',
+            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+          },
+          reference: 'mock-uuid'
+        }
+      }
+    }
+
+    mockSendEmail.mockResolvedValue({
+      data: {
+        id: 'mock-notify-response-id'
+      }
+    })
+
+    await sendNotification(message)
+
+    expect(logCreatedNotification).toHaveBeenCalledTimes(1)
+    expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-notify-response-id')
+  })
+
+  test('should call logRejectedNotification when sendEmail fails', async () => {
+    const message = {
+      body: {
+        data: {
+          notifyTemplateId: 'mock-notify-template-id',
+          commsAddress: 'mock-email@test.com',
+          personalisation: {
+            reference: 'mock-reference',
+            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+          },
+          reference: 'mock-uuid'
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue('mock-error')
+
+    await sendNotification(message)
+
+    expect(logRejectedNotification).toHaveBeenCalledTimes(1)
+    expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-error')
   })
 })

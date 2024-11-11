@@ -16,3 +16,10 @@ services:
       - ./package.json:/home/node/package.json
     environment:
       NODE_OPTIONS: "$NODE_OPTIONS --experimental-vm-modules"
+
+  fcp-fd-comms-postgres:
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
