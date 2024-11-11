@@ -102,8 +102,6 @@ components:
         - personalisation
         - sbi
         - reference
-        - statusDetails
-        - correlationId
       properties:
         crn:
           $ref: '#/components/schemas/crn'
@@ -135,6 +133,8 @@ components:
         - personalisation
         - sbi
         - reference
+        - statusDetails
+        - correlationId
       properties:
         crn:
           $ref: '#/components/schemas/crn'
@@ -255,10 +255,10 @@ components:
           enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure"]
         errors:
           type: array
-          description: A list of error messages returned by email provider
+          description: A list of error messages returned by provider
           items:
             type: string
-            example: "The email address is not valid"
+            example: "Missing personalisation: 'caseNumber'"
 
     correlationId:
       type: string
