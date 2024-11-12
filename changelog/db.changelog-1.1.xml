@@ -21,7 +21,7 @@
       <column name="createdAt" type="TIMESTAMP">
         <constraints nullable="false"/>
       </column>
-      <column name="notifyResponseId" type="VARCHAR(255)">
+      <column name="notifyResponseId" type="UUID">
         <constraints nullable="false"/>
       </column>
       <column name="message" type="JSONB">
