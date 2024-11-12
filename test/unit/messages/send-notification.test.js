@@ -113,6 +113,7 @@ describe('Send Notification', () => {
 
   test('should log an error message when sendEmail fails', async () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
+    const consoleSpy = jest.spyOn(console, 'error')
 
     const message = {
       body: {
@@ -128,12 +129,13 @@ describe('Send Notification', () => {
       }
     }
 
-    mockSendEmail.mockRejectedValue(console.log('Email failed to send.'))
+    mockSendEmail.mockRejectedValue('Email failed to send.')
 
     await sendNotification(message)
 
-    expect(console.log).toHaveBeenCalledWith('Error sending email: ', console.log('Email failed to send.'))
+    expect(consoleSpy).toHaveBeenCalledWith('Error sending email: ', 'Email failed to send.')
 
+    consoleSpy.mockRestore()
     uuidSpy.mockRestore()
   })
 

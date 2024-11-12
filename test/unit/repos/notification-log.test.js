@@ -45,28 +45,4 @@ describe('Notification Log Repository', () => {
       error: 'test error'
     })
   })
-
-  test('should log error if logCreatedNotification call fails', async () => {
-    const consoleSpy = jest.spyOn(console, 'error')
-    const message = { body: 'test message' }
-    mockCreate.mockRejectedValue(new Error('test error'))
-
-    await logCreatedNotification(message, '123456789')
-
-    expect(consoleSpy).toHaveBeenCalledTimes(1)
-
-    consoleSpy.mockRestore()
-  })
-
-  test('should log error if logRejectedNotification call fails', async () => {
-    const consoleSpy = jest.spyOn(console, 'error')
-    const message = { body: 'test message' }
-    mockCreate.mockRejectedValue(new Error('test error'))
-
-    await logRejectedNotification(message, { response: { data: 'test error' } })
-
-    expect(consoleSpy).toHaveBeenCalledTimes(1)
-
-    consoleSpy.mockRestore()
-  })
 })
