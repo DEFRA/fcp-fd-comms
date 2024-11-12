@@ -21,45 +21,33 @@ const logRejectedNotification = async (message, notifyError) => {
 }
 
 const getPendingNotifications = async () => {
-  try {
-    const pending = await db.notifyApiRequestSuccess.findAll({
-      where: {
-        completed: null
-      }
-    })
+  const pending = await db.notifyApiRequestSuccess.findAll({
+    where: {
+      completed: null
+    }
+  })
 
-    return pending.map((notification) => ({
-      id: notification.notifyResponseId,
-      status: notification.status
-    }))
-  } catch (error) {
-    console.error('Error getting pending notifications: ', error)
-
-    throw error
-  }
+  return pending.map((notification) => ({
+    id: notification.notifyResponseId,
+    status: notification.status
+  }))
 }
 
 const updateNotificationStatus = async (notificationId, status) => {
-  try {
-    const notification = await db.notifyApiRequestSuccess.findOne({
-      where: {
-        notifyResponseId: notificationId
-      }
-    })
-
-    notification.status = status
-    notification.statusUpdatedAt = new Date()
-
-    if (status !== notifyStatus.CREATED && status !== notifyStatus.SENDING) {
-      notification.completed = new Date()
+  const notification = await db.notifyApiRequestSuccess.findOne({
+    where: {
+      notifyResponseId: notificationId
     }
+  })
 
-    await notification.save()
-  } catch (error) {
-    console.error('Error updating notification status: ', error)
+  notification.status = status
+  notification.statusUpdatedAt = new Date()
 
-    throw error
+  if (status !== notifyStatus.CREATED && status !== notifyStatus.SENDING) {
+    notification.completed = new Date()
   }
+
+  await notification.save()
 }
 
 export {
