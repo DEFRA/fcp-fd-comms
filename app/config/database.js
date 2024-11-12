@@ -7,11 +7,11 @@ const isProd = () => {
 }
 
 const hooks = {
-  beforeConnect: async (_config) => {
+  beforeConnect: async (config) => {
     if (isProd()) {
       const credential = new DefaultAzureCredential()
       const accessToken = await credential.getToken('https://ossrdbms-aad.database.windows.net')
-      database.password = accessToken.token
+      config.password = accessToken.token
     }
   }
 }
