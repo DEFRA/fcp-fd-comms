@@ -1,6 +1,6 @@
 {
   "name": "fcp-fd-comms",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "Common communications service for Single Front Door",
   "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
@@ -23,6 +23,7 @@
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {
+    "@azure/identity": "4.4.1",
     "@hapi/hapi": "21.3.2",
     "applicationinsights": "2.9.1",
     "blipp": "4.0.2",
@@ -32,6 +33,8 @@
     "hapi-pino": "12.1.0",
     "joi": "17.13.3",
     "log-timestamp": "0.3.0",
+    "pg": "8.13.0",
+    "sequelize": "6.37.4",
     "notifications-node-client": "8.2.1"
   },
   "devDependencies": {
