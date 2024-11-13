@@ -2,7 +2,10 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { Sequelize, DataTypes } from 'sequelize'
+import { DefaultAzureCredential } from '@azure/identity'
+
 import { databaseConfig } from '../config/index.js'
+import isProd from '../utils/is-prod.js'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -10,9 +13,38 @@ const modelPath = path.join(dirname, 'models')
 
 const db = {}
 
-const dbConfig = databaseConfig.getProperties()
+const sequelizeConfig = {
+  host: databaseConfig.get('host'),
+  port: databaseConfig.get('port'),
+  dialect: databaseConfig.get('dialect'),
+  dialectOptions: databaseConfig.get('dialectOptions'),
+  logging: databaseConfig.get('logging'),
+  retry: {
+    backoffBase: 500,
+    backoffExponent: 1.1,
+    match: [/SequelizeConnectionError/],
+    max: 10,
+    name: 'connection',
+    timeout: 60000
+  }
+}
 
-const sequelize = new Sequelize(dbConfig)
+if (isProd()) {
+  sequelizeConfig.hooks = {
+    beforeConnect: async (config) => {
+      const credential = new DefaultAzureCredential()
+      const accessToken = await credential.getToken('https://ossrdbms-aad.database.windows.net')
+      config.password = accessToken.token
+    }
+  }
+}
+
+const sequelize = new Sequelize(
+  databaseConfig.get('database'),
+  databaseConfig.get('username'),
+  databaseConfig.get('password'),
+  sequelizeConfig
+)
 
 const fileExtensionLength = '.js'.length
 

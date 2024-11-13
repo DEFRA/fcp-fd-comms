@@ -1,29 +1,5 @@
 import convict from 'convict'
-import { DefaultAzureCredential } from '@azure/identity'
-import environments from '../constants/environments.js'
-
-const isProd = () => {
-  return process.env.NODE_ENV === environments.PRODUCTION
-}
-
-const hooks = {
-  beforeConnect: async (config) => {
-    if (isProd()) {
-      const credential = new DefaultAzureCredential()
-      const accessToken = await credential.getToken('https://ossrdbms-aad.database.windows.net')
-      config.password = accessToken.token
-    }
-  }
-}
-
-const retry = {
-  backoffBase: 500,
-  backoffExponent: 1.1,
-  match: [/SequelizeConnectionError/],
-  max: 10,
-  name: 'connection',
-  timeout: 60000
-}
+import isProd from '../utils/is-prod.js'
 
 const database = convict({
   database: {
@@ -44,11 +20,6 @@ const database = convict({
       default: isProd()
     }
   },
-  hooks: {
-    doc: 'Hooks to be executed before connecting to the database.',
-    format: '*',
-    default: hooks
-  },
   host: {
     doc: 'Host of PostgreSQL database.',
     format: String,
@@ -58,7 +29,8 @@ const database = convict({
   password: {
     doc: 'Password for PostgreSQL database.',
     format: String,
-    default: isProd() ? '' : null,
+    nullable: isProd(),
+    default: undefined,
     env: 'POSTGRES_PASSWORD'
   },
   port: {
@@ -72,11 +44,6 @@ const database = convict({
     format: Boolean,
     default: false,
     env: 'POSTGRES_LOGGING'
-  },
-  retry: {
-    doc: 'Retry options for database connection.',
-    format: '*',
-    default: retry
   },
   schema: {
     doc: 'Name of PostgreSQL schema.',

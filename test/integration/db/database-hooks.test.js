@@ -1,5 +1,7 @@
 import { jest } from '@jest/globals'
 
+jest.setTimeout(30000)
+
 const mockGetToken = jest.fn()
 
 jest.mock('@azure/identity', () => {
@@ -12,11 +14,9 @@ jest.mock('@azure/identity', () => {
   }
 })
 
-const { DefaultAzureCredential } = await import('@azure/identity')
-const { default: db } = await import('../../../app/data/index.js')
-
 describe('Sequelize hooks', () => {
   beforeEach(() => {
+    jest.resetModules()
     jest.clearAllMocks()
   })
 
@@ -25,7 +25,29 @@ describe('Sequelize hooks', () => {
 
     process.env.NODE_ENV = 'production'
 
-    mockGetToken.mockResolvedValue('ppp')
+    const { DefaultAzureCredential } = await import('@azure/identity')
+
+    const { databaseConfig } = await import('../../../app/config/index.js')
+
+    const originalGet = databaseConfig.get.bind(databaseConfig)
+
+    const dbConfigSpy = jest.spyOn(databaseConfig, 'get')
+
+    dbConfigSpy.mockImplementation((key) => {
+      if (key === 'dialectOptions') {
+        return {
+          ssl: false
+        }
+      }
+
+      return originalGet(key)
+    })
+
+    mockGetToken.mockResolvedValue({
+      token: 'ppp'
+    })
+
+    const { default: db } = await import('../../../app/data/index.js')
 
     await db.sequelize.authenticate()
 
@@ -33,6 +55,10 @@ describe('Sequelize hooks', () => {
     expect(mockGetToken).toHaveBeenCalled()
 
     process.env.NODE_ENV = originalEnv
+
+    await db.sequelize.close()
+
+    dbConfigSpy.mockRestore()
   })
 
   test('should not call getToken if env is not production', async () => {
@@ -40,7 +66,9 @@ describe('Sequelize hooks', () => {
 
     process.env.NODE_ENV = 'development'
 
-    mockGetToken.mockResolvedValue('ppp')
+    const { DefaultAzureCredential } = await import('@azure/identity')
+
+    const { default: db } = await import('../../../app/data/index.js')
 
     await db.sequelize.authenticate()
 
@@ -48,9 +76,7 @@ describe('Sequelize hooks', () => {
     expect(mockGetToken).not.toHaveBeenCalled()
 
     process.env.NODE_ENV = originalEnv
-  })
 
-  afterAll(async () => {
     await db.sequelize.close()
   })
 })
