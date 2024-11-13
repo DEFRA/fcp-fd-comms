@@ -13,7 +13,7 @@ data:
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
   CHECK_NOTIFY_STATUS_CRON_PATTERN: {{ .Values.container.checkNotifyStatusCronPattern | quote }}
   POSTGRES_DB: {{ quote .Values.postgresService.postgresDb }}
-  POSTGRES_HOST: {{ quote .Values.postgresService.postgresHost }}
+  POSTGRES_HOST: {{ quote .Values.postgresService.postgresqlHost }}
   POSTGRES_PORT: {{ quote .Values.postgresService.postgresPort }}
   POSTGRES_SCHEMA_NAME: {{ quote .Values.postgresService.postgresSchema }}
 {{- end -}}

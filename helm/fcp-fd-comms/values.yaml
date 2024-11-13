@@ -31,35 +31,21 @@ container:
   notifyApiKey:
   checkNotifyStatusCronPattern: '*/30 * * * * *'
 
-postgresService:
-  postgresDb: fcp_fd_comms
-  postgresExternalName:
-  postgresHost: fcp-fd-comms-postgres
-  postgresPort: 5432
-  postgresSchema: public
-  postgresUser: postgres
+livenessProbe:
+  path: /healthz
+  port: 3039
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
 
-usePodIdentity: true
-
-postgresService:
-  postgresDb: fcp_fd_comms
-  postgresExternalName:
-  postgresHost: fcp-fd-comms-postgres
-  postgresPort: 5432
-  postgresSchema: public
-  postgresUser: postgres
-
-usePodIdentity: true
-
-postgresService:
-  postgresDb: fcp_fd_comms
-  postgresExternalName:
-  postgresHost: fcp-fd-comms-postgres
-  postgresPort: 5432
-  postgresSchema: public
-  postgresUser: postgres
-
-usePodIdentity: true
+readinessProbe:
+  path: /healthy
+  port: 3039
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
 
 postgresService:
   postgresDb: fcp_fd_comms

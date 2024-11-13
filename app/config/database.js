@@ -30,7 +30,7 @@ const database = convict({
     doc: 'Password for PostgreSQL database.',
     format: String,
     nullable: isProd(),
-    default: undefined,
+    default: null,
     env: 'POSTGRES_PASSWORD'
   },
   port: {
