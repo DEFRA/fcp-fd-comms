@@ -19,6 +19,7 @@ const sequelizeConfig = {
   dialect: databaseConfig.get('dialect'),
   dialectOptions: databaseConfig.get('dialectOptions'),
   logging: databaseConfig.get('logging'),
+  schema: databaseConfig.get('schema'),
   retry: {
     backoffBase: 500,
     backoffExponent: 1.1,
