@@ -50,7 +50,7 @@ readinessProbe:
 postgresService:
   postgresDb: fcp_fd_comms
   postgresExternalName:
-  postgresHost: fcp-fd-comms-postgres
+  postgresqlHost: fcp-fd-comms-postgres
   postgresPort: 5432
   postgresSchema: public
   postgresUser: postgres
