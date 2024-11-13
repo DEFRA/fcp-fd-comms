@@ -29,19 +29,9 @@ describe('Sequelize hooks', () => {
 
     const { databaseConfig } = await import('../../../app/config/index.js')
 
-    const originalGet = databaseConfig.get.bind(databaseConfig)
+    const originalSsl = databaseConfig.dialectOptions.ssl
 
-    const dbConfigSpy = jest.spyOn(databaseConfig, 'get')
-
-    dbConfigSpy.mockImplementation((key) => {
-      if (key === 'dialectOptions') {
-        return {
-          ssl: false
-        }
-      }
-
-      return originalGet(key)
-    })
+    databaseConfig.dialectOptions.ssl = false
 
     mockGetToken.mockResolvedValue({
       token: 'ppp'
@@ -55,10 +45,9 @@ describe('Sequelize hooks', () => {
     expect(mockGetToken).toHaveBeenCalled()
 
     process.env.NODE_ENV = originalEnv
+    databaseConfig.dialectOptions.ssl = originalSsl
 
     await db.sequelize.close()
-
-    dbConfigSpy.mockRestore()
   })
 
   test('should not call getToken if env is not production', async () => {
