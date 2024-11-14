@@ -29,11 +29,28 @@ container:
   commsSubscriptionAddress: fcp-fd-comms
   commsTopicAddress: fcp-fd-comms
   notifyApiKey:
+  checkNotifyStatusCronPattern: '*/30 * * * * *'
+
+livenessProbe:
+  path: /healthz
+  port: 3039
+  initialDelaySeconds: 20
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
+
+readinessProbe:
+  path: /healthy
+  port: 3039
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 3
+  timeoutSeconds: 5
 
 postgresService:
   postgresDb: fcp_fd_comms
   postgresExternalName:
-  postgresHost: fcp-fd-comms-postgres
+  postgresqlHost: fcp-fd-comms-postgres
   postgresPort: 5432
   postgresSchema: public
   postgresUser: postgres

@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import { Sequelize, DataTypes } from 'sequelize'
+
 import { databaseConfig } from '../config/index.js'
 
 const filename = fileURLToPath(import.meta.url)
@@ -10,9 +11,12 @@ const modelPath = path.join(dirname, 'models')
 
 const db = {}
 
-const dbConfig = databaseConfig.getProperties()
-
-const sequelize = new Sequelize(dbConfig)
+const sequelize = new Sequelize(
+  databaseConfig.database,
+  databaseConfig.username,
+  databaseConfig.password,
+  databaseConfig
+)
 
 const fileExtensionLength = '.js'.length
 

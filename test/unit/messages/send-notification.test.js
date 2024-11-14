@@ -3,10 +3,10 @@ import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
 
-jest.mock('notifications-node-client', () => ({
-  NotifyClient: jest.fn().mockImplementation(() => ({
+jest.unstable_mockModule('../../../app/clients/notify-client.js', () => ({
+  default: {
     sendEmail: mockSendEmail
-  }))
+  }
 }))
 
 jest.unstable_mockModule('../../../app/repos/notification-log.js', () => ({

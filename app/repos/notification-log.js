@@ -20,4 +20,39 @@ const logRejectedNotification = async (message, notifyError) => {
   })
 }
 
-export { logCreatedNotification, logRejectedNotification }
+const getPendingNotifications = async () => {
+  const pending = await db.notifyApiRequestSuccess.findAll({
+    where: {
+      completed: null
+    }
+  })
+
+  return pending.map((notification) => ({
+    id: notification.notifyResponseId,
+    status: notification.status
+  }))
+}
+
+const updateNotificationStatus = async (notificationId, status) => {
+  const notification = await db.notifyApiRequestSuccess.findOne({
+    where: {
+      notifyResponseId: notificationId
+    }
+  })
+
+  notification.status = status
+  notification.statusUpdatedAt = new Date()
+
+  if (status !== notifyStatus.CREATED && status !== notifyStatus.SENDING) {
+    notification.completed = new Date()
+  }
+
+  await notification.save()
+}
+
+export {
+  logCreatedNotification,
+  logRejectedNotification,
+  getPendingNotifications,
+  updateNotificationStatus
+}
