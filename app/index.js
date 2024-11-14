@@ -2,7 +2,7 @@ import 'log-timestamp'
 
 import { setup } from './insights.js'
 import { createServer } from './server.js'
-import { startMessaging } from './messages/index.js'
+import { startMessaging } from './messages/inbound/index.js'
 import { startJobs } from './jobs/index.js'
 
 const init = async () => {
