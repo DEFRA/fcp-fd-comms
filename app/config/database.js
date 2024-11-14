@@ -28,7 +28,7 @@ const database = {
     ssl: isProd()
   },
   hooks,
-  host: process.env.POSTGRES_HOST || 'fcp-fd-data-postgres',
+  host: process.env.POSTGRES_HOST || 'fcp-fd-comms-postgres',
   password: process.env.POSTGRES_PASSWORD,
   port: process.env.POSTGRES_PORT || 5432,
   retry,
