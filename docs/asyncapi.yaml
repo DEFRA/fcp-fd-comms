@@ -62,6 +62,7 @@ components:
         - personalisation
         - sbi
         - reference
+        - emailReplyToId
       properties:
         crn:
           $ref: '#/components/schemas/crn'
@@ -162,7 +163,7 @@ components:
     emailReplyToId:
       type: string
       format: uuid
-      description: Optional ID for the reply-to email address
+      description: ID for the reply-to email address
       example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
 
     specversion:
