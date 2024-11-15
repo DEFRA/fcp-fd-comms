@@ -1,18 +1,16 @@
 asyncapi: 3.0.0
 info:
-  title: Single Front Door User Communications
+  title: Single Front Door Communications
   version: 1.0.3
   description: Publish communications to users via the Single Front Door
 
 channels:
   fcp-fd-comms:
     address: fcp-fd-comms-request
-    description: |
-      Accepts requests for communication notifications via Azure service bus.
+    description: Accepts requests for notifications via Azure Service Bus
     messages:
       commsMessage:
         $ref: '#/components/messages/commsMessage'
-      
 
 operations:
   fcp-fd-comms.subscribe:
@@ -23,7 +21,7 @@ operations:
 components:
   messages:
     commsMessage:
-      name: user communications message
+      name: Communications message.
       contentType: application/json
       payload:
         $ref: '#/components/schemas/commsSchema'
@@ -87,21 +85,21 @@ components:
 
     crn:
       type: number
-      description: Customer reference Number
+      description: Customer Reference Number (consists of 10 digits)
       minimum: 1050000000
       maximum: 9999999999
       example: 1234567890
 
     sbi:
       type: number
-      description: Single Business Identifier
+      description: Single Business Identifier (consists of 9 digits)
       minimum: 105000000
       maximum: 999999999
       example: 123456789
 
     sourceSystem:
       type: string
-      description: The name of the source system that originated the message
+      description: Name of the source system that originated the message
       example: "AHWP"
       minlength: 3
       maxlength: 100
@@ -109,13 +107,13 @@ components:
 
     notifyTemplateId:
       type: string
-      description: Notification template identifier
+      description: Notify template identifier
       example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
       format: uuid
 
     commsType:
       type: string
-      description: Type of communication (e.g., email, SMS)
+      description: Type of communication (e.g. email, SMS)
       default: "email"
       example: "email"
       enum: ["email"]
@@ -123,25 +121,25 @@ components:
     commsAddresses:
       oneOf:
         - type: string
-          description: A single contact email address for one recipient
+          description: A single contact email address corresponding to one recipient
           example: "mrMegaFarmer@strawberryFortFarm.co.uk"
           minLength: 1
           maxLength: 320
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
-          title: accepts a single string
+          title: Accepts a single string
         - type: array
-          title: accepts an array of strings
+          title: Accepts an array of strings
           items:
             type: string
-            description: A list of contact email addresses for multiple recipients
-            example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@strawberryFortFarm.co.uk"]
+            description: A list of contact email addresses corresponding to multiple recipients
+            example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@blueberryCottageFarm.co.uk"]
             minLength: 1
             maxLength: 320
             pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
       type: object
-      description: JSON-formatted variables required for the template
+      description: JSON-formatted variables required for the Notify template
       example:
         caseNumber: "ACC123456789"
         expectedPaymentDate: "21.11.2025"
@@ -150,7 +148,7 @@ components:
     reference:
       type: string
       description: Unique identifier for further operations like status query, must be prefixed with the source system
-      example: "ffc-ahwr-whatever-format-is-needed"
+      example: "ffc-ahwr-reference"
       minlength: 1
       maxlength: 100
 
@@ -162,47 +160,47 @@ components:
 
     emailReplyToId:
       type: string
-      format: uuid
-      description: ID for the reply-to email address
+      description: Identifier for the reply-to email address
       example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
+      format: uuid
 
     specversion:
       type: string
-      description: The version of the CloudEvents specification that the event uses
+      description: Version of the CloudEvents specification used by the event
       example: '1.0'
       minlength: 3
       maxlength: 10
 
     type:
       type: string
-      description: The type of event in reverse DNS notation
+      description: Type of event in reverse DNS notation
       example: uk.gov.fcp.sfd.notification.request
       minlength: 3
       maxlength: 250
 
     source:
       type: string
-      description: The service publishing the event
+      description: Service publishing the event
       example: ffc-ahwr-claim
       minlength: 1
       maxlength: 100
 
     id:
       type: string
-      format: uuid
-      description: The unique ID of the event
+      description: Unique identifier of the event
       example: 123e4567-e89b-12d3-a456-426655440000
       minlength: 1
       uniqueItems: true
+      format: uuid
 
     time:
       type: string
       format: date-time
-      description: The time the event occurred
+      description: Time the event occurred
       example: '2023-10-17T14:48:00Z'
 
     datacontenttype:
       type: string
-      description: The format of the event data
+      description: Format of the event data
       default: "application/json"
       example: "application/json"
