@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door User Communications
-  version: 1.0.2
+  version: 1.0.3
   description: Publish communications to users via the Single Front Door
 
 channels:
