@@ -1,6 +1,6 @@
 {
   "name": "fcp-fd-comms",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Common communications service for Single Front Door",
   "homepage": "https://github.com/DEFRA/fcp-fd-comms",
   "main": "app/index.js",
