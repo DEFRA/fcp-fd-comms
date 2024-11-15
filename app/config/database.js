@@ -5,9 +5,18 @@ import isProd from '../utils/is-prod.js'
 const hooks = {
   beforeConnect: async (config) => {
     if (isProd()) {
+      console.log('Using MI to get db access token')
+
       const credential = new DefaultAzureCredential()
-      const accessToken = await credential.getToken('https://ossrdbms-aad.database.windows.net')
+
+      const accessToken = await credential.getToken(
+        'https://ossrdbms-aad.database.windows.net',
+        { requestOptions: { timeout: 1000 } }
+      )
+
       config.password = accessToken.token
+
+      console.log('Got access token for db')
     }
   }
 }
