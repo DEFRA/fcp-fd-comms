@@ -12,7 +12,7 @@ appInsights:
 labels: {}
 
 containerConfigMap:
-  name: fcp-fd-comms-documents-config-map
+  name: fcp-fd-comms-config-map
 
 containerSecret:
   name: fcp-fd-comms-container-secret
