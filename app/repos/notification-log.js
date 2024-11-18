@@ -5,7 +5,7 @@ const logCreatedNotification = async (message, notificationId) => {
   await db.notifyApiRequestSuccess.create({
     createdAt: new Date(),
     notifyResponseId: notificationId,
-    message: message.body,
+    message,
     status: notifyStatus.CREATED,
     statusUpdatedAt: new Date(),
     completed: null
@@ -15,7 +15,7 @@ const logCreatedNotification = async (message, notificationId) => {
 const logRejectedNotification = async (message, notifyError) => {
   await db.notifyApiRequestFailure.create({
     createdAt: new Date(),
-    message: message.body,
+    message,
     error: notifyError.response.data
   })
 }
@@ -29,7 +29,8 @@ const getPendingNotifications = async () => {
 
   return pending.map((notification) => ({
     id: notification.notifyResponseId,
-    status: notification.status
+    status: notification.status,
+    message: notification.message
   }))
 }
 

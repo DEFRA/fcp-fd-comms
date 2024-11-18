@@ -4,5 +4,6 @@ export default {
   DELIVERED: 'delivered',
   PERMANENT_FAILURE: 'permanent-failure',
   TEMPORARY_FAILURE: 'temporary-failure',
-  TECHNICAL_FAILURE: 'technical-failure'
+  TECHNICAL_FAILURE: 'technical-failure',
+  INTERNAL_FAILURE: 'internal-failure'
 }

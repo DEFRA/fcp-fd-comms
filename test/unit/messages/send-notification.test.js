@@ -32,16 +32,14 @@ describe('Send Notification', () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
 
     const message = {
-      body: {
-        data: {
-          notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
-          personalisation: {
-            reference: 'mock-reference',
-            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          },
-          reference: 'mock-uuid'
-        }
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
       }
     }
 
@@ -67,16 +65,14 @@ describe('Send Notification', () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
 
     const message = {
-      body: {
-        data: {
-          notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
-          personalisation: {
-            reference: 'mock-reference',
-            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          },
-          reference: 'mock-uuid'
-        }
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
       }
     }
 
@@ -116,16 +112,14 @@ describe('Send Notification', () => {
     const consoleSpy = jest.spyOn(console, 'error')
 
     const message = {
-      body: {
-        data: {
-          notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
-          personalisation: {
-            reference: 'mock-reference',
-            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          },
-          reference: 'mock-uuid'
-        }
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
       }
     }
 
@@ -141,16 +135,14 @@ describe('Send Notification', () => {
 
   test('should call logCreatedNotification when sendEmail is successful', async () => {
     const message = {
-      body: {
-        data: {
-          notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
-          personalisation: {
-            reference: 'mock-reference',
-            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          },
-          reference: 'mock-uuid'
-        }
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
       }
     }
 
@@ -168,16 +160,14 @@ describe('Send Notification', () => {
 
   test('should call logRejectedNotification when sendEmail fails', async () => {
     const message = {
-      body: {
-        data: {
-          notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
-          personalisation: {
-            reference: 'mock-reference',
-            agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-          },
-          reference: 'mock-uuid'
-        }
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
       }
     }
 

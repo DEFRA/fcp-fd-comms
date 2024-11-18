@@ -253,12 +253,22 @@ components:
           description: The status of the message delivery in GOV.UK Notify
           example: "delivered"
           enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure"]
-        errors:
-          type: array
-          description: A list of error messages returned by provider
-          items:
-            type: string
-            example: "Missing personalisation: 'caseNumber'"
+        error:
+          type: object
+          description: Details of the error of the status is "internal-failure"
+          required:
+            - code
+          properties:
+            code:
+              type: number
+              description: The HTTP status code of the error
+              example: 400
+            errors:
+              type: array
+              description: A list of error messages returned by email provider
+              items:
+                type: string
+                example: "Missing personalisation: 'caseNumber'"
 
     correlationId:
       type: string

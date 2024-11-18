@@ -1,7 +1,8 @@
 import { jest } from '@jest/globals'
 
 const mockReceiver = {
-  completeMessage: jest.fn()
+  completeMessage: jest.fn(),
+  abandonMessage: jest.fn()
 }
 
 jest.unstable_mockModule('../../../app/messages/inbound/send-notification.js', () => ({
@@ -21,7 +22,7 @@ describe('Handle Message', () => {
 
     await handleMessage(message, mockReceiver)
 
-    expect(sendNotification).toHaveBeenCalledWith(message)
+    expect(sendNotification).toHaveBeenCalledWith(message.body)
   })
 
   test('should call completeMessage', async () => {
@@ -37,11 +38,10 @@ describe('Handle Message', () => {
     const error = new Error('mock-error')
     sendNotification.mockRejectedValue(error)
 
-    await expect(handleMessage(message, mockReceiver))
-      .rejects
-      .toThrow('Message error')
+    await handleMessage(message, mockReceiver)
 
     expect(mockReceiver.completeMessage).not.toHaveBeenCalled()
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
   })
 
   test('should throw an error when completeMessage fails', async () => {
@@ -49,8 +49,8 @@ describe('Handle Message', () => {
     const error = new Error('mock-error')
     mockReceiver.completeMessage.mockRejectedValue(error)
 
-    await expect(handleMessage(message, mockReceiver))
-      .rejects
-      .toThrow('Message error')
+    await handleMessage(message, mockReceiver)
+
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
   })
 })

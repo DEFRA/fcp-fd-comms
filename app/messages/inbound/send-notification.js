@@ -1,14 +1,17 @@
 import crypto from 'crypto'
 
 import notifyClient from '../../clients/notify-client.js'
+import notifyStatus from '../../constants/notify-statuses.js'
+
 import { logCreatedNotification, logRejectedNotification } from '../../repos/notification-log.js'
+import { publishStatus } from '../outbound/notification-status/publish-status.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
   try {
     const response = await notifyClient.sendEmail(
-      message.body.data.notifyTemplateId,
+      message.data.notifyTemplateId,
       emailAddress, {
-        personalisation: message.body.data.personalisation,
+        personalisation: message.data.personalisation,
         reference: crypto.randomUUID()
       }
     )
@@ -22,18 +25,24 @@ const trySendViaNotify = async (message, emailAddress) => {
 }
 
 const sendNotification = async (message) => {
-  const emailAddresses = Array.isArray(message.body.data.commsAddress)
-    ? message.body.data.commsAddress
-    : [message.body.data.commsAddress]
+  const emailAddresses = Array.isArray(message.data.commsAddress)
+    ? message.data.commsAddress
+    : [message.data.commsAddress]
 
   for (const emailAddress of emailAddresses) {
-    const [success, response] = await trySendViaNotify(message, emailAddress)
+    const [success, result] = await trySendViaNotify(message, emailAddress)
+
+    const status = success
+      ? notifyStatus.CREATED
+      : notifyStatus.INTERNAL_FAILURE
 
     try {
       if (success) {
-        await logCreatedNotification(message, response.data.id)
+        await publishStatus(message, status)
+        await logCreatedNotification(message, result.data.id)
       } else {
-        await logRejectedNotification(message, response)
+        await publishStatus(message, status, result.response)
+        await logRejectedNotification(message, result)
       }
     } catch (error) {
       console.error('Error logging notification: ', error)
