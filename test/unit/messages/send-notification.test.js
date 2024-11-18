@@ -14,6 +14,10 @@ jest.unstable_mockModule('../../../app/repos/notification-log.js', () => ({
   logRejectedNotification: jest.fn()
 }))
 
+jest.unstable_mockModule('../../../app/messages/outbound/notification-status/publish-status.js', () => ({
+  publishStatus: jest.fn()
+}))
+
 const {
   logCreatedNotification,
   logRejectedNotification
