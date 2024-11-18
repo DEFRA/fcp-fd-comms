@@ -121,13 +121,14 @@ components:
     commsAddresses:
       oneOf:
         - type: string
+          title: Accepts a single string
           description: A single contact email address corresponding to one recipient
           example: "mrMegaFarmer@strawberryFortFarm.co.uk"
           minLength: 1
           maxLength: 320
           pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
-          title: Accepts a single string
         - type: array
+          title: Accepts an array of strings
           description: A list of contact email addresses corresponding to multiple recipients
           example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@blueberryCottageFarm.co.uk"]
           minLength: 1
