@@ -121,7 +121,7 @@ components:
     commsAddresses:
       type: array
       title: Accepts an array of strings
-      description: List of contact email addresses (also accepts a single email address)
+      description: List of contact email addresses (accepts a single email address)
       example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
       minItems: 1
       maxItems: 10
