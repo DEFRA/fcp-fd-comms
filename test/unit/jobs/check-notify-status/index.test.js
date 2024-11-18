@@ -1,20 +1,22 @@
 import { beforeEach, jest, test } from '@jest/globals'
+import commsMessage from '../../../mocks/comms-message.js'
 
-jest.unstable_mockModule('../../../../app/repos/notification-log', () => ({
+jest.unstable_mockModule('../../../../app/repos/notification-log.js', () => ({
   getPendingNotifications: jest.fn(),
   updateNotificationStatus: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-status', () => ({
+jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-status.js', () => ({
   getNotifyStatus: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/publish-status', () => ({
+jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/index.js', () => ({
   publishStatus: jest.fn()
 }))
 
 const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
+const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
 
 const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
 
@@ -43,9 +45,9 @@ describe('Check notify status job handler', () => {
     const consoleLogSpy = jest.spyOn(console, 'log')
 
     getPendingNotifications.mockReturnValue([
-      { id: 1, status: 'sending' },
-      { id: 2, status: 'sending' },
-      { id: 3, status: 'sending' }
+      { id: 1, message: commsMessage, status: 'sending' },
+      { id: 2, message: commsMessage, status: 'sending' },
+      { id: 3, message: commsMessage, status: 'sending' }
     ])
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
@@ -59,7 +61,7 @@ describe('Check notify status job handler', () => {
 
   test('should update notification status if status has changed', async () => {
     getPendingNotifications.mockReturnValue([
-      { id: 1, status: 'sending' }
+      { id: 1, message: commsMessage, status: 'sending' }
     ])
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
@@ -71,7 +73,7 @@ describe('Check notify status job handler', () => {
 
   test('should not update notification status if status has not changed', async () => {
     getPendingNotifications.mockReturnValue([
-      { id: 1, status: 'sending' }
+      { id: 1, message: commsMessage, status: 'sending' }
     ])
 
     getNotifyStatus.mockReturnValue({ id: 1, status: 'sending' })
@@ -113,7 +115,7 @@ describe('Check notify status job handler', () => {
     const consoleErrorSpy = jest.spyOn(console, 'error')
 
     getPendingNotifications.mockReturnValue([
-      { id: 1, status: 'sending' }
+      { id: 1, message: commsMessage, status: 'sending' }
     ])
 
     getNotifyStatus.mockImplementation(() => {
@@ -125,5 +127,17 @@ describe('Check notify status job handler', () => {
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error checking notification 1:', 'Request failed with status code 404')
 
     consoleErrorSpy.mockRestore()
+  })
+
+  test('should call publish status if status has changed', async () => {
+    getPendingNotifications.mockReturnValue([
+      { id: 1, message: commsMessage, status: 'sending' }
+    ])
+
+    getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
+
+    await checkNotifyStatusHandler()
+
+    expect(publishStatus).toHaveBeenCalledWith(commsMessage, 'delivered')
   })
 })

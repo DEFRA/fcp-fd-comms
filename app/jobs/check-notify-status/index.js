@@ -1,4 +1,4 @@
-import { publishStatus } from '../../messages/outbound/notification-status/publish-status.js'
+import { publishStatus } from '../../messages/outbound/notification-status/index.js'
 import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
 import { getNotifyStatus } from './get-notify-status.js'
 

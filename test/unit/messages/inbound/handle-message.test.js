@@ -5,12 +5,12 @@ const mockReceiver = {
   abandonMessage: jest.fn()
 }
 
-jest.unstable_mockModule('../../../app/messages/inbound/send-notification.js', () => ({
+jest.unstable_mockModule('../../../../app/messages/inbound/send-notification.js', () => ({
   sendNotification: jest.fn()
 }))
 
-const { sendNotification } = await import('../../../app/messages/inbound/send-notification.js')
-const { handleMessage } = await import('../../../app/messages/inbound/handle-message.js')
+const { sendNotification } = await import('../../../../app/messages/inbound/send-notification.js')
+const { handleMessage } = await import('../../../../app/messages/inbound/handle-message.js')
 
 describe('Handle Message', () => {
   beforeEach(() => {

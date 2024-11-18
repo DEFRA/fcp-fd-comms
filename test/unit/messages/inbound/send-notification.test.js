@@ -1,29 +1,31 @@
-import { jest } from '@jest/globals'
+import { jest, test } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
 
-jest.unstable_mockModule('../../../app/clients/notify-client.js', () => ({
+jest.unstable_mockModule('../../../../app/clients/notify-client.js', () => ({
   default: {
     sendEmail: mockSendEmail
   }
 }))
 
-jest.unstable_mockModule('../../../app/repos/notification-log.js', () => ({
+jest.unstable_mockModule('../../../../app/repos/notification-log.js', () => ({
   logCreatedNotification: jest.fn(),
   logRejectedNotification: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../app/messages/outbound/notification-status/publish-status.js', () => ({
+jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/index.js', () => ({
   publishStatus: jest.fn()
 }))
 
 const {
   logCreatedNotification,
   logRejectedNotification
-} = await import('../../../app/repos/notification-log.js')
+} = await import('../../../../app/repos/notification-log.js')
 
-const { sendNotification } = await import('../../../app/messages/inbound/send-notification.js')
+const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
+
+const { sendNotification } = await import('../../../../app/messages/inbound/send-notification.js')
 
 console.log = jest.fn()
 
@@ -181,5 +183,66 @@ describe('Send Notification', () => {
 
     expect(logRejectedNotification).toHaveBeenCalledTimes(1)
     expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-error')
+  })
+
+  test('should call publishStatus with no error when email is sent successfully', async () => {
+    const message = {
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
+      }
+    }
+
+    mockSendEmail.mockResolvedValue({
+      data: {
+        id: 'mock-notify-response-id'
+      }
+    })
+
+    await sendNotification(message)
+
+    expect(publishStatus).toHaveBeenCalledTimes(1)
+    expect(publishStatus).toHaveBeenCalledWith(message, 'created')
+  })
+
+  test('should call publishStatus with an error when email fails to send', async () => {
+    const message = {
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddress: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: 'mock-uuid'
+      }
+    }
+
+    const mockError = {
+      response: {
+        data: {
+          error: {
+            status_code: 400,
+            errors: [
+              {
+                error: 'mock-error'
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await sendNotification(message)
+
+    expect(publishStatus).toHaveBeenCalledTimes(1)
+    expect(publishStatus).toHaveBeenCalledWith(message, 'internal-failure', mockError.response)
   })
 })
