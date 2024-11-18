@@ -10,13 +10,13 @@ channels:
     description: Accepts requests for notifications via Azure Service Bus
     messages:
       commsMessage:
-        $ref: '#/components/messages/commsMessage'
+        $ref: "#/components/messages/commsMessage"
 
 operations:
   fcp-fd-comms.subscribe:
     action: receive
     channel:
-      $ref: '#/channels/fcp-fd-comms'
+      $ref: "#/channels/fcp-fd-comms"
 
 components:
   messages:
@@ -24,7 +24,7 @@ components:
       name: Communications message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/commsSchema'
+        $ref: "#/components/schemas/commsSchema"
 
   schemas:
     commsSchema:
@@ -37,19 +37,19 @@ components:
         - data
       properties:
         id:
-          $ref: '#/components/schemas/id'
+          $ref: "#/components/schemas/id"
         source:
-          $ref: '#/components/schemas/source'
+          $ref: "#/components/schemas/source"
         specversion:
-          $ref: '#/components/schemas/specversion'
+          $ref: "#/components/schemas/specversion"
         type:
-          $ref: '#/components/schemas/type'
+          $ref: "#/components/schemas/type"
         datacontenttype:
-          $ref: '#/components/schemas/datacontenttype'
+          $ref: "#/components/schemas/datacontenttype"
         time:
-          $ref: '#/components/schemas/time'
+          $ref: "#/components/schemas/time"
         data:
-          $ref: '#/components/schemas/commsData'
+          $ref: "#/components/schemas/commsData"
 
     commsData:
       type: object
@@ -63,25 +63,25 @@ components:
         - emailReplyToId
       properties:
         crn:
-          $ref: '#/components/schemas/crn'
+          $ref: "#/components/schemas/crn"
         sbi:
-          $ref: '#/components/schemas/sbi'
+          $ref: "#/components/schemas/sbi"
         sourceSystem:
-          $ref: '#/components/schemas/sourceSystem'
+          $ref: "#/components/schemas/sourceSystem"
         notifyTemplateId:
-          $ref: '#/components/schemas/notifyTemplateId'
+          $ref: "#/components/schemas/notifyTemplateId"
         commsType:
-          $ref: '#/components/schemas/commsType'
+          $ref: "#/components/schemas/commsType"
         commsAddresses:
-          $ref: '#/components/schemas/commsAddresses'
+          $ref: "#/components/schemas/commsAddresses"
         personalisation:
-          $ref: '#/components/schemas/personalisation'
+          $ref: "#/components/schemas/personalisation"
         reference:
-          $ref: '#/components/schemas/reference'
+          $ref: "#/components/schemas/reference"
         oneClickUnsubscribeUrl:
-          $ref: '#/components/schemas/oneClickUnsubscribeUrl'
+          $ref: "#/components/schemas/oneClickUnsubscribeUrl"
         emailReplyToId:
-          $ref: '#/components/schemas/emailReplyToId'
+          $ref: "#/components/schemas/emailReplyToId"
 
     crn:
       type: number
@@ -119,21 +119,19 @@ components:
       enum: ["email"]
 
     commsAddresses:
-      oneOf:
-        - type: string
-          title: Accepts a single string
-          description: A single contact email address corresponding to one recipient
-          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
-          minLength: 1
-          maxLength: 320
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
-        - type: array
-          title: Accepts an array of strings
-          description: A list of contact email addresses corresponding to multiple recipients
-          example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@blueberryCottageFarm.co.uk"]
-          minLength: 1
-          maxLength: 320
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+      type: array
+      title: Accepts an array of strings
+      description: List of contact email addresses (also accepts a single email address)
+      example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
+      minItems: 1
+      maxItems: 10
+      items:
+        type: string
+        description: Contact email address
+        example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+        minLength: 1
+        maxLength: 320
+        pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
       type: object
@@ -165,7 +163,7 @@ components:
     specversion:
       type: string
       description: Version of the CloudEvents specification used by the event
-      example: '1.0'
+      example: "1.0"
       minlength: 3
       maxlength: 10
 
@@ -195,7 +193,7 @@ components:
       type: string
       format: date-time
       description: Time the event occurred
-      example: '2023-10-17T14:48:00Z'
+      example: "2023-10-17T14:48:00Z"
 
     datacontenttype:
       type: string
