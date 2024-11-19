@@ -10,7 +10,7 @@ const config = {
   ...messageConfig.get('dataLayerTopic')
 }
 
-const publishStatus = async (message, status, error) => {
+const publishStatus = async (message, recipient, status, error) => {
   const sender = new MessageSender(config)
 
   const type = statusToEventMap[status]
@@ -20,7 +20,9 @@ const publishStatus = async (message, status, error) => {
     error: error?.data
   }
 
-  const statusMessage = buildUpdateMessage(message, type, statusDetails)
+  const statusMessage = buildUpdateMessage(message, type, recipient, statusDetails)
+
+  console.log('Publishing status message:', statusMessage)
 
   await sender.send(statusMessage)
 }
