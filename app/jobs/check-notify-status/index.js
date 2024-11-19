@@ -1,5 +1,6 @@
-import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
 import { getNotifyStatus } from './get-notify-status.js'
+import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
+import { publishStatus } from '../../messages/outbound/notification-status/index.js'
 
 const checkNotifyStatusHandler = async () => {
   console.log('Checking notify status')
@@ -18,6 +19,8 @@ const checkNotifyStatusHandler = async () => {
       const { status } = await getNotifyStatus(notfication.id)
 
       if (status !== notfication.status) {
+        await publishStatus(notfication.message, status)
+
         await updateNotificationStatus(notfication.id, status)
 
         updates += 1
