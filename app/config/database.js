@@ -6,7 +6,12 @@ const hooks = {
   beforeConnect: async (config) => {
     if (isProd()) {
       const credential = new DefaultAzureCredential()
-      const accessToken = await credential.getToken('https://ossrdbms-aad.database.windows.net')
+
+      const accessToken = await credential.getToken(
+        'https://ossrdbms-aad.database.windows.net',
+        { requestOptions: { timeout: 1000 } }
+      )
+
       config.password = accessToken.token
     }
   }

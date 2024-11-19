@@ -12,7 +12,7 @@ appInsights:
 labels: {}
 
 containerConfigMap:
-  name: fcp-fd-comms-documents-config-map
+  name: fcp-fd-comms-config-map
 
 containerSecret:
   name: fcp-fd-comms-container-secret
@@ -60,6 +60,5 @@ usePodIdentity: true
 
 # Enable if Managed Identity is required, ensure the clientID and resourceID are set in Platform Configuration
 azureIdentity:
-  enabled: true
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID
