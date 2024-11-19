@@ -1,4 +1,4 @@
-export default {
+export const notifyStatus = {
   CREATED: 'created',
   SENDING: 'sending',
   DELIVERED: 'delivered',
@@ -7,3 +7,13 @@ export default {
   TECHNICAL_FAILURE: 'technical-failure',
   INTERNAL_FAILURE: 'internal-failure'
 }
+
+export const finishedStatus = [
+  notifyStatus.DELIVERED,
+  notifyStatus.INTERNAL_FAILURE,
+  notifyStatus.TEMPORARY_FAILURE,
+  notifyStatus.PERMANENT_FAILURE,
+  notifyStatus.TECHNICAL_FAILURE
+]
+
+export default notifyStatus

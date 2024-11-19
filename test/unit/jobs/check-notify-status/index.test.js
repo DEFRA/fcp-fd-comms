@@ -130,15 +130,33 @@ describe('Check notify status job handler', () => {
     consoleErrorSpy.mockRestore()
   })
 
-  test('should call publish status if status has changed', async () => {
+  test.each([
+    'delivered',
+    'technical-failure',
+    'permanent-failure',
+    'temporary-failure',
+    'internal-failure'
+  ])('should call publish event if status has changed to %s', async (newStatus) => {
     getPendingNotifications.mockReturnValue([
       { id: 1, message: commsMessage, status: 'sending' }
     ])
 
-    getNotifyStatus.mockReturnValue({ id: 1, status: 'delivered' })
+    getNotifyStatus.mockReturnValue({ id: 1, status: newStatus })
 
     await checkNotifyStatusHandler()
 
-    expect(publishStatus).toHaveBeenCalledWith(commsMessage, 'delivered')
+    expect(publishStatus).toHaveBeenCalledWith(commsMessage, newStatus)
+  })
+
+  test('should not publish status if status is sending', async () => {
+    getPendingNotifications.mockReturnValue([
+      { id: 1, message: commsMessage, status: 'sending' }
+    ])
+
+    getNotifyStatus.mockReturnValue({ id: 1, status: 'sending' })
+
+    await checkNotifyStatusHandler()
+
+    expect(publishStatus).not.toHaveBeenCalled()
   })
 })

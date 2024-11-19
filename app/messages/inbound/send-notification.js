@@ -38,7 +38,6 @@ const sendNotification = async (message) => {
 
     try {
       if (success) {
-        await publishStatus(message, status)
         await logCreatedNotification(message, result.data.id)
       } else {
         await publishStatus(message, status, result.response)

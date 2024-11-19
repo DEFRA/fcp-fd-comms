@@ -185,31 +185,6 @@ describe('Send Notification', () => {
     expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-error')
   })
 
-  test('should call publishStatus with no error when email is sent successfully', async () => {
-    const message = {
-      data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
-      }
-    }
-
-    mockSendEmail.mockResolvedValue({
-      data: {
-        id: 'mock-notify-response-id'
-      }
-    })
-
-    await sendNotification(message)
-
-    expect(publishStatus).toHaveBeenCalledTimes(1)
-    expect(publishStatus).toHaveBeenCalledWith(message, 'created')
-  })
-
   test('should call publishStatus with an error when email fails to send', async () => {
     const message = {
       data: {
