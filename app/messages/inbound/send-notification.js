@@ -18,7 +18,9 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [true, response]
   } catch (error) {
-    console.error('Error sending email: ', error)
+    const status = error.response.data.status_code
+
+    console.error('Error sending email with code:', status)
 
     return [false, error]
   }

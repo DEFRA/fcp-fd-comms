@@ -129,11 +129,24 @@ describe('Send Notification', () => {
       }
     }
 
-    mockSendEmail.mockRejectedValue('Email failed to send.')
+    const mockError = {
+      response: {
+        data: {
+          status_code: 400,
+          errors: [
+            {
+              error: 'mock-error'
+            }
+          ]
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
 
     await sendNotification(message)
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error sending email: ', 'Email failed to send.')
+    expect(consoleSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
 
     consoleSpy.mockRestore()
     uuidSpy.mockRestore()
@@ -177,12 +190,25 @@ describe('Send Notification', () => {
       }
     }
 
-    mockSendEmail.mockRejectedValue('mock-error')
+    const mockError = {
+      response: {
+        data: {
+          status_code: 400,
+          errors: [
+            {
+              error: 'mock-error'
+            }
+          ]
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
 
     await sendNotification(message)
 
     expect(logRejectedNotification).toHaveBeenCalledTimes(1)
-    expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-error')
+    expect(logRejectedNotification).toHaveBeenCalledWith(message, mockError)
   })
 
   test('should call publishStatus with an error when email fails to send', async () => {
