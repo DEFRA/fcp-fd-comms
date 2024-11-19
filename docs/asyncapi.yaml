@@ -119,19 +119,26 @@ components:
       enum: ["email"]
 
     commsAddresses:
-      type: array
-      title: Accepts an array of strings
-      description: List of contact email addresses (accepts a single email address)
-      example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
-      minItems: 1
-      maxItems: 10
-      items:
-        type: string
-        description: Contact email address
-        example: "mrMegaFarmer@strawberryFortFarm.co.uk"
-        minLength: 1
-        maxLength: 320
-        pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+      oneOf:
+        - type: string
+          description: Contact email address
+          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+          minLength: 1
+          maxLength: 320
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+        - type: array
+          title: an array of strings
+          description: List of contact email addresses
+          example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
+          minItems: 1
+          maxItems: 10
+          items:
+            type: string
+            description: Contact email address
+            example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+            minLength: 1
+            maxLength: 320
+            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
       type: object
