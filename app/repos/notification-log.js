@@ -2,22 +2,44 @@ import db from '../data/index.js'
 import notifyStatus from '../constants/notify-statuses.js'
 
 const logCreatedNotification = async (message, notificationId) => {
-  await db.notifyApiRequestSuccess.create({
-    createdAt: new Date(),
-    notifyResponseId: notificationId,
-    message: message.body,
-    status: notifyStatus.CREATED,
-    statusUpdatedAt: new Date(),
-    completed: null
-  })
+  let emailAddresses = message.body.data.commsAddresses
+
+  if (typeof emailAddresses === 'string') {
+    emailAddresses = [emailAddresses]
+  } else if (!Array.isArray(emailAddresses)) {
+    throw new Error('commsAddresses is neither a string nor an array')
+  }
+
+  for (const emailAddress of emailAddresses) {
+    await db.notifyApiRequestSuccess.create({
+      createdAt: new Date(),
+      notifyResponseId: notificationId,
+      message: message.body,
+      status: notifyStatus.CREATED,
+      statusUpdatedAt: new Date(),
+      completed: null,
+      emailAddress
+    })
+  }
 }
 
 const logRejectedNotification = async (message, notifyError) => {
-  await db.notifyApiRequestFailure.create({
-    createdAt: new Date(),
-    message: message.body,
-    error: notifyError.response.data
-  })
+  let emailAddresses = message.body.data.commsAddresses
+
+  if (typeof emailAddresses === 'string') {
+    emailAddresses = [emailAddresses]
+  } else if (!Array.isArray(emailAddresses)) {
+    throw new Error('commsAddresses is neither a string nor an array')
+  }
+
+  for (const emailAddress of emailAddresses) {
+    await db.notifyApiRequestFailure.create({
+      createdAt: new Date(),
+      message: message.body,
+      error: notifyError.response.data,
+      emailAddress
+    })
+  }
 }
 
 const getPendingNotifications = async () => {
