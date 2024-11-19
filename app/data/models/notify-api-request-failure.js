@@ -4,7 +4,7 @@ export default (sequelize, DataTypes) => {
     createdAt: { type: DataTypes.DATE, allowNull: false },
     message: { type: DataTypes.JSONB, allowNull: false },
     error: { type: DataTypes.JSONB, allowNull: false },
-    emailAddress: { type: DataTypes.STRING, allowNull: false }
+    recipient: { type: DataTypes.STRING, allowNull: false }
   },
   {
     tableName: 'notifyApiRequestFailure',

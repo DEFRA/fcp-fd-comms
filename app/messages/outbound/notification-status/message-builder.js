@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-const buildStatusMessage = (data, type, statusDetails) => {
+const buildStatusMessage = (data, type, recipient, statusDetails) => {
   return {
     id: crypto.randomUUID(),
     source: 'fcp-fd-comms',
@@ -9,6 +9,7 @@ const buildStatusMessage = (data, type, statusDetails) => {
     time: new Date(),
     data: {
       ...data,
+      commsAddresses: recipient,
       statusDetails: {
         status: statusDetails.status,
         errors: statusDetails.errors

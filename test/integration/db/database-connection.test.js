@@ -9,7 +9,8 @@ beforeEach(async () => {
     message: { text: 'Hello World!' },
     status: 'created',
     statusUpdatedAt: new Date(),
-    completed: new Date()
+    completed: new Date(),
+    recipient: 'mock@test.gov.uk'
   })
 })
 

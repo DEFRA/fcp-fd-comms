@@ -38,11 +38,11 @@ const sendNotification = async (message) => {
 
     try {
       if (success) {
-        await publishStatus(message, status)
-        await logCreatedNotification(message, result.data.id)
+        await publishStatus(message, emailAddress, status)
+        await logCreatedNotification(message, emailAddress, result.data.id)
       } else {
-        await publishStatus(message, status, result.response)
-        await logRejectedNotification(message, result)
+        await publishStatus(message, emailAddress, status, result.response)
+        await logRejectedNotification(message, emailAddress, result)
       }
     } catch (error) {
       console.error('Error logging notification: ', error)

@@ -17,7 +17,7 @@ export default (sequelize, DataTypes) => {
     },
     statusUpdatedAt: { type: DataTypes.DATE, allowNull: false },
     completed: { type: DataTypes.DATE, allowNull: true },
-    emailAddress: { type: DataTypes.STRING, allowNull: false }
+    recipient: { type: DataTypes.STRING, allowNull: false }
   },
   {
     tableName: 'notifyApiRequestSuccess',

@@ -6,7 +6,7 @@
 
     <changeSet author="Defra" id="2">
         <addColumn tableName="notifyApiRequestSuccess">
-            <column name="emailAddress" type="varchar(320)">
+            <column name="recipient" type="varchar(320)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
@@ -14,7 +14,7 @@
 
     <changeSet author="Defra" id="3">
         <addColumn tableName="notifyApiRequestFailure">
-            <column name="emailAddress" type="varchar(320)">
+            <column name="recipient" type="varchar(320)">
                 <constraints nullable="false"/>
             </column>
         </addColumn>
