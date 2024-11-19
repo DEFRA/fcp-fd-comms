@@ -1,4 +1,5 @@
 import { beforeEach, jest, test } from '@jest/globals'
+
 import commsMessage from '../../../mocks/comms-message.js'
 
 jest.unstable_mockModule('../../../../app/repos/notification-log.js', () => ({

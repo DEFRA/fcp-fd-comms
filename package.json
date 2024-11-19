@@ -36,6 +36,7 @@
     "log-timestamp": "0.3.0",
     "notifications-node-client": "^8.2.1",
     "pg": "8.13.0",
+    "semaphore": "^1.1.0",
     "sequelize": "6.37.4"
   },
   "devDependencies": {
