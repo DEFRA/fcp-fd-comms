@@ -12,7 +12,7 @@ export default {
       sourceSystem: 'source',
       notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
       commsType: 'email',
-      commsAddress: 'test@example.com',
+      commsAddresses: 'test@example.com',
       personalisation: {
         reference: 'test-reference'
       },

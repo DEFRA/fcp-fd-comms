@@ -35,7 +35,7 @@ describe('Send Notification', () => {
       body: {
         data: {
           notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
+          commsAddresses: 'mock-email@test.com',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -70,7 +70,7 @@ describe('Send Notification', () => {
       body: {
         data: {
           notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
+          commsAddresses: ['mock-email1@test.com', 'mock-email2@test.com'],
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -119,7 +119,7 @@ describe('Send Notification', () => {
       body: {
         data: {
           notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
+          commsAddresses: 'mock-email@test.com',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -144,7 +144,7 @@ describe('Send Notification', () => {
       body: {
         data: {
           notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
+          commsAddresses: 'mock-email@test.com',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -171,7 +171,7 @@ describe('Send Notification', () => {
       body: {
         data: {
           notifyTemplateId: 'mock-notify-template-id',
-          commsAddress: 'mock-email@test.com',
+          commsAddresses: 'mock-email@test.com',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
