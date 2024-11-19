@@ -28,6 +28,7 @@ container:
   messageQueueHost: namespace.servicebus.windows.net
   commsSubscriptionAddress: fcp-fd-comms
   commsTopicAddress: fcp-fd-comms
+  dataTopicAddress: fcp-fd-data
   notifyApiKey:
   checkNotifyStatusCronPattern: '*/30 * * * * *'
 

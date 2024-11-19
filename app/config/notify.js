@@ -1,8 +1,8 @@
 import convict from 'convict'
 
 const notify = convict({
-  notifyApiKey: {
-    doc: 'API key for GOV.UK Notify',
+  apiKey: {
+    doc: 'API key for GOV.UK Notify.',
     format: String,
     default: null,
     env: 'NOTIFY_API_KEY'

@@ -59,6 +59,19 @@ const messaging = convict({
       format: String,
       default: 'subscription'
     }
+  },
+  dataLayerTopic: {
+    address: {
+      doc: 'Data topic address (i.e. name of topic for data messages).',
+      format: String,
+      default: null,
+      env: 'DATA_TOPIC_ADDRESS'
+    },
+    type: {
+      doc: 'Type of topic (value is "topic" by default as it is a data topic).',
+      format: String,
+      default: 'topic'
+    }
   }
 })
 
