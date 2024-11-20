@@ -17,8 +17,8 @@ channels:
     description: |
       Accepts updates to the status of communication notifications via Azure service bus.
     messages:
-      commsMessage:
-        $ref: '#/components/messages/commsStatusMessage'
+      commsEventMessage:
+        $ref: '#/components/messages/commsEventMessage'
       
 operations:
   fcp-fd-comms.subscribe:
@@ -38,11 +38,11 @@ components:
       payload:
         $ref: '#/components/schemas/commsSchema'
     
-    commsStatusMessage:
-      name: user communications status message
+    commsEventMessage:
+      name: user communications event message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/commsStatusUpdateSchema'
+        $ref: '#/components/schemas/commsEventSchema'
 
   schemas:
     commsSchema:
@@ -69,7 +69,7 @@ components:
         data:
           $ref: "#/components/schemas/commsData"
 
-    commsStatusUpdateSchema:
+    commsEventSchema:
       type: object
       required:
         - id
@@ -91,7 +91,7 @@ components:
         time:
           $ref: '#/components/schemas/time'
         data:
-          $ref: '#/components/schemas/commsStatusData'
+          $ref: '#/components/schemas/commsEventData'
 
     commsData:
       type: object
@@ -125,7 +125,7 @@ components:
         emailReplyToId:
           $ref: "#/components/schemas/emailReplyToId"
 
-    commsStatusData:
+    commsEventData:
       type: object
       required:
         - crn
@@ -254,30 +254,33 @@ components:
       properties:
         status:
           type: string
-          description: The status of the message delivery in GOV.UK Notify
+          description: The status of the message delivery
           example: "delivered"
-          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure"]
-        error:
-          type: object
-          description: Details of the error of the status is "internal-failure"
+          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure", "internal-failure"]
+        errorCode:
+          type: number
+          description: Error code returned from Notify. Only present if status is 'internal-failure'
+          example: 400
+        errors:
+          type: array
+          description: A list of error messages returned from Notify. Only present if status is 'internal-failure'
           required:
-            - code
-          properties:
-            code:
-              type: number
-              description: The HTTP status code of the error
-              example: 400
-            errors:
-              type: array
-              description: A list of error messages returned by email provider
-              items:
+            - error
+            - message
+          items:
+            type: object
+            properties:
+              error:
                 type: string
-                example: "Missing personalisation: 'caseNumber'"
+                example: "BadRequestError"
+              message:
+                type: string
+                description: "Missing personalisation key: 'caseNumber'"
 
     correlationId:
       type: string
       format: uuid
-      description: The unique correlation ID of the message in the source system
+      description: The unique correlation ID linking updates to the original request
       example: 123e4567-e89b-12d3-a456-426655440000
 
     specversion:

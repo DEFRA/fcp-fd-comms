@@ -47,36 +47,57 @@ describe('Data Layer Outbound Messaging', () => {
   )
 
   test('should include status details in message', async () => {
+    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+
+    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+
+    cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
+
     await publishStatus(commsMessage, 'delivered')
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
         body: expect.objectContaining({
+          id: 'a41192cf-5478-42ce-846f-64f1cf977535',
           commsMessage: expect.objectContaining({
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+            source: 'fcp-fd-comms',
+            type: 'uk.gov.fcp.sfd.notification.delivered',
+            time: new Date('2024-11-18T15:00:00Z'),
+            datacontenttype: 'application/json',
+            specschema: '1.0',
             data: {
               ...commsMessage.data,
+              correlationId: commsMessage.id,
               statusDetails: {
                 status: 'delivered'
               }
             }
           })
-        })
+        }),
+        source: 'fcp-fd-comms',
+        type: 'uk.gov.fcp.sfd.notification.delivered'
       })
     )
+
+    cryptoSpy.mockRestore()
   })
 
   test('should include error details if passed', async () => {
+    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+
+    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+
+    cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
+
     const error = {
-      data: {
-        error: {
-          status_code: 400,
-          errors: [
-            {
-              error: 'mock-error'
-            }
-          ]
+      status_code: 400,
+      errors: [
+        {
+          error: 'mock-error',
+          message: 'mock-error message'
         }
-      }
+      ]
     }
 
     await publishStatus(commsMessage, 'internal-failure', error)
@@ -84,18 +105,36 @@ describe('Data Layer Outbound Messaging', () => {
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
         body: expect.objectContaining({
-          commsMessage: expect.objectContaining({
+          id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+          commsMessage: {
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+            source: 'fcp-fd-comms',
+            type: 'uk.gov.fcp.sfd.notification.failure.internal',
+            time: new Date('2024-11-18T15:00:00Z'),
+            datacontenttype: 'application/json',
+            specschema: '1.0',
             data: {
               ...commsMessage.data,
+              correlationId: commsMessage.id,
               statusDetails: {
                 status: 'internal-failure',
-                error: error.data
+                errorCode: 400,
+                errors: [
+                  {
+                    error: 'mock-error',
+                    message: 'mock-error message'
+                  }
+                ]
               }
             }
-          })
-        })
+          }
+        }),
+        source: 'fcp-fd-comms',
+        type: 'uk.gov.fcp.sfd.notification.failure.internal'
       })
     )
+
+    cryptoSpy.mockRestore()
   })
 
   test('should send message using original comms message', async () => {
@@ -112,12 +151,15 @@ describe('Data Layer Outbound Messaging', () => {
         body: expect.objectContaining({
           id: 'a41192cf-5478-42ce-846f-64f1cf977535',
           commsMessage: {
-            ...commsMessage,
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
             source: 'fcp-fd-comms',
             type: 'uk.gov.fcp.sfd.notification.sending',
             time: new Date('2024-11-18T15:00:00Z'),
+            datacontenttype: 'application/json',
+            specschema: '1.0',
             data: {
               ...commsMessage.data,
+              correlationId: commsMessage.id,
               statusDetails: {
                 status: 'sending'
               }

@@ -15,23 +15,23 @@ const checkNotifyStatusHandler = async () => {
 
   let updates = 0
 
-  for (const notfication of pending) {
+  for (const notification of pending) {
     try {
-      const { status } = await getNotifyStatus(notfication.id)
+      const { status } = await getNotifyStatus(notification.id)
 
-      if (status === notfication.status) {
+      if (status === notification.status) {
         continue
       }
 
       if (finishedStatus.includes(status)) {
-        await publishStatus(notfication.message, status)
+        await publishStatus(notification.message, status)
       }
 
-      await updateNotificationStatus(notfication.id, status)
+      await updateNotificationStatus(notification.id, status)
 
       updates += 1
     } catch (error) {
-      console.error(`Error checking notification ${notfication.id}:`, error.message)
+      console.error(`Error checking notification ${notification.id}:`, error.message)
     }
   }
 

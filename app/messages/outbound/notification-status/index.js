@@ -17,7 +17,8 @@ const publishStatus = async (message, status, error) => {
 
   const statusDetails = {
     status,
-    error: error?.data
+    errorCode: error?.status_code,
+    errors: error?.errors
   }
 
   const statusMessage = buildUpdateMessage(message, type, statusDetails)

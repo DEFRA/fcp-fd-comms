@@ -16,13 +16,13 @@ const trySendViaNotify = async (message, emailAddress) => {
       }
     )
 
-    return [true, response]
+    return [response, null]
   } catch (error) {
     const status = error.response.data.status_code
 
     console.error('Error sending email with code:', status)
 
-    return [false, error]
+    return [null, error]
   }
 }
 
@@ -32,18 +32,14 @@ const sendNotification = async (message) => {
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const [success, result] = await trySendViaNotify(message, emailAddress)
-
-    const status = success
-      ? notifyStatus.CREATED
-      : notifyStatus.INTERNAL_FAILURE
+    const [response, error] = await trySendViaNotify(message, emailAddress)
 
     try {
-      if (success) {
-        await logCreatedNotification(message, result.data.id)
+      if (response) {
+        await logCreatedNotification(message, response.data.id)
       } else {
-        await publishStatus(message, status, result.response)
-        await logRejectedNotification(message, result)
+        await publishStatus(message, notifyStatus.INTERNAL_FAILURE, error.response.data)
+        await logRejectedNotification(message, error)
       }
     } catch (error) {
       console.error('Error logging notification: ', error)
