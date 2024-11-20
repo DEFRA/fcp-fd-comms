@@ -32,14 +32,14 @@ const sendNotification = async (message) => {
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const [response, error] = await trySendViaNotify(message, emailAddress)
+    const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
     try {
       if (response) {
         await logCreatedNotification(message, response.data.id)
       } else {
-        await publishStatus(message, notifyStatus.INTERNAL_FAILURE, error.response.data)
-        await logRejectedNotification(message, error)
+        await publishStatus(message, notifyStatus.INTERNAL_FAILURE, notifyError.response.data)
+        await logRejectedNotification(message, notifyError)
       }
     } catch (error) {
       console.error('Error logging notification: ', error)
