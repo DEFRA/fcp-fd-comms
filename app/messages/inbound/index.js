@@ -1,5 +1,5 @@
 import { MessageReceiver } from 'ffc-messaging'
-import { messageConfig } from '../config/index.js'
+import { messageConfig } from '../../config/index.js'
 import { handleMessage } from './handle-message.js'
 
 const startMessaging = async () => {

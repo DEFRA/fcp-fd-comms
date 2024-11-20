@@ -35,7 +35,7 @@ describe('Notification log repository', () => {
       notifyResponseId: notificationId,
       createdAt: new Date('2021-01-01T00:00:00.000Z'),
       statusUpdatedAt: new Date('2021-01-01T00:00:00.000Z'),
-      message: commsMessage.body,
+      message: commsMessage,
       status: 'created',
       completed: null
     })
@@ -54,7 +54,7 @@ describe('Notification log repository', () => {
 
     expect(record).toMatchObject({
       createdAt: new Date('2021-01-01T00:00:00.000Z'),
-      message: commsMessage.body,
+      message: commsMessage,
       error: 'Error message'
     })
   })
@@ -86,11 +86,13 @@ describe('Notification log repository', () => {
 
     expect(result[0]).toEqual({
       id: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
+      message: commsMessage,
       status: 'created'
     })
 
     expect(result[1]).toEqual({
       id: '21df4efa-c4a8-4007-8f8a-3cf30b652955',
+      message: commsMessage,
       status: 'sending'
     })
   })
@@ -108,7 +110,7 @@ describe('Notification log repository', () => {
       notifyResponseId: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
       createdAt: new Date('2021-01-01T14:00:00.000Z'),
       statusUpdatedAt: new Date('2021-01-01T14:00:00.000Z'),
-      message: commsMessage.body,
+      message: commsMessage,
       status: 'sending',
       completed: null
     })
@@ -123,7 +125,7 @@ describe('Notification log repository', () => {
       notifyResponseId: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
       createdAt: new Date('2021-01-01T14:00:00.000Z'),
       statusUpdatedAt: new Date('2021-01-01T15:00:00.000Z'),
-      message: commsMessage.body,
+      message: commsMessage,
       status: 'delivered',
       completed: new Date('2021-01-01T15:00:00.000Z')
     })
