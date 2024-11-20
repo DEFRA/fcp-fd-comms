@@ -21,9 +21,10 @@ describe('Notification log repository', () => {
 
   test('log notfication created should create a new record', async () => {
     const notificationId = 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66'
+    const recipient = 'mock-email@test.gov.uk'
     jest.setSystemTime(new Date('2021-01-01'))
 
-    await logCreatedNotification(commsMessage, notificationId)
+    await logCreatedNotification(commsMessage, recipient, notificationId)
 
     const result = await db.notifyApiRequestSuccess.findAll()
 
@@ -37,15 +38,17 @@ describe('Notification log repository', () => {
       statusUpdatedAt: new Date('2021-01-01T00:00:00.000Z'),
       message: commsMessage,
       status: 'created',
-      completed: null
+      completed: null,
+      recipient
     })
   })
 
   test('log failed notification should create a new record', async () => {
     const error = { response: { data: 'Error message' } }
+    const recipient = 'mock-email@test.gov.uk'
     jest.setSystemTime(new Date('2021-01-01'))
 
-    await logRejectedNotification(commsMessage, error)
+    await logRejectedNotification(commsMessage, recipient, error)
 
     const result = await db.notifyApiRequestFailure.findAll()
     expect(result).toHaveLength(1)
@@ -55,7 +58,8 @@ describe('Notification log repository', () => {
     expect(record).toMatchObject({
       createdAt: new Date('2021-01-01T00:00:00.000Z'),
       message: commsMessage,
-      error: 'Error message'
+      error: 'Error message',
+      recipient
     })
   })
 
@@ -68,7 +72,8 @@ describe('Notification log repository', () => {
       statusUpdatedAt: new Date('2021-01-01T14:00:00.000Z'),
       message: commsMessage,
       status: 'created',
-      completed: null
+      completed: null,
+      recipient: 'mock-email-1@test.gov.uk'
     })
 
     await db.notifyApiRequestSuccess.create({
@@ -77,7 +82,8 @@ describe('Notification log repository', () => {
       statusUpdatedAt: new Date('2021-01-01T14:00:00.000Z'),
       message: commsMessage,
       status: 'sending',
-      completed: null
+      completed: null,
+      recipient: 'mock-email-2@test.gov.uk'
     })
 
     const result = await getPendingNotifications()
@@ -112,7 +118,8 @@ describe('Notification log repository', () => {
       statusUpdatedAt: new Date('2021-01-01T14:00:00.000Z'),
       message: commsMessage,
       status: 'sending',
-      completed: null
+      completed: null,
+      recipient: 'mock-email@test.gov.uk'
     })
 
     await updateNotificationStatus('e7a60aa3-1677-47eb-9bb9-7405ad4f4a66', 'delivered')
@@ -127,7 +134,8 @@ describe('Notification log repository', () => {
       statusUpdatedAt: new Date('2021-01-01T15:00:00.000Z'),
       message: commsMessage,
       status: 'delivered',
-      completed: new Date('2021-01-01T15:00:00.000Z')
+      completed: new Date('2021-01-01T15:00:00.000Z'),
+      recipient: 'mock-email@test.gov.uk'
     })
   })
 

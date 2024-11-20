@@ -33,7 +33,7 @@ describe('Notification Log Repository', () => {
   test('should log created notification', async () => {
     const message = { data: 'test message' }
 
-    await logCreatedNotification(message, '123456789')
+    await logCreatedNotification(message, 'mock-email@test.gov.uk', '123456789')
 
     expect(mockCreate).toHaveBeenCalledWith({
       createdAt: expect.any(Date),
@@ -41,19 +41,21 @@ describe('Notification Log Repository', () => {
       message,
       status: 'created',
       statusUpdatedAt: expect.any(Date),
-      completed: null
+      completed: null,
+      recipient: 'mock-email@test.gov.uk'
     })
   })
 
   test('should log rejected notification', async () => {
     const message = { data: 'test message' }
 
-    await logRejectedNotification(message, { response: { data: 'test error' } })
+    await logRejectedNotification(message, 'mock-email@test.gov.uk', { response: { data: 'test error' } })
 
     expect(mockCreate).toHaveBeenCalledWith({
       createdAt: expect.any(Date),
       message,
-      error: 'test error'
+      error: 'test error',
+      recipient: 'mock-email@test.gov.uk'
     })
   })
 

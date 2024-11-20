@@ -174,7 +174,7 @@ describe('Send Notification', () => {
     await sendNotification(message)
 
     expect(logCreatedNotification).toHaveBeenCalledTimes(1)
-    expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-notify-response-id')
+    expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', 'mock-notify-response-id')
   })
 
   test('should call logRejectedNotification when sendEmail fails', async () => {
@@ -208,7 +208,7 @@ describe('Send Notification', () => {
     await sendNotification(message)
 
     expect(logRejectedNotification).toHaveBeenCalledTimes(1)
-    expect(logRejectedNotification).toHaveBeenCalledWith(message, mockError)
+    expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError)
   })
 
   test('should call publishStatus with an error when email fails to send', async () => {
