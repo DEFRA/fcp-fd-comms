@@ -54,7 +54,7 @@ postgresService:
   postgresqlHost: fcp-fd-comms-postgres
   postgresPort: 5432
   postgresSchema: public
-  postgresUser: postgres
+  postgresUser:
 
 usePodIdentity: true
 
