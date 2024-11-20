@@ -1,22 +1,24 @@
 import db from '../data/index.js'
 import notifyStatus from '../constants/notify-statuses.js'
 
-const logCreatedNotification = async (message, notificationId) => {
+const logCreatedNotification = async (message, recipient, notificationId) => {
   await db.notifyApiRequestSuccess.create({
     createdAt: new Date(),
     notifyResponseId: notificationId,
     message,
     status: notifyStatus.CREATED,
     statusUpdatedAt: new Date(),
-    completed: null
+    completed: null,
+    recipient
   })
 }
 
-const logRejectedNotification = async (message, notifyError) => {
+const logRejectedNotification = async (message, recipient, notifyError) => {
   await db.notifyApiRequestFailure.create({
     createdAt: new Date(),
     message,
-    error: notifyError.response.data
+    error: notifyError.response.data,
+    recipient
   })
 }
 
