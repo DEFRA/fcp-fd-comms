@@ -2,7 +2,7 @@ import crypto from 'crypto'
 
 import { SOURCE } from '../../../constants/source.js'
 
-const buildUpdateMessage = (message, type, statusDetails) => ({
+const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
   body: {
     id: crypto.randomUUID(),
     commsMessage: {
@@ -12,6 +12,7 @@ const buildUpdateMessage = (message, type, statusDetails) => ({
       time: new Date(),
       data: {
         ...message.data,
+        commsAddresses: recipient,
         correlationId: message.id,
         statusDetails
       },

@@ -93,13 +93,15 @@ describe('Notification log repository', () => {
     expect(result[0]).toEqual({
       id: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
       message: commsMessage,
-      status: 'created'
+      status: 'created',
+      recipient: 'mock-email-1@test.gov.uk'
     })
 
     expect(result[1]).toEqual({
       id: '21df4efa-c4a8-4007-8f8a-3cf30b652955',
       message: commsMessage,
-      status: 'sending'
+      status: 'sending',
+      recipient: 'mock-email-2@test.gov.uk'
     })
   })
 

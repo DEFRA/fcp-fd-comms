@@ -32,7 +32,8 @@ const getPendingNotifications = async () => {
   return pending.map((notification) => ({
     id: notification.notifyResponseId,
     status: notification.status,
-    message: notification.message
+    message: notification.message,
+    recipient: notification.recipient
   }))
 }
 

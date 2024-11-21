@@ -16,6 +16,8 @@ jest.mock('ffc-messaging', () => {
 const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
 
 describe('Data Layer Outbound Messaging', () => {
+  const recipient = 'mock-recipient@example.com'
+
   beforeEach(() => {
     jest.clearAllMocks()
     jest.useFakeTimers()
@@ -31,7 +33,7 @@ describe('Data Layer Outbound Messaging', () => {
     ['technical-failure', 'uk.gov.fcp.sfd.notification.failure.provider']
   ])(
     'should map notify status \'%s\' to event \'%s\'', async (status, event) => {
-      await publishStatus(commsMessage, status)
+      await publishStatus(commsMessage, recipient, status)
 
       expect(mockSender).toHaveBeenCalledWith(
         expect.objectContaining({
