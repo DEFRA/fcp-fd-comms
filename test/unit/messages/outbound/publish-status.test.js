@@ -55,7 +55,7 @@ describe('Data Layer Outbound Messaging', () => {
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
-    await publishStatus(commsMessage, 'delivered')
+    await publishStatus(commsMessage, 'mock-email@test.gov.uk', 'delivered')
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -71,6 +71,7 @@ describe('Data Layer Outbound Messaging', () => {
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
+              commsAddresses: 'mock-email@test.gov.uk',
               statusDetails: {
                 status: 'delivered'
               }
@@ -102,7 +103,7 @@ describe('Data Layer Outbound Messaging', () => {
       ]
     }
 
-    await publishStatus(commsMessage, 'internal-failure', error)
+    await publishStatus(commsMessage, 'mock-email@test.gov.uk', 'internal-failure', error)
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -118,6 +119,7 @@ describe('Data Layer Outbound Messaging', () => {
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
+              commsAddresses: 'mock-email@test.gov.uk',
               statusDetails: {
                 status: 'internal-failure',
                 errorCode: 400,
@@ -146,7 +148,7 @@ describe('Data Layer Outbound Messaging', () => {
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
-    await publishStatus(commsMessage, 'sending')
+    await publishStatus(commsMessage, 'mock-email@test.gov.uk', 'sending')
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -161,6 +163,7 @@ describe('Data Layer Outbound Messaging', () => {
             specschema: '1.0',
             data: {
               ...commsMessage.data,
+              commsAddresses: 'mock-email@test.gov.uk',
               correlationId: commsMessage.id,
               statusDetails: {
                 status: 'sending'
