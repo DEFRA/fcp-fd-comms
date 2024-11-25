@@ -244,6 +244,6 @@ describe('Send Notification', () => {
     await sendNotification(message)
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
-    expect(publishStatus).toHaveBeenCalledWith(message, 'internal-failure', mockError.response.data)
+    expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
   })
 })
