@@ -24,7 +24,7 @@ const checkNotifyStatusHandler = async () => {
       }
 
       if (finishedStatus.includes(status)) {
-        await publishStatus(notification.message, status)
+        await publishStatus(notification.message, notification.recipient, status)
       }
 
       await updateNotificationStatus(notification.id, status)
