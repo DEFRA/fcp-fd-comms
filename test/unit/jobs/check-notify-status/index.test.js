@@ -138,14 +138,14 @@ describe('Check notify status job handler', () => {
     'internal-failure'
   ])('should call publish event if status has changed to %s', async (newStatus) => {
     getPendingNotifications.mockReturnValue([
-      { id: 1, message: commsMessage, status: 'sending' }
+      { id: 1, message: commsMessage, recipient: 'mock-email@test.gov.uk', status: 'sending' }
     ])
 
     getNotifyStatus.mockReturnValue({ id: 1, status: newStatus })
 
     await checkNotifyStatusHandler()
 
-    expect(publishStatus).toHaveBeenCalledWith(commsMessage, newStatus)
+    expect(publishStatus).toHaveBeenCalledWith(commsMessage, 'mock-email@test.gov.uk', newStatus)
   })
 
   test('should not publish status if status is sending', async () => {
