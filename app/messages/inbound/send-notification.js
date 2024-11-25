@@ -38,7 +38,13 @@ const sendNotification = async (message) => {
       if (response) {
         await logCreatedNotification(message, emailAddress, response.data.id)
       } else {
-        await publishStatus(message, emailAddress, notifyStatus.INTERNAL_FAILURE, notifyError.response.data)
+        await publishStatus(
+          message,
+          emailAddress,
+          notifyStatus.INTERNAL_FAILURE,
+          notifyError.response.data
+        )
+
         await logRejectedNotification(message, emailAddress, notifyError)
       }
     } catch (error) {
