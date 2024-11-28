@@ -27,9 +27,9 @@ const trySendViaNotify = async (message, emailAddress) => {
 }
 
 const sendNotification = async (message) => {
-  const emailAddresses = Array.isArray(message.data.commsAddresses)
-    ? message.data.commsAddresses
-    : [message.data.commsAddresses]
+  const emailAddresses = Array.isArray(message.data.commsAddress)
+    ? message.data.commsAddress
+    : [message.data.commsAddress]
 
   for (const emailAddress of emailAddresses) {
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)

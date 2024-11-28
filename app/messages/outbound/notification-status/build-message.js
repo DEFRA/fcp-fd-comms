@@ -12,7 +12,7 @@ const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
       time: new Date(),
       data: {
         ...message.data,
-        commsAddresses: recipient,
+        commsAddress: recipient,
         correlationId: message.id,
         statusDetails
       },

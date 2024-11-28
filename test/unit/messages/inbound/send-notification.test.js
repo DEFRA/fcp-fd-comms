@@ -40,7 +40,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
+        commsAddress: 'mock-email@test.com',
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -73,7 +73,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: ['mock-email1@test.com', 'mock-email2@test.com'],
+        commsAddress: ['mock-email1@test.com', 'mock-email2@test.com'],
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -120,7 +120,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
+        commsAddress: 'mock-email@test.com',
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -156,7 +156,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
+        commsAddress: 'mock-email@test.com',
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -181,7 +181,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
+        commsAddress: 'mock-email@test.com',
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -215,7 +215,7 @@ describe('Send Notification', () => {
     const message = {
       data: {
         notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
+        commsAddress: 'mock-email@test.com',
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'

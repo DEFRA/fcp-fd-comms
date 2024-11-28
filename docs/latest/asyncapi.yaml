@@ -1,0 +1,325 @@
+asyncapi: 3.0.0
+info:
+  title: Single Front Door Communications
+  version: 3.0.0
+  description: Publish communications to users via the Single Front Door
+
+channels:
+  fcp-fd-comms:
+    address: fcp-fd-comms
+    description: |
+      Accepts requests for communication notifications via Azure service bus.
+    messages:
+      commsMessage:
+        $ref: '#/components/messages/commsMessage'
+  fcp-fd-data:
+    address: fcp-fd-data
+    description: |
+      Accepts updates to the status of communication notifications via Azure service bus.
+    messages:
+      commsEventMessage:
+        $ref: '#/components/messages/commsEventMessage'
+      
+operations:
+  fcp-fd-comms.subscribe:
+    action: receive
+    channel:
+      $ref: '#/channels/fcp-fd-comms'
+  fcp-fd-data.publish:
+    action: send
+    channel:
+      $ref: '#/channels/fcp-fd-data'
+
+components:
+  messages:
+    commsMessage:
+      name: Communications message
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/commsSchema'
+    
+    commsEventMessage:
+      name: user communications event message
+      contentType: application/json
+      payload:
+        $ref: '#/components/schemas/commsEventSchema'
+
+  schemas:
+    commsSchema:
+      type: object
+      required:
+        - id
+        - source
+        - specversion
+        - type
+        - data
+      properties:
+        id:
+          $ref: "#/components/schemas/id"
+        source:
+          $ref: "#/components/schemas/source"
+        specversion:
+          $ref: "#/components/schemas/specversion"
+        type:
+          $ref: "#/components/schemas/type"
+        datacontenttype:
+          $ref: "#/components/schemas/datacontenttype"
+        time:
+          $ref: "#/components/schemas/time"
+        data:
+          $ref: "#/components/schemas/commsData"
+
+    commsEventSchema:
+      type: object
+      required:
+        - id
+        - source
+        - specversion
+        - type
+        - data
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        source:
+          $ref: '#/components/schemas/source'
+        specversion:
+          $ref: '#/components/schemas/specversion'
+        type:
+          $ref: '#/components/schemas/type'
+        datacontenttype:
+          $ref: '#/components/schemas/datacontenttype'
+        time:
+          $ref: '#/components/schemas/time'
+        data:
+          $ref: '#/components/schemas/commsEventData'
+
+    commsData:
+      type: object
+      required:
+        - crn
+        - sourceSystem
+        - notifyTemplateId
+        - personalisation
+        - sbi
+        - reference
+        - emailReplyToId
+      properties:
+        crn:
+          $ref: "#/components/schemas/crn"
+        sbi:
+          $ref: "#/components/schemas/sbi"
+        sourceSystem:
+          $ref: "#/components/schemas/sourceSystem"
+        notifyTemplateId:
+          $ref: "#/components/schemas/notifyTemplateId"
+        commsType:
+          $ref: "#/components/schemas/commsType"
+        commsAddress:
+          $ref: "#/components/schemas/commsAddress"
+        personalisation:
+          $ref: "#/components/schemas/personalisation"
+        reference:
+          $ref: "#/components/schemas/reference"
+        oneClickUnsubscribeUrl:
+          $ref: "#/components/schemas/oneClickUnsubscribeUrl"
+        emailReplyToId:
+          $ref: "#/components/schemas/emailReplyToId"
+
+    commsEventData:
+      type: object
+      required:
+        - crn
+        - sourceSystem
+        - notifyTemplateId
+        - personalisation
+        - sbi
+        - reference
+        - statusDetails
+        - correlationId
+      properties:
+        crn:
+          $ref: '#/components/schemas/crn'
+        sbi:
+          $ref: '#/components/schemas/sbi'
+        sourceSystem:
+          $ref: '#/components/schemas/sourceSystem'
+        notifyTemplateId:
+          $ref: '#/components/schemas/notifyTemplateId'
+        commsType:
+          $ref: '#/components/schemas/commsType'
+        commsAddress:
+          $ref: '#/components/schemas/commsAddress'
+        personalisation:
+          $ref: '#/components/schemas/personalisation'
+        reference:
+          $ref: '#/components/schemas/reference'
+        oneClickUnsubscribeUrl:
+          $ref: '#/components/schemas/oneClickUnsubscribeUrl'
+        emailReplyToId:
+          $ref: '#/components/schemas/emailReplyToId'
+        statusDetails:
+          $ref: '#/components/schemas/statusDetails'
+        correlationId:
+          $ref: '#/components/schemas/correlationId'
+
+    crn:
+      type: number
+      description: Customer Reference Number (consists of 10 digits)
+      minimum: 1050000000
+      maximum: 9999999999
+      example: 1234567890
+
+    sbi:
+      type: number
+      description: Single Business Identifier (consists of 9 digits)
+      minimum: 105000000
+      maximum: 999999999
+      example: 123456789
+
+    sourceSystem:
+      type: string
+      description: Name of the source system that originated the message
+      example: "AHWP"
+      minlength: 3
+      maxlength: 100
+      pattern: "^[a-z0-9-_]+$"
+
+    notifyTemplateId:
+      type: string
+      description: Notify template identifier
+      example: "f33517ff-2a88-4f6e-b855-c550268ce08a"
+      format: uuid
+
+    commsType:
+      type: string
+      description: Type of communication (e.g. email, SMS)
+      default: "email"
+      example: "email"
+      enum: ["email"]
+
+    commsAddress:
+      oneOf:
+        - type: string
+          description: Contact email address
+          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+          minLength: 1
+          maxLength: 320
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+        - type: array
+          title: an array of strings
+          description: List of contact email addresses
+          example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
+          minItems: 1
+          maxItems: 10
+          items:
+            type: string
+            description: Contact email address
+            example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+            minLength: 1
+            maxLength: 320
+            pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+
+    personalisation:
+      type: object
+      description: JSON-formatted variables required for the Notify template
+      example:
+        caseNumber: "ACC123456789"
+        expectedPaymentDate: "21.11.2025"
+        adminName: "Jessica Lrrr"
+
+    reference:
+      type: string
+      description: Unique identifier for further operations like status query, must be prefixed with the source system
+      example: "ffc-ahwr-reference"
+      minlength: 1
+      maxlength: 100
+
+    oneClickUnsubscribeUrl:
+      type: string
+      description: URL for one-click unsubscribe option
+      example: "https://unsubscribe.example.com"
+      minlength: 1
+
+    emailReplyToId:
+      type: string
+      description: Identifier for the reply-to email address
+      example: "8e222534-7f05-4972-86e3-17c5d9f894e2"
+      format: uuid
+
+    statusDetails:
+      type: object
+      description: Details of the message delivery status
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          description: The status of the message delivery
+          example: "delivered"
+          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure", "internal-failure"]
+        errorCode:
+          type: number
+          description: Error code returned from Notify. Only present if status is 'internal-failure'
+          example: 400
+        errors:
+          type: array
+          description: A list of error messages returned from Notify. Only present if status is 'internal-failure'
+          required:
+            - error
+            - message
+          items:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "BadRequestError"
+              message:
+                type: string
+                description: "Missing personalisation key: 'caseNumber'"
+
+    correlationId:
+      type: string
+      format: uuid
+      description: The unique correlation ID linking updates to the original request
+      example: 123e4567-e89b-12d3-a456-426655440000
+
+    specversion:
+      type: string
+      description: Version of the CloudEvents specification used by the event
+      example: "1.0"
+      minlength: 3
+      maxlength: 10
+
+    type:
+      type: string
+      description: Type of event in reverse DNS notation
+      example: uk.gov.fcp.sfd.notification.request
+      minlength: 3
+      maxlength: 250
+
+    source:
+      type: string
+      description: Service publishing the event
+      example: ffc-ahwr-claim
+      minlength: 1
+      maxlength: 100
+
+    id:
+      type: string
+      description: Unique identifier of the event
+      example: 123e4567-e89b-12d3-a456-426655440000
+      minlength: 1
+      uniqueItems: true
+      format: uuid
+
+    time:
+      type: string
+      format: date-time
+      description: Time the event occurred
+      example: "2023-10-17T14:48:00Z"
+
+    datacontenttype:
+      type: string
+      description: Format of the event data
+      default: "application/json"
+      example: "application/json"

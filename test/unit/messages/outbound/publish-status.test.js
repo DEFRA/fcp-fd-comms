@@ -71,7 +71,7 @@ describe('Data Layer Outbound Messaging', () => {
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
-              commsAddresses: 'mock-email@test.gov.uk',
+              commsAddress: 'mock-email@test.gov.uk',
               statusDetails: {
                 status: 'delivered'
               }
@@ -119,7 +119,7 @@ describe('Data Layer Outbound Messaging', () => {
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
-              commsAddresses: 'mock-email@test.gov.uk',
+              commsAddress: 'mock-email@test.gov.uk',
               statusDetails: {
                 status: 'internal-failure',
                 errorCode: 400,
@@ -163,7 +163,7 @@ describe('Data Layer Outbound Messaging', () => {
             specschema: '1.0',
             data: {
               ...commsMessage.data,
-              commsAddresses: 'mock-email@test.gov.uk',
+              commsAddress: 'mock-email@test.gov.uk',
               correlationId: commsMessage.id,
               statusDetails: {
                 status: 'sending'
