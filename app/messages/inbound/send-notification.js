@@ -36,6 +36,7 @@ const sendNotification = async (message) => {
 
     try {
       if (response) {
+        await publishStatus(message, emailAddress, notifyStatus.SENDING)
         await logCreatedNotification(message, emailAddress, response.data.id)
       } else {
         const status = notifyStatus.INTERNAL_FAILURE
