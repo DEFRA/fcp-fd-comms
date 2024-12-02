@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door Communications
-  version: 3.0.0
+  version: 3.1.0
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -96,7 +96,6 @@ components:
     commsData:
       type: object
       required:
-        - crn
         - sourceSystem
         - notifyTemplateId
         - personalisation
@@ -128,7 +127,6 @@ components:
     commsEventData:
       type: object
       required:
-        - crn
         - sourceSystem
         - notifyTemplateId
         - personalisation
