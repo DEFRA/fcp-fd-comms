@@ -1,6 +1,7 @@
 import notifyStatus from './notify-statuses.js'
 
 const commEvents = {
+  RECEIVED: 'uk.gov.fcp.sfd.notification.received',
   SENDING: 'uk.gov.fcp.sfd.notification.sending',
   DELIVERED: 'uk.gov.fcp.sfd.notification.delivered',
   INTERNAL_FAILURE: 'uk.gov.fcp.sfd.notification.failure.internal',

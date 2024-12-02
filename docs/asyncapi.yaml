@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door Communications
-  version: 3.1.0
+  version: 3.2.0
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -132,7 +132,6 @@ components:
         - personalisation
         - sbi
         - reference
-        - statusDetails
         - correlationId
         - emailReplyToId
       properties:

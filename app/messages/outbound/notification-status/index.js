@@ -1,8 +1,8 @@
 import { MessageSender } from 'ffc-messaging'
 
-import { statusToEventMap } from '../../../constants/comm-events.js'
+import commEvents, { statusToEventMap } from '../../../constants/comm-events.js'
 
-import { buildUpdateMessage } from './build-message.js'
+import { buildUpdateMessage, buildReceivedMessage } from './build-message.js'
 import { messageConfig } from '../../../config/index.js'
 
 const config = {
@@ -26,4 +26,12 @@ const publishStatus = async (message, recipient, status, error) => {
   await sender.send(statusMessage)
 }
 
-export { publishStatus }
+const publishReceived = async (message) => {
+  const sender = new MessageSender(config)
+
+  const receivedMessage = buildReceivedMessage(message, commEvents.RECEIVED)
+
+  await sender.send(receivedMessage)
+}
+
+export { publishStatus, publishReceived }
