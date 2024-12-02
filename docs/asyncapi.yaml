@@ -134,6 +134,7 @@ components:
         - reference
         - statusDetails
         - correlationId
+        - emailReplyToId
       properties:
         crn:
           $ref: '#/components/schemas/crn'
