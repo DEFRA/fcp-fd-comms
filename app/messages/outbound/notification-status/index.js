@@ -32,6 +32,6 @@ const publishReceived = async (message) => {
   const receivedMessage = buildReceivedMessage(message, commEvents.RECEIVED)
 
   await sender.send(receivedMessage)
-} 
+}
 
 export { publishStatus, publishReceived }

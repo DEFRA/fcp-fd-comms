@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, jest, test } from '@jest/globals'
 
 import crypto from 'crypto'
-import commsMessage from '../../../mocks/comms-message'
+import commsMessage from '../../../../mocks/comms-message'
 
 const mockSender = jest.fn()
 
@@ -13,7 +13,7 @@ jest.mock('ffc-messaging', () => {
   }
 })
 
-const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus, publishReceived } = await import('../../../../../app/messages/outbound/notification-status/index.js')
 
 describe('Data Layer Outbound Messaging', () => {
   const recipient = 'mock-recipient@example.com'
@@ -47,6 +47,40 @@ describe('Data Layer Outbound Messaging', () => {
       )
     }
   )
+
+  test('should send initial message on service bus', async () => {
+    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+
+    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+
+    cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
+
+    await publishReceived(commsMessage, 'uk.gov.fcp.sfd.notification.received')
+
+    expect(mockSender).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+          commsMessage: expect.objectContaining({
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+            source: 'fcp-fd-comms',
+            type: 'uk.gov.fcp.sfd.notification.received',
+            time: new Date('2024-11-18T15:00:00Z'),
+            datacontenttype: 'application/json',
+            specschema: '1.0',
+            data: {
+              ...commsMessage.data,
+              correlationId: commsMessage.id
+            }
+          })
+        }),
+        source: 'fcp-fd-comms',
+        type: 'uk.gov.fcp.sfd.notification.received'
+      })
+    )
+
+    cryptoSpy.mockRestore()
+  })
 
   test('should include status details in message', async () => {
     const cryptoSpy = jest.spyOn(crypto, 'randomUUID')

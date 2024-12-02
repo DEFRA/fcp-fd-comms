@@ -7,7 +7,7 @@ const handleMessage = async (message, receiver) => {
 
     await publishReceived(messageBody)
     await sendNotification(messageBody)
-    
+
     await receiver.completeMessage(message)
   } catch (error) {
     console.error('Error handling message: ', error)
