@@ -4,9 +4,9 @@ export default {
   specversion: '1.0',
   type: 'uk.gov.fcp.sfd.notification.request',
   datacontenttype: 'application/json',
-  time: '2023-10-17T14:48:00Z',
+  time: '2023-10-17T14:48:00.000Z',
   data: {
-    crn: 123456789,
+    crn: 1234567890,
     sbi: 123456789,
     sourceSystem: 'source',
     notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',

@@ -1,8 +1,10 @@
-import { jest } from '@jest/globals'
+import { jest, test } from '@jest/globals'
+import commsMessage from '../../../../mocks/comms-message.js'
 
 const mockReceiver = {
   completeMessage: jest.fn(),
-  abandonMessage: jest.fn()
+  abandonMessage: jest.fn(),
+  deadLetterMessage: jest.fn()
 }
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/index.js', () => ({
@@ -23,7 +25,7 @@ describe('Handle Message', () => {
   })
 
   test('should call publishReceived', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -31,7 +33,7 @@ describe('Handle Message', () => {
   })
 
   test('should call sendNotification', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -39,7 +41,7 @@ describe('Handle Message', () => {
   })
 
   test('should call completeMessage', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -47,7 +49,7 @@ describe('Handle Message', () => {
   })
 
   test('should throw an error when publishReceived fails', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
     const error = new Error('mock-error')
     publishReceived.mockRejectedValue(error)
 
@@ -58,7 +60,7 @@ describe('Handle Message', () => {
   })
 
   test('should throw an error when sendNotification fails', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
     const error = new Error('mock-error')
     sendNotification.mockRejectedValue(error)
 
@@ -69,12 +71,41 @@ describe('Handle Message', () => {
   })
 
   test('should throw an error when completeMessage fails', async () => {
-    const message = { body: 'mock-message' }
+    const message = { body: commsMessage }
     const error = new Error('mock-error')
     mockReceiver.completeMessage.mockRejectedValue(error)
 
     await handleCommsRequest(message, mockReceiver)
 
     expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
+  })
+
+  test('should dead letter message when validation fails', async () => {
+    const message = { body: {} }
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(mockReceiver.deadLetterMessage).toHaveBeenCalledWith(message)
+  })
+
+  test('should console error if message is invalid', async () => {
+    const message = {
+      body: {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          sbi: '1'
+        }
+      }
+    }
+
+    const consoleErrorSpy = jest.spyOn(console, 'error')
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Error validating message: ',
+      [{ type: 'ValidationError', message: '"data.sbi" must be greater than or equal to 105000000' }]
+    )
   })
 })
