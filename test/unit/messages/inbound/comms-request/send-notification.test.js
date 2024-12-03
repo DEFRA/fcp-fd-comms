@@ -3,29 +3,29 @@ import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
 
-jest.unstable_mockModule('../../../../app/clients/notify-client.js', () => ({
+jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
   default: {
     sendEmail: mockSendEmail
   }
 }))
 
-jest.unstable_mockModule('../../../../app/repos/notification-log.js', () => ({
+jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => ({
   logCreatedNotification: jest.fn(),
   logRejectedNotification: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/index.js', () => ({
+jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/index.js', () => ({
   publishStatus: jest.fn()
 }))
 
 const {
   logCreatedNotification,
   logRejectedNotification
-} = await import('../../../../app/repos/notification-log.js')
+} = await import('../../../../../app/repos/notification-log.js')
 
-const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/index.js')
 
-const { sendNotification } = await import('../../../../app/messages/inbound/send-notification.js')
+const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 
 console.log = jest.fn()
 

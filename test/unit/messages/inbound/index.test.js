@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals'
 
-const mockHandleMessage = jest.fn()
+const mockHandleCommsRequest = jest.fn()
 
-jest.unstable_mockModule('../../../../app/messages/inbound/handle-message.js', () => ({
-  handleMessage: mockHandleMessage
+jest.unstable_mockModule('../../../../app/messages/inbound/comms-request/index.js', () => ({
+  handleCommsRequest: mockHandleCommsRequest
 }))
 
 jest.mock('ffc-messaging', () => {
@@ -40,7 +40,7 @@ describe('Start Messaging', () => {
 
     await messageCallback(mockMessage)
 
-    expect(mockHandleMessage).toHaveBeenCalledWith(
+    expect(mockHandleCommsRequest).toHaveBeenCalledWith(
       mockMessage,
       expect.objectContaining({ subscribe: expect.any(Function) })
     )

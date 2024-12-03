@@ -1,10 +1,10 @@
 import crypto from 'crypto'
 
-import notifyClient from '../../clients/notify-client.js'
-import notifyStatus from '../../constants/notify-statuses.js'
+import notifyClient from '../../../clients/notify-client.js'
+import notifyStatus from '../../../constants/notify-statuses.js'
 
-import { logCreatedNotification, logRejectedNotification } from '../../repos/notification-log.js'
-import { publishStatus } from '../outbound/notification-status/index.js'
+import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
+import { publishStatus } from '../../outbound/notification-status/index.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
   try {

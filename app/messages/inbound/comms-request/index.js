@@ -1,7 +1,7 @@
-import { publishReceived } from '../outbound/notification-status/index.js'
+import { publishReceived } from '../../outbound/notification-status/index.js'
 import { sendNotification } from './send-notification.js'
 
-const handleMessage = async (message, receiver) => {
+const handleCommsRequest = async (message, receiver) => {
   try {
     const messageBody = message.body
 
@@ -15,4 +15,4 @@ const handleMessage = async (message, receiver) => {
   }
 }
 
-export { handleMessage }
+export { handleCommsRequest }
