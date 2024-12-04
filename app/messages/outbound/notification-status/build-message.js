@@ -15,7 +15,7 @@ const buildReceivedMessage = (message, type) => ({
         correlationId: message.id
       },
       datacontenttype: 'application/json',
-      specschema: '1.0'
+      specversion: '1.0'
     }
   },
   source: SOURCE,
@@ -37,7 +37,7 @@ const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
         statusDetails
       },
       datacontenttype: 'application/json',
-      specschema: '1.0'
+      specversion: '1.0'
     }
   },
   source: SOURCE,

@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door Communications
-  version: 3.2.0
+  version: 3.3.0
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -73,25 +73,35 @@ components:
       type: object
       required:
         - id
-        - source
-        - specversion
-        - type
-        - data
+        - commsMessage
       properties:
         id:
           $ref: '#/components/schemas/id'
-        source:
-          $ref: '#/components/schemas/source'
-        specversion:
-          $ref: '#/components/schemas/specversion'
-        type:
-          $ref: '#/components/schemas/type'
-        datacontenttype:
-          $ref: '#/components/schemas/datacontenttype'
-        time:
-          $ref: '#/components/schemas/time'
-        data:
-          $ref: '#/components/schemas/commsEventData'
+        commsMessage:
+          type: object
+          required:
+            - id
+            - source
+            - specversion
+            - type
+            - datacontenttype
+            - time
+            - data
+          properties:
+            id:
+              $ref: '#/components/schemas/id'
+            source:
+              $ref: '#/components/schemas/source'
+            specversion:
+              $ref: '#/components/schemas/specversion'
+            type:
+              $ref: '#/components/schemas/type'
+            datacontenttype:
+              $ref: '#/components/schemas/datacontenttype'
+            time:
+              $ref: '#/components/schemas/time'
+            data:
+              $ref: '#/components/schemas/commsEventData'
 
     commsData:
       type: object

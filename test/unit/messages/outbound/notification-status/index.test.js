@@ -51,7 +51,7 @@ describe('Data Layer Outbound Messaging', () => {
   test('should send initial message on service bus', async () => {
     const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
 
-    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
@@ -65,9 +65,9 @@ describe('Data Layer Outbound Messaging', () => {
             id: 'a41192cf-5478-42ce-846f-64f1cf977535',
             source: 'fcp-fd-comms',
             type: 'uk.gov.fcp.sfd.notification.received',
-            time: new Date('2024-11-18T15:00:00Z'),
+            time: new Date('2024-11-18T15:00:00.000Z'),
             datacontenttype: 'application/json',
-            specschema: '1.0',
+            specversion: '1.0',
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id
@@ -85,7 +85,7 @@ describe('Data Layer Outbound Messaging', () => {
   test('should include status details in message', async () => {
     const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
 
-    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
@@ -99,9 +99,9 @@ describe('Data Layer Outbound Messaging', () => {
             id: 'a41192cf-5478-42ce-846f-64f1cf977535',
             source: 'fcp-fd-comms',
             type: 'uk.gov.fcp.sfd.notification.delivered',
-            time: new Date('2024-11-18T15:00:00Z'),
+            time: new Date('2024-11-18T15:00:00.000Z'),
             datacontenttype: 'application/json',
-            specschema: '1.0',
+            specversion: '1.0',
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
@@ -123,7 +123,7 @@ describe('Data Layer Outbound Messaging', () => {
   test('should include error details if passed', async () => {
     const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
 
-    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
@@ -147,9 +147,9 @@ describe('Data Layer Outbound Messaging', () => {
             id: 'a41192cf-5478-42ce-846f-64f1cf977535',
             source: 'fcp-fd-comms',
             type: 'uk.gov.fcp.sfd.notification.failure.internal',
-            time: new Date('2024-11-18T15:00:00Z'),
+            time: new Date('2024-11-18T15:00:00.000Z'),
             datacontenttype: 'application/json',
-            specschema: '1.0',
+            specversion: '1.0',
             data: {
               ...commsMessage.data,
               correlationId: commsMessage.id,
@@ -178,7 +178,7 @@ describe('Data Layer Outbound Messaging', () => {
   test('should send message using original comms message', async () => {
     const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
 
-    jest.setSystemTime(new Date('2024-11-18T15:00:00Z'))
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
     cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
 
@@ -192,9 +192,9 @@ describe('Data Layer Outbound Messaging', () => {
             id: 'a41192cf-5478-42ce-846f-64f1cf977535',
             source: 'fcp-fd-comms',
             type: 'uk.gov.fcp.sfd.notification.sending',
-            time: new Date('2024-11-18T15:00:00Z'),
+            time: new Date('2024-11-18T15:00:00.000Z'),
             datacontenttype: 'application/json',
-            specschema: '1.0',
+            specversion: '1.0',
             data: {
               ...commsMessage.data,
               commsAddresses: 'mock-email@test.gov.uk',

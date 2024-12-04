@@ -1,5 +1,7 @@
 import Joi from 'joi'
 
+import { sbi, crn } from '../common'
+
 const schema = Joi.object({
   id: Joi.string().required(),
   source: Joi.string().required(),
@@ -8,8 +10,8 @@ const schema = Joi.object({
   datacontenttype: Joi.string().valid('application/json').required(),
   time: Joi.string().isoDate().required(),
   data: Joi.object({
-    crn: Joi.number().min(1050000000).max(9999999999).optional(),
-    sbi: Joi.number().min(105000000).max(999999999).required(),
+    crn: crn.optional(),
+    sbi: sbi.required(),
     sourceSystem: Joi.string().required(),
     notifyTemplateId: Joi.string().uuid().required(),
     commsType: Joi.string().valid('email').required(),
@@ -24,22 +26,4 @@ const schema = Joi.object({
   }).required()
 })
 
-const validate = async (message) => {
-  try {
-    const value = await schema.validateAsync(message, { abortEarly: false })
-
-    return [value, null]
-  } catch (error) {
-    const errors = error.details.map((d) => ({
-      type: 'ValidationError',
-      message: d.message
-    }))
-
-    return [null, errors]
-  }
-}
-
-export {
-  validate,
-  schema
-}
+export default schema
