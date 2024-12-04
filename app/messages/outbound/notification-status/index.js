@@ -24,7 +24,7 @@ const publishStatus = async (message, recipient, status, error) => {
 
   const statusMessage = buildUpdateMessage(message, recipient, type, statusDetails)
 
-  await sender.send(statusMessage)
+  await sender.sendMessage(statusMessage)
 }
 
 const publishReceived = async (message) => {
@@ -32,7 +32,7 @@ const publishReceived = async (message) => {
 
   const receivedMessage = buildReceivedMessage(message, commEvents.RECEIVED)
 
-  await sender.send(receivedMessage)
+  await sender.sendMessage(receivedMessage)
 }
 
 const publishInvalidRequest = async (message, errors) => {
@@ -45,7 +45,7 @@ const publishInvalidRequest = async (message, errors) => {
 
   const invalidMessage = buildInvalidMessage(message, commEvents.VALIDATION_FAILURE, statusDetails)
 
-  await sender.send(invalidMessage)
+  await sender.sendMessage(invalidMessage)
 }
 
 export { publishStatus, publishReceived, publishInvalidRequest }

@@ -2,19 +2,18 @@ import { afterAll, describe, expect, jest, test } from '@jest/globals'
 
 import crypto from 'crypto'
 import commsMessage from '../../../../mocks/comms-message'
-import { publishInvalidRequest } from '../../../../../app/messages/outbound/notification-status/index.js'
 
 const mockSender = jest.fn()
 
 jest.mock('ffc-messaging', () => {
   return {
     MessageSender: jest.fn(() => ({
-      send: mockSender
+      sendMessage: mockSender
     }))
   }
 })
 
-const { publishStatus, publishReceived } = await import('../../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus, publishReceived, publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/index.js')
 
 describe('Data Layer Outbound Messaging', () => {
   const recipient = 'mock-recipient@example.com'
@@ -243,7 +242,6 @@ describe('Data Layer Outbound Messaging', () => {
             specversion: '1.0',
             data: {
               ...commsMessage.data,
-              commsAddresses: 'mock-email@test.gov.uk',
               correlationId: commsMessage.id,
               statusDetails: {
                 status: 'validation-failure',
