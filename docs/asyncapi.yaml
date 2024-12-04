@@ -264,14 +264,14 @@ components:
           type: string
           description: The status of the message delivery
           example: "delivered"
-          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure", "internal-failure"]
+          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure", "internal-failure", "validation-failure"]
         errorCode:
           type: number
           description: Error code returned from Notify. Only present if status is 'internal-failure'
           example: 400
         errors:
           type: array
-          description: A list of error messages returned from Notify. Only present if status is 'internal-failure'
+          description: A list of error messages returned either from Notify or the fd-comms. Only present if status is 'internal-failure' or 'validation-failure'
           required:
             - error
             - message
