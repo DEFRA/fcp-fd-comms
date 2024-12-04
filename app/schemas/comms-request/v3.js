@@ -1,6 +1,6 @@
 import Joi from 'joi'
 
-import { sbi, crn } from '../common'
+import { sbi, crn } from '../common/index.js'
 
 const v3 = Joi.object({
   id: Joi.string().required(),

@@ -1,5 +1,5 @@
-import sbi from './sbi'
-import crn from './crn'
+import sbi from './sbi.js'
+import crn from './crn.js'
 
 export {
   sbi,
