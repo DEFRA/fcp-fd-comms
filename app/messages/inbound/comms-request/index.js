@@ -7,12 +7,14 @@ import { sendNotification } from './send-notification.js'
 
 const handleCommsRequest = async (message, receiver) => {
   try {
-    const [validated, error] = await validate(commsSchema, message.body)
+    const messageBody = message.body
 
-    if (error) {
-      console.error('Error validating message: ', error)
+    const [validated, errors] = await validate(commsSchema, messageBody)
 
-      await publishInvalidRequest(message.body, error)
+    if (errors) {
+      console.error('Invalid comms request received. Request ID:', messageBody.id)
+
+      await publishInvalidRequest(messageBody, errors)
 
       await receiver.deadLetterMessage(message)
 

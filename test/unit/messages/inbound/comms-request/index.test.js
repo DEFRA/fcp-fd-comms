@@ -1,4 +1,4 @@
-import { jest, test } from '@jest/globals'
+import { expect, jest, test } from '@jest/globals'
 import commsMessage from '../../../../mocks/comms-message.js'
 
 const mockReceiver = {
@@ -89,10 +89,22 @@ describe('Handle Message', () => {
 
     expect(publishInvalidRequest).toHaveBeenCalledWith(message.body, expect.arrayContaining([
       expect.objectContaining({
-        type: 'ValidationError',
+        error: 'ValidationError',
         message: expect.any(String)
       })
     ]))
+
+    expect(publishReceived).not.toHaveBeenCalled()
+    expect(sendNotification).not.toHaveBeenCalled()
+  })
+
+  test('should not continue processing if message is invalid', async () => {
+    const message = { body: {} }
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(publishReceived).not.toHaveBeenCalled()
+    expect(sendNotification).not.toHaveBeenCalled()
   })
 
   test('should not call publishInvalidRequest when validation success', async () => {
@@ -127,8 +139,8 @@ describe('Handle Message', () => {
     await handleCommsRequest(message, mockReceiver)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Error validating message: ',
-      [{ type: 'ValidationError', message: '"data.sbi" must be greater than or equal to 105000000' }]
+      'Invalid comms request received. Request ID:',
+      '79389915-7275-457a-b8ca-8bf206b2e67b'
     )
   })
 })

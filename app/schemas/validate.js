@@ -5,7 +5,7 @@ const validate = async (schema, message) => {
     return [value, null]
   } catch (error) {
     const errors = error.details.map((d) => ({
-      type: 'ValidationError',
+      error: 'ValidationError',
       message: d.message
     }))
 
