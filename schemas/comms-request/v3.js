@@ -2,7 +2,7 @@ import Joi from 'joi'
 
 import { sbi, crn } from '../common'
 
-const schema = Joi.object({
+const v3 = Joi.object({
   id: Joi.string().required(),
   source: Joi.string().required(),
   specversion: Joi.string().required(),
@@ -26,4 +26,4 @@ const schema = Joi.object({
   }).required()
 })
 
-export default schema
+export default v3
