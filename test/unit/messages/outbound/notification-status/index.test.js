@@ -2,6 +2,7 @@ import { afterAll, describe, expect, jest, test } from '@jest/globals'
 
 import crypto from 'crypto'
 import commsMessage from '../../../../mocks/comms-message'
+import { publishInvalidRequest } from '../../../../../app/messages/outbound/notification-status/index.js'
 
 const mockSender = jest.fn()
 
@@ -207,6 +208,52 @@ describe('Data Layer Outbound Messaging', () => {
         }),
         source: 'fcp-fd-comms',
         type: 'uk.gov.fcp.sfd.notification.sending'
+      })
+    )
+
+    cryptoSpy.mockRestore()
+  })
+
+  test('should send invalid message with status details', async () => {
+    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+
+    const mockErrors = [
+      {
+        type: 'ValidationError',
+        message: 'mock-message'
+      }
+    ]
+
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
+
+    cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
+
+    await publishInvalidRequest(commsMessage, mockErrors)
+
+    expect(mockSender).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+          commsMessage: {
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+            source: 'fcp-fd-comms',
+            type: 'uk.gov.fcp.sfd.notification.failure.validation',
+            time: new Date('2024-11-18T15:00:00.000Z'),
+            datacontenttype: 'application/json',
+            specversion: '1.0',
+            data: {
+              ...commsMessage.data,
+              commsAddresses: 'mock-email@test.gov.uk',
+              correlationId: commsMessage.id,
+              statusDetails: {
+                status: 'validation-failure',
+                errors: mockErrors
+              }
+            }
+          }
+        }),
+        source: 'fcp-fd-comms',
+        type: 'uk.gov.fcp.sfd.notification.failure.validation'
       })
     )
 

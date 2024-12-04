@@ -8,7 +8,8 @@ const mockReceiver = {
 }
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/index.js', () => ({
-  publishReceived: jest.fn()
+  publishReceived: jest.fn(),
+  publishInvalidRequest: jest.fn()
 }))
 
 jest.unstable_mockModule('../../../../../app/messages/inbound/comms-request/send-notification.js', () => ({
@@ -16,6 +17,7 @@ jest.unstable_mockModule('../../../../../app/messages/inbound/comms-request/send
 }))
 
 const { publishReceived } = await import('../../../../../app/messages/outbound/notification-status/index.js')
+const { publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/index.js')
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/index.js')
 
@@ -78,6 +80,27 @@ describe('Handle Message', () => {
     await handleCommsRequest(message, mockReceiver)
 
     expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
+  })
+
+  test('should call publishInvalidRequest when validation fails', async () => {
+    const message = { body: {} }
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(publishInvalidRequest).toHaveBeenCalledWith(message.body, expect.arrayContaining([
+      expect.objectContaining({
+        type: 'ValidationError',
+        message: expect.any(String)
+      })
+    ]))
+  })
+
+  test('should not call publishInvalidRequest when validation success', async () => {
+    const message = { body: commsMessage }
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(publishInvalidRequest).not.toHaveBeenCalled()
   })
 
   test('should dead letter message when validation fails', async () => {
