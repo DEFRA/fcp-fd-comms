@@ -1,17 +1,4 @@
-import { sendNotification } from './send-notification.js'
-import { sendNotificationV2 } from './send-notification-v2.js'
-
-const getVersionHandler = (type) => {
-  switch (type) {
-    case 'uk.gov.fcp.sfd.notification.request.v2':
-    case 'uk.gov.fcp.sfd.notification.request':
-      return sendNotificationV2
-    case 'uk.gov.fcp.sfd.notification.request.v3':
-      return sendNotification
-    default:
-      throw new Error(`Unsupported message type: ${type}`)
-  }
-}
+import { getVersionHandler } from './get-version-handler.js'
 
 const handleMessage = async (message, receiver) => {
   try {
