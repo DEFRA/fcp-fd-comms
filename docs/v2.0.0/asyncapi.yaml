@@ -307,7 +307,7 @@ components:
     type:
       type: string
       description: Type of event in reverse DNS notation
-      example: uk.gov.fcp.sfd.notification.request
+      example: uk.gov.fcp.sfd.notification.request.v2
       minlength: 3
       maxlength: 250
 

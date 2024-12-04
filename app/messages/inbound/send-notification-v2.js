@@ -3,10 +3,10 @@ import notifyStatus from '../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification } from '../../repos/notification-log.js'
 import { publishStatus } from '../outbound/notification-status/index.js'
 
-const sendNotification = async (message) => {
-  const emailAddresses = Array.isArray(message.data.commsAddress)
-    ? message.data.commsAddress
-    : [message.data.commsAddress]
+const sendNotificationV2 = async (message) => {
+  const emailAddresses = Array.isArray(message.data.commsAddresses)
+    ? message.data.commsAddresses
+    : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)
@@ -26,4 +26,4 @@ const sendNotification = async (message) => {
   }
 }
 
-export { sendNotification }
+export { sendNotificationV2 }
