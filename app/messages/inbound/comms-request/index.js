@@ -1,7 +1,7 @@
-import { validate } from '../../../../schemas/validate.js'
+import { validate } from '../../../schemas/validate.js'
 import {
   v3 as commsSchema
-} from '../../../../schemas/comms-request/index.js'
+} from '../../../schemas/comms-request/index.js'
 import { publishReceived } from '../../outbound/notification-status/index.js'
 import { sendNotification } from './send-notification.js'
 
