@@ -1,8 +1,8 @@
 import { validate } from '../../../schemas/validate.js'
 import {
   v3 as commsSchema
-} from '../../../schemas/comms-request/index.js'
-import { publishInvalidRequest, publishReceived } from '../../outbound/notification-status/index.js'
+} from '../../../schemas/comms-request/versions.js'
+import { publishInvalidRequest, publishReceived } from '../../outbound/notification-status/publish.js'
 import { sendNotification } from './send-notification.js'
 
 const handleCommsRequest = async (message, receiver) => {

@@ -7,7 +7,7 @@ const mockReceiver = {
   deadLetterMessage: jest.fn()
 }
 
-jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/index.js', () => ({
+jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
   publishReceived: jest.fn(),
   publishInvalidRequest: jest.fn()
 }))
@@ -16,10 +16,10 @@ jest.unstable_mockModule('../../../../../app/messages/inbound/comms-request/send
   sendNotification: jest.fn()
 }))
 
-const { publishReceived } = await import('../../../../../app/messages/outbound/notification-status/index.js')
-const { publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/index.js')
+const { publishReceived } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
+const { publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
-const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/index.js')
+const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/handler.js')
 
 describe('Handle Message', () => {
   beforeEach(() => {

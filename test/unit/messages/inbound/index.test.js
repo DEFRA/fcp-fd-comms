@@ -2,7 +2,7 @@ import { jest } from '@jest/globals'
 
 const mockHandleCommsRequest = jest.fn()
 
-jest.unstable_mockModule('../../../../app/messages/inbound/comms-request/index.js', () => ({
+jest.unstable_mockModule('../../../../app/messages/inbound/comms-request/handler.js', () => ({
   handleCommsRequest: mockHandleCommsRequest
 }))
 

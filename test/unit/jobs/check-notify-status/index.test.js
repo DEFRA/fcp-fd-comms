@@ -11,13 +11,13 @@ jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-st
   getNotifyStatus: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/index.js', () => ({
+jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/publish.js', () => ({
   publishStatus: jest.fn()
 }))
 
 const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
-const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/publish.js')
 
 const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
 

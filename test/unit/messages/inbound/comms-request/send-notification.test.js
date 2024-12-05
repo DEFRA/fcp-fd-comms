@@ -14,7 +14,7 @@ jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => (
   logRejectedNotification: jest.fn()
 }))
 
-jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/index.js', () => ({
+jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
   publishStatus: jest.fn()
 }))
 
@@ -23,7 +23,7 @@ const {
   logRejectedNotification
 } = await import('../../../../../app/repos/notification-log.js')
 
-const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 

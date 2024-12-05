@@ -13,7 +13,7 @@ jest.mock('ffc-messaging', () => {
   }
 })
 
-const { publishStatus, publishReceived, publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/index.js')
+const { publishStatus, publishReceived, publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 
 describe('Data Layer Outbound Messaging', () => {
   const recipient = 'mock-recipient@example.com'
