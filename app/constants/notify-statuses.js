@@ -5,7 +5,8 @@ export const notifyStatus = {
   PERMANENT_FAILURE: 'permanent-failure',
   TEMPORARY_FAILURE: 'temporary-failure',
   TECHNICAL_FAILURE: 'technical-failure',
-  INTERNAL_FAILURE: 'internal-failure'
+  INTERNAL_FAILURE: 'internal-failure',
+  VALIDATION_FAILURE: 'validation-failure'
 }
 
 export const finishedStatus = [

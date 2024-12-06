@@ -1,6 +1,6 @@
 import { getNotifyStatus } from './get-notify-status.js'
 import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
-import { publishStatus } from '../../messages/outbound/notification-status/index.js'
+import { publishStatus } from '../../messages/outbound/notification-status/publish.js'
 import { finishedStatus } from '../../constants/notify-statuses.js'
 
 const checkNotifyStatusHandler = async () => {

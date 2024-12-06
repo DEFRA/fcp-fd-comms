@@ -35,6 +35,7 @@ describe('Service Bus Configuration', () => {
         host: 'mock-prd-message-host',
         username: 'mock-prd-user',
         password: 'mock-prd-password',
+        connectionString: null,
         useCredentialChain: true,
         managedIdentityClientId: 'mock-prd-client-id',
         appInsights: expect.any(Object)
@@ -70,6 +71,7 @@ describe('Service Bus Configuration', () => {
         host: 'mock-dev-message-host',
         username: 'mock-dev-user',
         password: 'mock-dev-password',
+        connectionString: null,
         useCredentialChain: false,
         managedIdentityClientId: 'mock-dev-client-id',
         appInsights: undefined

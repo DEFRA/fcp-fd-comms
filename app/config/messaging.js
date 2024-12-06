@@ -23,6 +23,13 @@ const messaging = convict({
       nullable: true,
       env: 'MESSAGE_QUEUE_PASSWORD'
     },
+    connectionString: {
+      doc: 'Azure Service Bus connection string (intended for use with service bus emulator).',
+      format: String,
+      default: null,
+      nullable: true,
+      env: 'MESSAGE_QUEUE_CONNECTION_STRING'
+    },
     useCredentialChain: {
       doc: 'Use of credential chain for authentication.',
       format: Boolean,

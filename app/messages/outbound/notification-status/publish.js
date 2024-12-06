@@ -2,8 +2,9 @@ import { MessageSender } from 'ffc-messaging'
 
 import commEvents, { statusToEventMap } from '../../../constants/comm-events.js'
 
-import { buildUpdateMessage, buildReceivedMessage } from './build-message.js'
+import { buildUpdateMessage, buildReceivedMessage, buildInvalidMessage } from './build-message.js'
 import { messageConfig } from '../../../config/index.js'
+import notifyStatus from '../../../constants/notify-statuses.js'
 
 const config = {
   ...messageConfig.get('messageQueue'),
@@ -23,7 +24,7 @@ const publishStatus = async (message, recipient, status, error) => {
 
   const statusMessage = buildUpdateMessage(message, recipient, type, statusDetails)
 
-  await sender.send(statusMessage)
+  await sender.sendMessage(statusMessage)
 }
 
 const publishReceived = async (message) => {
@@ -31,7 +32,20 @@ const publishReceived = async (message) => {
 
   const receivedMessage = buildReceivedMessage(message, commEvents.RECEIVED)
 
-  await sender.send(receivedMessage)
+  await sender.sendMessage(receivedMessage)
 }
 
-export { publishStatus, publishReceived }
+const publishInvalidRequest = async (message, errors) => {
+  const sender = new MessageSender(config)
+
+  const statusDetails = {
+    status: notifyStatus.VALIDATION_FAILURE,
+    errors
+  }
+
+  const invalidMessage = buildInvalidMessage(message, commEvents.VALIDATION_FAILURE, statusDetails)
+
+  await sender.sendMessage(invalidMessage)
+}
+
+export { publishStatus, publishReceived, publishInvalidRequest }

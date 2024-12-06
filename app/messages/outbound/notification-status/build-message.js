@@ -15,7 +15,7 @@ const buildReceivedMessage = (message, type) => ({
         correlationId: message.id
       },
       datacontenttype: 'application/json',
-      specschema: '1.0'
+      specversion: '1.0'
     }
   },
   source: SOURCE,
@@ -37,11 +37,36 @@ const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
         statusDetails
       },
       datacontenttype: 'application/json',
-      specschema: '1.0'
+      specversion: '1.0'
     }
   },
   source: SOURCE,
   type
 })
 
-export { buildUpdateMessage, buildReceivedMessage }
+const buildInvalidMessage = (message, type, statusDetails) => ({
+  body: {
+    id: crypto.randomUUID(),
+    commsMessage: {
+      id: crypto.randomUUID(),
+      source: SOURCE,
+      type,
+      time: new Date(),
+      data: {
+        ...message.data,
+        correlationId: message.id,
+        statusDetails
+      },
+      datacontenttype: 'application/json',
+      specversion: '1.0'
+    }
+  },
+  source: SOURCE,
+  type
+})
+
+export {
+  buildUpdateMessage,
+  buildReceivedMessage,
+  buildInvalidMessage
+}
