@@ -12,7 +12,7 @@ const v3 = Joi.object({
   data: Joi.object({
     crn: crn.optional(),
     sbi: sbi.required(),
-    sourceSystem: Joi.string().required(),
+    sourceSystem: Joi.string().regex(/^[a-z0-9-_]+$/).required(),
     notifyTemplateId: Joi.string().uuid().required(),
     commsType: Joi.string().valid('email').required(),
     commsAddresses: Joi.alternatives(
@@ -24,6 +24,9 @@ const v3 = Joi.object({
     oneClickUnsubscribeUrl: Joi.string().uri().optional(),
     emailReplyToId: Joi.string().uuid().required()
   }).required()
+}).required().messages({
+  'object.base': '{{#label}} must be of type object',
+  'object.required': '{{#label}} is required',
 })
 
 export default v3
