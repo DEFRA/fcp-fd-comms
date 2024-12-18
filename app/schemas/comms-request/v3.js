@@ -24,9 +24,6 @@ const v3 = Joi.object({
     oneClickUnsubscribeUrl: Joi.string().uri().optional(),
     emailReplyToId: Joi.string().uuid().required()
   }).required()
-}).required().messages({
-  'object.base': '{{#label}} must be of type object',
-  'object.required': '{{#label}} is required',
-})
+}).label('body').required()
 
 export default v3
