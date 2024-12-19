@@ -4,10 +4,19 @@ import {
 } from '../../../schemas/comms-request/index.js'
 import { publishInvalidRequest, publishReceived } from '../../outbound/notification-status/publish.js'
 import { sendNotification } from './send-notification.js'
+import parseObject from '../../../utils/parse-object.js'
 
 const handleCommsRequest = async (message, receiver) => {
   try {
-    const commsRequest = message.body
+    const commsRequest = parseObject(message.body)
+
+    if (!commsRequest) {
+      console.error('Invalid JSON message body received.')
+
+      await receiver.deadLetterMessage(message)
+
+      return
+    }
 
     const [validated, errors] = await validate(commsSchema, commsRequest)
 
