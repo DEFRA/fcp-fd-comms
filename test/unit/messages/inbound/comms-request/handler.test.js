@@ -115,6 +115,24 @@ describe('Handle Message', () => {
     expect(publishInvalidRequest).not.toHaveBeenCalled()
   })
 
+  test('should dead letter message when JSON parse fails', async () => {
+    const message = { body: 'invalid' }
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(mockReceiver.deadLetterMessage).toHaveBeenCalledWith(message)
+  })
+
+  test('should console error if JSON parse fails', async () => {
+    const message = { body: 'invalid' }
+
+    const consoleErrorSpy = jest.spyOn(console, 'error')
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid JSON message body received.')
+  })
+
   test('should dead letter message when validation fails', async () => {
     const message = { body: {} }
 
