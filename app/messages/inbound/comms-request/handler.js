@@ -6,15 +6,19 @@ import { publishInvalidRequest, publishReceived } from '../../outbound/notificat
 import { sendNotification } from './send-notification.js'
 
 const handleCommsRequest = async (message, receiver) => {
-  try {
-    const commsRequest = message.body
+  const commsRequest = message.body
 
+  try {
     const [validated, errors] = await validate(commsSchema, commsRequest)
 
     if (errors) {
       console.error('Invalid comms request received. Request ID:', commsRequest.id)
 
-      await publishInvalidRequest(commsRequest, errors)
+      if (commsRequest.id) {
+        await publishInvalidRequest(commsRequest, errors)
+      } else {
+        console.error('No ID provided in message. Cannot publish invalid request to data layer.')
+      }
 
       await receiver.deadLetterMessage(message)
 
