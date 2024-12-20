@@ -83,7 +83,15 @@ describe('Handle Message', () => {
   })
 
   test('should call publishInvalidRequest when validation fails', async () => {
-    const message = { body: {} }
+    const message = {
+      body: {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          sbi: '1'
+        }
+      }
+    }
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -115,7 +123,7 @@ describe('Handle Message', () => {
     expect(publishInvalidRequest).not.toHaveBeenCalled()
   })
 
-  test('should dead letter message when JSON parse fails', async () => {
+  test('should dead letter message if no request id', async () => {
     const message = { body: 'invalid' }
 
     await handleCommsRequest(message, mockReceiver)
@@ -123,14 +131,15 @@ describe('Handle Message', () => {
     expect(mockReceiver.deadLetterMessage).toHaveBeenCalledWith(message)
   })
 
-  test('should console error if JSON parse fails', async () => {
+  test('should console error if no request id', async () => {
     const message = { body: 'invalid' }
 
     const consoleErrorSpy = jest.spyOn(console, 'error')
 
     await handleCommsRequest(message, mockReceiver)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid JSON message body received.')
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid comms request received. Request ID:', undefined)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('No ID provided in message. Cannot publish invalid request.')
   })
 
   test('should dead letter message when validation fails', async () => {

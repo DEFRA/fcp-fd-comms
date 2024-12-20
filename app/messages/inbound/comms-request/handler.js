@@ -4,26 +4,21 @@ import {
 } from '../../../schemas/comms-request/index.js'
 import { publishInvalidRequest, publishReceived } from '../../outbound/notification-status/publish.js'
 import { sendNotification } from './send-notification.js'
-import parseObject from '../../../utils/parse-object.js'
 
 const handleCommsRequest = async (message, receiver) => {
+  const commsRequest = message.body
+
   try {
-    const commsRequest = parseObject(message.body)
-
-    if (!commsRequest) {
-      console.error('Invalid JSON message body received.')
-
-      await receiver.deadLetterMessage(message)
-
-      return
-    }
-
     const [validated, errors] = await validate(commsSchema, commsRequest)
 
     if (errors) {
       console.error('Invalid comms request received. Request ID:', commsRequest.id)
 
-      await publishInvalidRequest(commsRequest, errors)
+      if (commsRequest.id) {
+        await publishInvalidRequest(commsRequest, errors)
+      } else {
+        console.error('No ID provided in message. Cannot publish invalid request to data layer.')
+      }
 
       await receiver.deadLetterMessage(message)
 
