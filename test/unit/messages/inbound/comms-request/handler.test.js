@@ -139,7 +139,7 @@ describe('Handle Message', () => {
     await handleCommsRequest(message, mockReceiver)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid comms request received. Request ID:', undefined)
-    expect(consoleErrorSpy).toHaveBeenCalledWith('No ID provided in message. Cannot publish invalid request.')
+    expect(consoleErrorSpy).toHaveBeenCalledWith('No ID provided in message. Cannot publish invalid request to data layer.')
   })
 
   test('should dead letter message when validation fails', async () => {
