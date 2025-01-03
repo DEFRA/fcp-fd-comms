@@ -125,6 +125,8 @@ components:
           $ref: "#/components/schemas/commsType"
         commsAddresses:
           $ref: "#/components/schemas/commsAddresses"
+        attachments:
+          $ref: "#/components/schemas/attachments"
         personalisation:
           $ref: "#/components/schemas/personalisation"
         reference:
@@ -157,6 +159,8 @@ components:
           $ref: '#/components/schemas/commsType'
         commsAddresses:
           $ref: '#/components/schemas/commsAddresses'
+        attachments:
+          $ref: '#/components/schemas/attachments'
         personalisation:
           $ref: '#/components/schemas/personalisation'
         reference:
