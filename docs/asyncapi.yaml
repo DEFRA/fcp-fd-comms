@@ -227,6 +227,23 @@ components:
             maxLength: 320
             pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
+    attachments:
+      oneOf:
+        - type: object
+          description: JSON-formatted variables containing the name and identifier (path) for a single file attachment that will converted into a base64 encoded string
+          example: 
+            name: "agreement.pdf"
+            id: "a8c4d7f3-2d5e-4899-8c42-8d6eaa5b4f51"
+        - type: array
+          title: an array of objects
+          description: List of JSON-formatted variables containing the names and identifiers (paths) for multiple file attachments that will converted into base64 encoded strings
+          example: [
+            { "name": "agreement.pdf", "id": "a8c4d7f3-2d5e-4899-8c42-8d6eaa5b4f51" },
+            { "name": "invoice.pdf", "id": "a8c4d7f3-2d5e-4899-8c42-8d6eaa5b4f52" }
+          ]
+          minLength: 1
+          maxLength: 10
+
     personalisation:
       type: object
       description: JSON-formatted variables required for the Notify template
