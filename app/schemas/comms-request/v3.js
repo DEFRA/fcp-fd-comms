@@ -23,7 +23,11 @@ const v3 = Joi.object({
       then: Joi.array().items(Joi.object({
         name: Joi.string().required(),
         id: Joi.string().required()
-      }))
+      })).required(),
+      otherwise: Joi.object({
+        name: Joi.string().required(),
+        id: Joi.string().required()
+      }).required()
     }).required(),
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),
