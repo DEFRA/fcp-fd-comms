@@ -1,13 +1,8 @@
-import { DefaultAzureCredential } from '@azure/identity'
 import { BlobServiceClient } from '@azure/storage-blob'
 
-const account = 'devstoreaccount1'
-const defaultAzureCredential = new DefaultAzureCredential()
+const connectionString = 'UseDevelopmentStorage=true'
 
-const blobServiceClient = new BlobServiceClient(
-  `https://${account}.blob.core.windows.net`,
-  defaultAzureCredential
-)
+const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString)
 
 const containerName = 'fcp-fd-comms-temp'
 
@@ -22,4 +17,4 @@ const retrieve = async () => {
   }
 }
 
-export default retrieve
+export { retrieve }
