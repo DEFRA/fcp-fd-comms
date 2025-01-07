@@ -191,7 +191,7 @@ components:
     sourceSystem:
       type: string
       description: Name of the source system that originated the message
-      example: "AHWP"
+      example: "ahwp"
       minlength: 3
       maxlength: 100
       pattern: "^[a-z0-9-_]+$"
