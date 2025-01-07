@@ -29,3 +29,11 @@ services:
       POSTGRES_DB: fcp_fd_comms
       POSTGRES_PASSWORD: ppp
       POSTGRES_USERNAME: postgres
+
+  fcp-fd-comms-azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:3.33.0
+    container_name: fcp-fd-comms-azurite
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
