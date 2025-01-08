@@ -22,19 +22,10 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_SCHEMA_NAME: ${POSTGRES_SCHEMA_NAME:-public}
       POSTGRES_USERNAME: ${POSTGRES_SCHEMA_USERNAME:-postgres}
-      # below is only temporary and should be switch out once no longer needed
-      USE_AZURITE: ${USE_AZURITE:-true}
-      AZURITE_HOST: ${AZURITE_HOST:-http://fcp-fd-file-retriever-azurite-development}
-      AZURITE_BLOB_PORT: ${AZURITE_BLOB_PORT:-10000}
-      AZURITE_ACCESS_KEY: ${AZURITE_ACCESS_KEY:-test}
+      # below is only temporary and should be switch out once no longer needed ---------------------
       OBJECTS_CONTAINER_NAME: objects-${MESSAGE_DEV_SUFFIX}
-      DMZ_STORAGE_ACCOUNT_NAME: ${DMZ_STORAGE_ACCOUNT_NAME:-dmz}
-      DMZ_STORAGE_ACCESS_KEY: ${DMZ_STORAGE_ACCESS_KEY:-test}
       CLN_STORAGE_ACCOUNT_NAME: ${CLN_STORAGE_ACCOUNT_NAME:-cln}
       CLN_STORAGE_ACCESS_KEY: ${CLN_STORAGE_ACCESS_KEY:-test}
-      MAL_STORAGE_ACCOUNT_NAME: ${MAL_STORAGE_ACCOUNT_NAME:-mal}
-      MAL_STORAGE_ACCESS_KEY: ${MAL_STORAGE_ACCESS_KEY:-test}
-      ALLOW_TEXT_FILES: ${ALLOW_TEXT_FILES:-false}
 
   fcp-fd-comms-postgres:
     image: postgres:16.4-alpine
@@ -42,11 +33,3 @@ services:
       POSTGRES_DB: fcp_fd_comms
       POSTGRES_PASSWORD: ppp
       POSTGRES_USERNAME: postgres
-
-  fcp-fd-comms-azurite:
-    image: mcr.microsoft.com/azure-storage/azurite:3.33.0
-    container_name: fcp-fd-comms-azurite
-    ports:
-      - "10000:10000"
-      - "10001:10001"
-      - "10002:10002"

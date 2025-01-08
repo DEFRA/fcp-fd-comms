@@ -1,5 +1,3 @@
-const convertToBase64 = async (file) => {
-  
+export const convertToBase64 = async (file) => {
+  return file.toString('base64')
 }
-
-export default convertToBase64
