@@ -23,12 +23,16 @@ services:
       - "5039:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+  # temporary, should be removed when not needed
   fcp-fd-comms-azurite:
+    container_name: fcp-fd-comms-azurite-development
+    networks:
+      - fcp-fd-comms
+    environment:
+      AZURITE_ACCOUNTS: >
+        ${DMZ_STORAGE_ACCOUNT_NAME:-dmz}:${AZURITE_ACCESS_KEY:-test};${CLN_STORAGE_ACCOUNT_NAME:-cln}:${AZURITE_ACCESS_KEY:-test};${MAL_STORAGE_ACCOUNT_NAME:-mal}:${AZURITE_ACCESS_KEY:-test}
     volumes:
       - azurite_data:/data
-    ports:
-      - "10019:10000"
 
 volumes:
   postgres_data:
@@ -36,5 +40,5 @@ volumes:
 
 networks:
   fcp-fd-comms:
-    name: fcp-fd
+    name: fcp-fd-comms # change back to fcp-fd before merging
     driver: bridge

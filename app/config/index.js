@@ -3,11 +3,13 @@ import messageConfig from './messaging.js'
 import jobsConfig from './jobs.js'
 import databaseConfig from './database.js'
 import notifyConfig from './notify.js'
+import storageConfig from './storage.js'
 
 export {
   serverConfig,
   messageConfig,
   jobsConfig,
   databaseConfig,
-  notifyConfig
+  notifyConfig,
+  storageConfig
 }
