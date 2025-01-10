@@ -2,4 +2,4 @@ resources:
   topics:
     - name: fcp-fd-comms
   postgreSql:
-    host: fcp-fd-comms-postgres
+    name: fcp-fd-comms-postgres
