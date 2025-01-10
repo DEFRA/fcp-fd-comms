@@ -238,15 +238,15 @@ components:
     attachments:
       oneOf:
         - type: object
-          description: JSON-formatted variable containing the name and id of a single file attachments
+          description: JSON-formatted variable corresponding to a single file attachment.
           properties:
             name:
               type: string
-              description: Name of the file personalisation placeholder in the relevant Notify template
+              description: Name of the file personalisation placeholder in the relevant Notify template.
               example: "link_to_file"
             id: 
               type: string
-              description: Unique identifier of the file attachment in blob storage container
+              description: Unique identifier of the file attachment in blob storage container.
               example: "123e4567-e89b-12d3-a456-426655440000"
               format: uuid
           required:
@@ -254,10 +254,10 @@ components:
             - id
         - type: array
           title: an array of objects
-          description: List of JSON-formatted variables corresponding to multiple file attachments
+          description: List of JSON-formatted variables corresponding to multiple file attachments.
           items: 
             type: object
-            description: JSON-formatted variable containing the name and id of a single file attachments
+            description: JSON-formatted variable containing the name and id of a single file attachment.
             properties:
               name:
                 type: string
