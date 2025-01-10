@@ -1,3 +1,5 @@
 resources:
   topics:
-    - name: comms
+    - name: fcp-fd-comms
+  postgreSql:
+    host: fcp-fd-comms-postgres

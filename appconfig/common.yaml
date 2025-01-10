@@ -1,1 +1,2 @@
-container.commsTopicAddress: topic:comms
+container.commsTopicAddress: topic:fcp-fd-comms
+container.postgresqlHost: postgresqlHost:fcp-fd-comms-postgres
