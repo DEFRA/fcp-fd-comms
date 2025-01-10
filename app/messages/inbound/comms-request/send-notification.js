@@ -6,21 +6,21 @@ import notifyStatus from '../../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 
-import { handleFileRetrieval } from '../../../services/retrieve.js'
+import { retrieveFile } from '../../../services/retrieve-file.js'
 
-const addFileToPersonalisation = async (message) => {
+const buildPersonalisation = async (message) => {
+  if (!message.data.attachments) {
+    return message.data.personalisation
+  }
+
   const attachments = Array.isArray(message.data.attachments)
     ? message.data.attachments
     : [message.data.attachments]
 
   const personalisation = { ...message.data.personalisation }
 
-  if (attachments.length === 0) {
-    return personalisation
-  }
-
   for (const attachment of attachments) {
-    const file = await handleFileRetrieval(attachment.id)
+    const file = await retrieveFile(attachment.id)
     const base64 = file.toString('base64')
     personalisation[attachment.name] = { file: base64 }
   }
@@ -29,8 +29,6 @@ const addFileToPersonalisation = async (message) => {
 }
 
 const trySendViaNotify = async (message, emailAddress, personalisation) => {
-  console.log(personalisation)
-
   try {
     const response = await notifyClient.sendEmail(
       message.data.notifyTemplateId,
@@ -51,7 +49,7 @@ const trySendViaNotify = async (message, emailAddress, personalisation) => {
 }
 
 const sendNotification = async (message) => {
-  const personalisation = await addFileToPersonalisation(message)
+  const personalisation = await buildPersonalisation(message)
 
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses

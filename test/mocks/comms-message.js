@@ -12,10 +12,6 @@ export default {
     notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
     commsType: 'email',
     commsAddresses: 'test@example.com',
-    attachments: {
-      name: 'clean-test-file.pdf',
-      id: '8015b77f-f1e5-42ab-adb7-eb716e64a5e0'
-    },
     personalisation: {
       reference: 'test-reference'
     },
