@@ -250,7 +250,7 @@ components:
 
     personalisation:
       type: object
-      description: JSON-formatted variables required for the Notify template
+      description: JSON-formatted variables required for the Notify template.
       example:
         caseNumber: "ACC123456789"
         expectedPaymentDate: "21.11.2025"

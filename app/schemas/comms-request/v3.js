@@ -28,7 +28,7 @@ const v3 = Joi.object({
         name: Joi.string().required(),
         id: Joi.string().required()
       }).required()
-    }).required(),
+    }).optional(),
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),
     oneClickUnsubscribeUrl: Joi.string().uri().optional(),

@@ -6,12 +6,36 @@ import notifyStatus from '../../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 
-const trySendViaNotify = async (message, emailAddress) => {
+import { handleFileRetrieval } from '../../../services/retrieve.js'
+
+const addFileToPersonalisation = async (message) => {
+  const attachments = Array.isArray(message.data.attachments)
+    ? message.data.attachments
+    : [message.data.attachments]
+
+  const personalisation = { ...message.data.personalisation }
+
+  if (attachments.length === 0) {
+    return personalisation
+  }
+
+  for (const attachment of attachments) {
+    const file = await handleFileRetrieval(attachment.id)
+    const base64 = file.toString('base64')
+    personalisation[attachment.name] = { file: base64 }
+  }
+
+  return personalisation
+}
+
+const trySendViaNotify = async (message, emailAddress, personalisation) => {
+  console.log(personalisation)
+
   try {
     const response = await notifyClient.sendEmail(
       message.data.notifyTemplateId,
       emailAddress, {
-        personalisation: message.data.personalisation,
+        personalisation,
         reference: crypto.randomUUID()
       }
     )
@@ -27,12 +51,14 @@ const trySendViaNotify = async (message, emailAddress) => {
 }
 
 const sendNotification = async (message) => {
+  const personalisation = await addFileToPersonalisation(message)
+
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const [response, notifyError] = await trySendViaNotify(message, emailAddress)
+    const [response, notifyError] = await trySendViaNotify(message, emailAddress, personalisation)
 
     try {
       if (response) {

@@ -1,4 +1,5 @@
 import { handleFileRetrieval } from '../services/retrieve.js'
+import { convertToBase64 } from '../utils/convert-to-base64.js'
 
 const objects = {
   method: 'GET',
@@ -6,8 +7,8 @@ const objects = {
   handler: async (request, h) => {
     const { path } = request.params
     const file = await handleFileRetrieval(path)
-    console.log('file:', file)
-    return h.response(file).code(200)
+    const base64 = await convertToBase64(file)
+    return h.response(base64).code(200)
   }
 }
 
