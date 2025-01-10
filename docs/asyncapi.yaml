@@ -11,24 +11,24 @@ channels:
       Accepts requests for communication notifications via Azure service bus.
     messages:
       commsMessage:
-        $ref: '#/components/messages/commsMessage'
+        $ref: "#/components/messages/commsMessage"
   fcp-fd-data:
     address: fcp-fd-data
     description: |
       Accepts updates to the status of communication notifications via Azure service bus.
     messages:
       commsEventMessage:
-        $ref: '#/components/messages/commsEventMessage'
-      
+        $ref: "#/components/messages/commsEventMessage"
+
 operations:
   fcp-fd-comms.subscribe:
     action: receive
     channel:
-      $ref: '#/channels/fcp-fd-comms'
+      $ref: "#/channels/fcp-fd-comms"
   fcp-fd-data.publish:
     action: send
     channel:
-      $ref: '#/channels/fcp-fd-data'
+      $ref: "#/channels/fcp-fd-data"
 
 components:
   messages:
@@ -36,13 +36,13 @@ components:
       name: Communications message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/commsSchema'
-    
+        $ref: "#/components/schemas/commsSchema"
+
     commsEventMessage:
       name: user communications event message
       contentType: application/json
       payload:
-        $ref: '#/components/schemas/commsEventSchema'
+        $ref: "#/components/schemas/commsEventSchema"
 
   schemas:
     commsSchema:
@@ -76,7 +76,7 @@ components:
         - commsMessage
       properties:
         id:
-          $ref: '#/components/schemas/id'
+          $ref: "#/components/schemas/id"
         commsMessage:
           type: object
           required:
@@ -89,19 +89,19 @@ components:
             - data
           properties:
             id:
-              $ref: '#/components/schemas/id'
+              $ref: "#/components/schemas/id"
             source:
-              $ref: '#/components/schemas/source'
+              $ref: "#/components/schemas/source"
             specversion:
-              $ref: '#/components/schemas/specversion'
+              $ref: "#/components/schemas/specversion"
             type:
-              $ref: '#/components/schemas/type'
+              $ref: "#/components/schemas/type"
             datacontenttype:
-              $ref: '#/components/schemas/datacontenttype'
+              $ref: "#/components/schemas/datacontenttype"
             time:
-              $ref: '#/components/schemas/time'
+              $ref: "#/components/schemas/time"
             data:
-              $ref: '#/components/schemas/commsEventData'
+              $ref: "#/components/schemas/commsEventData"
 
     commsData:
       type: object
@@ -148,31 +148,31 @@ components:
         - emailReplyToId
       properties:
         crn:
-          $ref: '#/components/schemas/crn'
+          $ref: "#/components/schemas/crn"
         sbi:
-          $ref: '#/components/schemas/sbi'
+          $ref: "#/components/schemas/sbi"
         sourceSystem:
-          $ref: '#/components/schemas/sourceSystem'
+          $ref: "#/components/schemas/sourceSystem"
         notifyTemplateId:
-          $ref: '#/components/schemas/notifyTemplateId'
+          $ref: "#/components/schemas/notifyTemplateId"
         commsType:
-          $ref: '#/components/schemas/commsType'
+          $ref: "#/components/schemas/commsType"
         commsAddresses:
-          $ref: '#/components/schemas/commsAddresses'
+          $ref: "#/components/schemas/commsAddresses"
         attachments:
-          $ref: '#/components/schemas/attachments'
+          $ref: "#/components/schemas/attachments"
         personalisation:
-          $ref: '#/components/schemas/personalisation'
+          $ref: "#/components/schemas/personalisation"
         reference:
-          $ref: '#/components/schemas/reference'
+          $ref: "#/components/schemas/reference"
         oneClickUnsubscribeUrl:
-          $ref: '#/components/schemas/oneClickUnsubscribeUrl'
+          $ref: "#/components/schemas/oneClickUnsubscribeUrl"
         emailReplyToId:
-          $ref: '#/components/schemas/emailReplyToId'
+          $ref: "#/components/schemas/emailReplyToId"
         statusDetails:
-          $ref: '#/components/schemas/statusDetails'
+          $ref: "#/components/schemas/statusDetails"
         correlationId:
-          $ref: '#/components/schemas/correlationId'
+          $ref: "#/components/schemas/correlationId"
 
     crn:
       type: number
@@ -220,7 +220,11 @@ components:
         - type: array
           title: an array of strings
           description: List of contact email addresses
-          example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
+          example:
+            [
+              "mrMegaFarmer@strawberryFortFarm.co.uk",
+              "msMegaFarmer@bluberryCottageFarm.com",
+            ]
           minItems: 1
           maxItems: 10
           items:
@@ -234,19 +238,41 @@ components:
     attachments:
       oneOf:
         - type: object
-          description: JSON-formatted variables containing the name and identifier (path) for a single file attachment that will converted into a base64 encoded string
-          example: 
-            name: "link_to_file"
-            id: "a8c4d7f3-2d5e-4899-8c42-8d6eaa5b4f51"
+          description: JSON-formatted variable containing the name and id of a single file attachments
+          properties:
+            name:
+              type: string
+              description: Name of the file personalisation placeholder in the relevant Notify template
+              example: "link_to_file"
+            id: 
+              type: string
+              description: Unique identifier of the file attachment in blob storage container
+              example: "123e4567-e89b-12d3-a456-426655440000"
+              format: uuid
+          required:
+            - name
+            - id
         - type: array
           title: an array of objects
-          description: List of JSON-formatted variables containing the names and identifiers (paths) for multiple file attachments that will converted into base64 encoded strings
-          example: [
-            { "name": "link_to_agreement", "id": "dba0d625-d52b-472c-91a4-2cb763d5cc05" },
-            { "name": "link_to_invoice", "id": "c10e63e5-77a7-472e-a9bf-2d46a3819527" }
-          ]
-          minLength: 1
-          maxLength: 10
+          description: List of JSON-formatted variables corresponding to multiple file attachments
+          items: 
+            type: object
+            description: JSON-formatted variable containing the name and id of a single file attachments
+            properties:
+              name:
+                type: string
+                description: Name of the file personalisation placeholder in the relevant Notify template
+                example: "link_to_file"
+              id: 
+                type: string
+                description: Unique identifier of the file attachment in blob storage container
+                example: "123e4567-e89b-12d3-a456-426655440000"
+                format: uuid
+            required:
+              - name
+              - id
+          minItems: 1
+          maxItems: 10
 
     personalisation:
       type: object
@@ -285,7 +311,17 @@ components:
           type: string
           description: The status of the message delivery
           example: "delivered"
-          enum: ["created", "sending", "delivered", "permanent-failure", "temporary-failure", "technical-failure", "internal-failure", "validation-failure"]
+          enum:
+            [
+              "created",
+              "sending",
+              "delivered",
+              "permanent-failure",
+              "temporary-failure",
+              "technical-failure",
+              "internal-failure",
+              "validation-failure",
+            ]
         errorCode:
           type: number
           description: Error code returned from Notify. Only present if status is 'internal-failure'
