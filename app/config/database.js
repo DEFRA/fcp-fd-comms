@@ -1,18 +1,16 @@
-import { DefaultAzureCredential } from '@azure/identity'
+import { DefaultAzureCredential, getBearerTokenProvider } from '@azure/identity'
 
 import isProd from '../utils/is-prod.js'
 
 const hooks = {
   beforeConnect: async (config) => {
     if (isProd()) {
-      const credential = new DefaultAzureCredential()
-
-      const accessToken = await credential.getToken(
-        'https://ossrdbms-aad.database.windows.net',
-        { requestOptions: { timeout: 1000 } }
+      const credential = new DefaultAzureCredential({ managedIdentityClientId: process.env.AZURE_CLIENT_ID })
+      const tokenProvider = getBearerTokenProvider(
+        credential,
+        'https://ossrdbms-aad.database.windows.net/.default'
       )
-
-      config.password = accessToken.token
+      config.password = tokenProvider
     }
   }
 }
