@@ -26,6 +26,6 @@ volumes:
   postgres_data:
 
 networks:
-  fcp-fd-comms:
-    name: fcp-fd
+  fcp-fd-file-retriever:
+    name: fcp-fd-file-retriever
     driver: bridge
