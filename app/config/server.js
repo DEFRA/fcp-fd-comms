@@ -27,11 +27,6 @@ const server = convict({
     default: 3000,
     env: 'PORT',
     arg: 'port'
-  },
-  fileRetrieverHost: {
-    doc: 'Host of the file retriever service.',
-    format: 'url',
-    env: 'FILE_RETRIEVER_HOST'
   }
 })
 
