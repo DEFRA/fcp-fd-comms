@@ -1,10 +1,10 @@
 resources:
   identity: fd-comms
-  topics:
-    - name: fcp-fd-comms
-      role: receiver
-      subscription: fcp-fd-comms
-    - name: fcp-fd-data
-      role: sender
+  # topics:
+  #   - name: fcp-fd-comms
+  #     role: receiver
+  #     subscription: fcp-fd-comms
+  #   - name: fcp-fd-data
+  #     role: sender
   postgreSql:
     name: fcp-fd-comms
