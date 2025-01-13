@@ -1,2 +1,2 @@
-container.commsTopicAddress: topic:fcp-fd-comms
-container.dataTopicAddress: topic:fcp-fd-data
+container.commsTopicAddress: queue:fcp-fd-comms
+container.dataTopicAddress: queue:fcp-fd-data
