@@ -1,4 +1,5 @@
 resources:
+  identity: fd-comms
   topics:
     - name: fcp-fd-comms
       role: receiver
