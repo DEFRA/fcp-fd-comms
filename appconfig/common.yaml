@@ -1,0 +1,2 @@
+container.commsTopicAddress: queue:fcp-fd-comms
+container.dataTopicAddress: queue:fcp-fd-data

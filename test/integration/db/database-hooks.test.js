@@ -3,16 +3,14 @@ import { jest } from '@jest/globals'
 jest.setTimeout(30000)
 
 const mockGetToken = jest.fn()
+const mockGetBearerTokenProvider = jest.fn()
 
-jest.mock('@azure/identity', () => {
-  return {
-    DefaultAzureCredential: jest.fn().mockImplementation(() => {
-      return {
-        getToken: mockGetToken
-      }
-    })
-  }
-})
+jest.mock('@azure/identity', () => ({
+  DefaultAzureCredential: jest.fn().mockImplementation(() => ({
+    getToken: mockGetToken
+  })),
+  getBearerTokenProvider: jest.fn().mockImplementation(() => mockGetBearerTokenProvider)
+}))
 
 describe('Sequelize hooks', () => {
   beforeEach(() => {
@@ -25,7 +23,7 @@ describe('Sequelize hooks', () => {
 
     process.env.NODE_ENV = 'production'
 
-    const { DefaultAzureCredential } = await import('@azure/identity')
+    const { DefaultAzureCredential, getBearerTokenProvider } = await import('@azure/identity')
 
     const { databaseConfig } = await import('../../../app/config/index.js')
 
@@ -37,12 +35,14 @@ describe('Sequelize hooks', () => {
       token: 'ppp'
     })
 
+    mockGetBearerTokenProvider.mockReturnValue('ppp')
+
     const { default: db } = await import('../../../app/data/index.js')
 
     await db.sequelize.authenticate()
 
     expect(DefaultAzureCredential).toHaveBeenCalled()
-    expect(mockGetToken).toHaveBeenCalled()
+    expect(getBearerTokenProvider).toHaveBeenCalled()
 
     process.env.NODE_ENV = originalEnv
     databaseConfig.dialectOptions.ssl = originalSsl
