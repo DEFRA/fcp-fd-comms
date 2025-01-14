@@ -1,8 +1,7 @@
-const getOptions = (headers) => ({
+const getOptions = (_headers) => ({
   headers: {
-    'Content-Type': 'application/json'
-  },
-  json: true
+    'Content-Type': 'application/octet-stream'
+  }
 })
 
 const handleResponse = async (response) => {
