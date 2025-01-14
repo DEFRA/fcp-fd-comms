@@ -4,7 +4,6 @@ import jobsConfig from './jobs.js'
 import databaseConfig from './database.js'
 import notifyConfig from './notify.js'
 import apiConfig from './api.js'
-import storageConfig from './storage.js'
 
 export {
   serverConfig,
@@ -12,6 +11,5 @@ export {
   jobsConfig,
   databaseConfig,
   notifyConfig,
-  apiConfig,
-  storageConfig
+  apiConfig
 }
