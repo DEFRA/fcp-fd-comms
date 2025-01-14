@@ -1,8 +1,7 @@
-import * as cleanRepo from '../repos/clean.js'
+import { getObjectById } from '../api/files.js'
 
 const retrieveFile = async (path) => {
-  const file = await cleanRepo.getObject(path)
-  return file
+  return getObjectById(path)
 }
 
 export {

@@ -4,13 +4,8 @@ import { setup } from './insights.js'
 import { createServer } from './server.js'
 import { startMessaging } from './messages/inbound/start-messaging.js'
 import { startJobs } from './jobs/index.js'
-import { createCleanContainers } from './storage/blob/clean.js'
 
 const init = async () => {
-  if (process.env.NODE_ENV === 'development') {
-    await createCleanContainers()
-  }
-
   const server = await createServer()
   await server.start()
   await startMessaging()
