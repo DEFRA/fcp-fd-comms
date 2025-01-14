@@ -9,7 +9,11 @@ data:
   COMMS_TOPIC_ADDRESS: {{ .Values.container.commsTopicAddress | quote }}
   DATA_TOPIC_ADDRESS: {{ .Values.container.dataTopicAddress | quote }}
   {{- end }}
+  {{ if .Values.pr }}
+  COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.commsTopicAddress }}
+  {{ else }}
   COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.commsSubscriptionAddress }}
+  {{- end }}
   NODE_ENV: {{ .Values.environment | quote }}
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
