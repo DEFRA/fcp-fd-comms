@@ -21,8 +21,7 @@ const buildPersonalisation = async (message) => {
 
   for (const attachment of attachments) {
     const file = await retrieveFile(attachment.id)
-    const base64 = file.toString('base64')
-    personalisation[attachment.name] = { file: base64 }
+    personalisation[attachment.name] = { file }
   }
 
   return personalisation

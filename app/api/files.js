@@ -1,10 +1,17 @@
-import { get } from './base.js'
 import { apiConfig } from '../config/index.js'
 
-const fileRetrieverHost = apiConfig.get('fileRetrieverHost')
+const baseUrl = apiConfig.get('fileRetriever.host')
 
 const getObjectById = async (id) => {
-  return get(`${fileRetrieverHost}/objects/${id}`)
+  const response = await fetch(`${baseUrl}/objects/${id}`)
+
+  if (!response.ok) {
+    throw new Error(`HTTP Error: ${response.statusText}`)
+  }
+
+  const file = await response.arrayBuffer()
+
+  return Buffer.from(file)
 }
 
 export {
