@@ -23,7 +23,7 @@ const v3 = Joi.object({
       then: Joi.array().items(Joi.object({
         name: Joi.string().required(),
         id: Joi.string().required()
-      })).required(),
+      })).min(1).max(10).required(),
       otherwise: Joi.object({
         name: Joi.string().required(),
         id: Joi.string().required()
