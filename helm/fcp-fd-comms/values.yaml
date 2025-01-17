@@ -31,7 +31,7 @@ container:
   dataTopicAddress: fcp-fd-data
   notifyApiKey:
   checkNotifyStatusCronPattern: '*/30 * * * * *'
-  fileRetrieverHost:
+  fileRetrieverUrl:
 
 livenessProbe:
   path: /healthz
