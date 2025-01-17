@@ -19,6 +19,16 @@ const v3 = Joi.object({
       then: Joi.array().items(Joi.string().email()).min(1).max(10).required(),
       otherwise: Joi.string().email().required()
     }).required(),
+    attachments: Joi.alternatives().conditional(Joi.array(), {
+      then: Joi.array().items(Joi.object({
+        name: Joi.string().required(),
+        id: Joi.string().required()
+      })).min(1).max(10).required(),
+      otherwise: Joi.object({
+        name: Joi.string().required(),
+        id: Joi.string().required()
+      }).required()
+    }).optional(),
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),
     oneClickUnsubscribeUrl: Joi.string().uri().optional(),

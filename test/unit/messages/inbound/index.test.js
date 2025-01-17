@@ -18,21 +18,21 @@ jest.mock('ffc-messaging', () => {
 describe('Start Messaging', () => {
   test('should create a MessageReceiver', async () => {
     const { MessageReceiver } = await import('ffc-messaging')
-    const { startMessaging } = await import('../../../../app/messages/inbound/index.js')
+    const { startMessaging } = await import('../../../../app/messages/inbound/start-messaging.js')
     await startMessaging()
     expect(MessageReceiver).toHaveBeenCalled()
   })
 
   test('should call subscribe on the MessageReceiver instance', async () => {
     const { MessageReceiver } = await import('ffc-messaging')
-    const { startMessaging } = await import('../../../../app/messages/inbound/index.js')
+    const { startMessaging } = await import('../../../../app/messages/inbound/start-messaging.js')
     await startMessaging()
     expect(MessageReceiver.mock.calls[0][1]).toBeInstanceOf(Function)
   })
 
   test('should pass a callback to the MessageReceiver that calls handleMessage', async () => {
     const { MessageReceiver } = await import('ffc-messaging')
-    const { startMessaging } = await import('../../../../app/messages/inbound/index.js')
+    const { startMessaging } = await import('../../../../app/messages/inbound/start-messaging.js')
     await startMessaging()
 
     const mockMessage = { body: 'This is a mock message.' }
