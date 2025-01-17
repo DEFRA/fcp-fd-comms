@@ -62,3 +62,7 @@ workloadIdentity: true
 azureIdentity:
   clientID: not-a-real-clientID
   resourceID: not-a-real-resourceID
+
+service:
+  type: ClusterIP
+  port: 80
