@@ -22,7 +22,7 @@ services:
       POSTGRES_PORT: 5432
       POSTGRES_SCHEMA_NAME: ${POSTGRES_SCHEMA_NAME:-public}
       POSTGRES_USERNAME: ${POSTGRES_SCHEMA_USERNAME:-postgres}
-      FILE_RETRIEVER_HOST: ${FILE_RETRIEVER_HOST:-http://host.docker.internal:3042}
+      FILE_RETRIEVER_URL: ${FILE_RETRIEVER_URL:-http://host.docker.internal:3042}
 
   fcp-fd-comms-postgres:
     image: postgres:16.4-alpine

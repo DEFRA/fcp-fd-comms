@@ -1,6 +1,6 @@
 import { apiConfig } from '../config/index.js'
 
-const baseUrl = apiConfig.get('fileRetriever.host')
+const baseUrl = apiConfig.get('fileRetriever.url')
 
 const getObjectById = async (id) => {
   const response = await fetch(`${baseUrl}/objects/${id}`)

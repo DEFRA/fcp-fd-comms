@@ -22,4 +22,5 @@ data:
   POSTGRES_HOST: {{ quote .Values.postgresService.postgresqlHost }}
   POSTGRES_PORT: {{ quote .Values.postgresService.postgresPort }}
   POSTGRES_SCHEMA: {{ quote .Values.postgresService.postgresSchema }}
+  FILE_RETRIEVER_HOST: {{ .Values.container.fileRetrieverHost }}
 {{- end -}}
