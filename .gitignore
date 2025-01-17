@@ -5,4 +5,3 @@ helm/**/*.lock
 *.tgz
 .vscode
 .env
-.DS_Store
