@@ -5,11 +5,11 @@ data:
   {{- if and (.Values.environmentCode) (not .Values.pr) }}
   COMMS_TOPIC_ADDRESS: {{ .Values.container.commsTopicAddress }}-{{ .Values.environmentCode }}
   DATA_TOPIC_ADDRESS: {{ .Values.container.dataTopicAddress }}-{{ .Values.environmentCode }}
-  FILE_RETRIEVER_URL: {{ .Values.container.fileRetrieverUrl }}-{{ .Values.environmentCode }}
+  FILE_RETRIEVER_URL: {{ .Values.container.fileRetrieverProtocol }}{{ .Values.container.fileRetrieverUrl }}-{{ .Values.environmentCode }}
   {{ else }}
   COMMS_TOPIC_ADDRESS: {{ .Values.container.commsTopicAddress | quote }}
   DATA_TOPIC_ADDRESS: {{ .Values.container.dataTopicAddress | quote }}
-  FILE_RETRIEVER_URL: {{ .Values.container.fileRetrieverUrl | quote }}
+  FILE_RETRIEVER_URL: {{ .Values.container.fileRetrieverProtocol }}{{ .Values.container.fileRetrieverUrl | quote }}
   {{- end }}
   {{- if .Values.pr }}
   COMMS_SUBSCRIPTION_ADDRESS: {{ .Values.container.commsTopicAddress }}
