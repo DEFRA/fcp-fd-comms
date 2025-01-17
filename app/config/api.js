@@ -5,7 +5,7 @@ const api = convict({
     url: {
       doc: 'URL of the Single Front Door file retriever service (fcp-fd-file-retriever).',
       format: 'url',
-      default: 'http://host.docker.internal:3042',
+      default: 'http://localhost:3042',
       env: 'FILE_RETRIEVER_URL'
     }
   }
