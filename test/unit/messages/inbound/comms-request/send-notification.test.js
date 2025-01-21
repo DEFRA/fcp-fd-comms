@@ -2,6 +2,7 @@ import { jest, test } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
+const mockRetrieveFile = jest.fn()
 
 jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
   default: {
@@ -16,6 +17,10 @@ jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => (
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
   publishStatus: jest.fn()
+}))
+
+jest.unstable_mockModule('../../../../../app/services/retrieve-file.js', () => ({
+  retrieveFile: mockRetrieveFile
 }))
 
 const {
@@ -270,5 +275,103 @@ describe('Send Notification', () => {
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
+  })
+
+  test('should build personalisation without attachments', async () => {
+    const message = {
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        }
+      }
+    }
+
+    await sendNotification(message)
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      'mock-notify-template-id',
+      'mock-email@test.com',
+      {
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        },
+        reference: expect.any(String)
+      }
+    )
+  })
+
+  test('should build personalisation with single attachment', async () => {
+    mockRetrieveFile.mockResolvedValue('mock-file-content')
+
+    const message = {
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference'
+        },
+        attachments: {
+          id: 'mock-file-id',
+          name: 'mock-file-name'
+        }
+      }
+    }
+
+    await sendNotification(message)
+
+    expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id')
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      'mock-notify-template-id',
+      'mock-email@test.com',
+      {
+        personalisation: {
+          reference: 'mock-reference',
+          'mock-file-name': { file: 'mock-file-content' }
+        },
+        reference: expect.any(String)
+      }
+    )
+  })
+
+  test('should build personalisation with multiple attachments', async () => {
+    mockRetrieveFile
+      .mockResolvedValueOnce('mock-file-content-1')
+      .mockResolvedValueOnce('mock-file-content-2')
+
+    const message = {
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference'
+        },
+        attachments: [
+          { id: 'mock-file-id-1', name: 'mock-file-name-1' },
+          { id: 'mock-file-id-2', name: 'mock-file-name-2' }
+        ]
+      }
+    }
+
+    await sendNotification(message)
+
+    expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id-1')
+    expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id-2')
+
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      'mock-notify-template-id',
+      'mock-email@test.com',
+      {
+        personalisation: {
+          reference: 'mock-reference',
+          'mock-file-name-1': { file: 'mock-file-content-1' },
+          'mock-file-name-2': { file: 'mock-file-content-2' }
+        },
+        reference: expect.any(String)
+      }
+    )
   })
 })
