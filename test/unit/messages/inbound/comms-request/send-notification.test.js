@@ -304,8 +304,8 @@ describe('Send Notification', () => {
     )
   })
 
-  test('should build personalisation with single attachment', async () => {
-    mockRetrieveFile.mockResolvedValue('mock-file-content')
+  test('should build personalisation for a single attachment', async () => {
+    mockRetrieveFile.mockResolvedValue('mock-file-name')
 
     const message = {
       data: {
@@ -330,7 +330,7 @@ describe('Send Notification', () => {
       {
         personalisation: {
           reference: 'mock-reference',
-          'mock-file-name': { file: 'mock-file-content' }
+          'mock-file-name': { file: 'mock-file-name' }
         },
         reference: expect.any(String)
       }
@@ -339,8 +339,8 @@ describe('Send Notification', () => {
 
   test('should build personalisation with multiple attachments', async () => {
     mockRetrieveFile
-      .mockResolvedValueOnce('mock-file-content-1')
-      .mockResolvedValueOnce('mock-file-content-2')
+      .mockResolvedValueOnce('mock-file-name-1')
+      .mockResolvedValueOnce('mock-file-name-2')
 
     const message = {
       data: {
@@ -367,8 +367,8 @@ describe('Send Notification', () => {
       {
         personalisation: {
           reference: 'mock-reference',
-          'mock-file-name-1': { file: 'mock-file-content-1' },
-          'mock-file-name-2': { file: 'mock-file-content-2' }
+          'mock-file-name-1': { file: 'mock-file-name-1' },
+          'mock-file-name-2': { file: 'mock-file-name-2' }
         },
         reference: expect.any(String)
       }
