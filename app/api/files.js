@@ -6,7 +6,7 @@ const getObjectById = async (id) => {
   const response = await fetch(`${baseUrl}/objects/${id}`)
 
   if (!response.ok) {
-    throw new Error(`HTTP Error: ${response.statusText}`)
+    throw new Error(`Error retrieving file ${id}: ${response.statusText}`)
   }
 
   const file = await response.arrayBuffer()
