@@ -15,7 +15,7 @@ describe('Retrieve File Service', () => {
     mockPath = '550e8400-e29b-41d4-a716-446655440000'
   })
 
-  test('should call getObjectById with the correct path and convert the result to base64', async () => {
+  test('should convert the object (attachment) retrieved into a base64 encoded string', async () => {
     const mockBuffer = Buffer.from('Mock file content')
 
     fetch.mockResolvedValueOnce({
@@ -28,8 +28,6 @@ describe('Retrieve File Service', () => {
     getObjectById.mockResolvedValue(mockBuffer)
 
     const result = await retrieveFile(mockPath)
-
-    // expect(getObjectById).toHaveBeenCalledWith(mockPath)
 
     const mockBase64String = mockBuffer.toString('base64')
     expect(result).toEqual(mockBase64String)
