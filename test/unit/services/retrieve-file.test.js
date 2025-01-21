@@ -2,7 +2,12 @@ import { jest, test, describe, beforeEach } from '@jest/globals'
 
 global.fetch = jest.fn()
 
+const mockGetObjectById = jest.fn()
 const mockRetrieveFile = jest.fn()
+
+jest.unstable_mockModule('../../../app/api/files.js', () => ({
+  getObjectById: mockGetObjectById
+}))
 
 jest.unstable_mockModule('../../../app/services/retrieve-file.js', () => ({
   retrieveFile: mockRetrieveFile
@@ -19,6 +24,12 @@ describe('Retrieve File Service', () => {
   test('should convert the retrieved object into a base64 encoded string', async () => {
     const mockBuffer = Buffer.from('Mock file content')
 
+    fetch.mockResolvedValueOnce({
+      ok: true,
+      arrayBuffer: jest.fn().mockResolvedValueOnce(mockBuffer)
+    })
+
+    mockGetObjectById.mockResolvedValue(mockBuffer)
     mockRetrieveFile.mockResolvedValueOnce(mockBuffer.toString('base64'))
 
     const result = await mockRetrieveFile(mockPath)
