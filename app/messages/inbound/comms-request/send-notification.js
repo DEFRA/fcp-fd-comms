@@ -1,51 +1,8 @@
-import crypto from 'crypto'
-
-import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
-
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
-
-import { retrieveFile } from '../../../services/retrieve-file.js'
-
-const buildPersonalisation = async (message) => {
-  if (!message.data.attachments) {
-    return message.data.personalisation
-  }
-
-  const attachments = Array.isArray(message.data.attachments)
-    ? message.data.attachments
-    : [message.data.attachments]
-
-  const personalisation = { ...message.data.personalisation }
-
-  for (const attachment of attachments) {
-    const file = await retrieveFile(attachment.id)
-    personalisation[attachment.name] = { file }
-  }
-
-  return personalisation
-}
-
-const trySendViaNotify = async (message, emailAddress, personalisation) => {
-  try {
-    const response = await notifyClient.sendEmail(
-      message.data.notifyTemplateId,
-      emailAddress, {
-        personalisation,
-        reference: crypto.randomUUID()
-      }
-    )
-
-    return [response, null]
-  } catch (error) {
-    const status = error.response.data.status_code
-
-    console.error('Error sending email with code:', status)
-
-    return [null, error]
-  }
-}
+import { buildPersonalisation } from './build-personalisation.js'
+import { trySendViaNotify } from './try-send-via-notify.js'
 
 const sendNotification = async (message) => {
   const personalisation = await buildPersonalisation(message)
