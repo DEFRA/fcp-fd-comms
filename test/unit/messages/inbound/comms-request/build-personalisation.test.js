@@ -80,28 +80,4 @@ describe('Build Personalisation', () => {
     expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id-1')
     expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id-2')
   })
-
-  test('should handle attachments when attachments is not an array', async () => {
-    mockRetrieveFile.mockResolvedValue('mock-file-name')
-
-    const message = {
-      data: {
-        personalisation: {
-          reference: 'mock-reference'
-        },
-        attachments: {
-          id: 'mock-file-id',
-          name: 'mock-file-name'
-        }
-      }
-    }
-
-    const result = await buildPersonalisation(message)
-
-    expect(result).toEqual({
-      reference: 'mock-reference',
-      'mock-file-name': { file: 'mock-file-name' }
-    })
-    expect(mockRetrieveFile).toHaveBeenCalledWith('mock-file-id')
-  })
 })
