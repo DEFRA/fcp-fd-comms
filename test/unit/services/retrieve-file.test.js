@@ -1,5 +1,4 @@
-import { jest, test, describe, beforeEach } from '@jest/globals'
-import { retrieveFile } from '../../../app/services/retrieve-file.js'
+import { jest } from '@jest/globals'
 
 global.fetch = jest.fn()
 
@@ -14,7 +13,9 @@ describe('Retrieve File Service', () => {
     mockPath = '550e8400-e29b-41d4-a716-446655440000'
   })
 
-  test('should convert the object (attachment) retrieved into a base64 encoded string', async () => {
+  test('should retrieve and convert the object into a base64 encoded string', async () => {
+    const { getObjectById } = await import('../../../app/api/files.js')
+    const { retrieveFile } = await import('../../../app/services/retrieve-file.js')
     const mockBuffer = Buffer.from('Mock file content')
 
     fetch.mockResolvedValueOnce({
@@ -23,7 +24,6 @@ describe('Retrieve File Service', () => {
       arrayBuffer: jest.fn().mockResolvedValueOnce(mockBuffer)
     })
 
-    const { getObjectById } = await import('../../../app/api/files.js')
     getObjectById.mockResolvedValue(mockBuffer)
 
     const result = await retrieveFile(mockPath)

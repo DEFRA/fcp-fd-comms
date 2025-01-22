@@ -1,5 +1,4 @@
-import { jest, test, describe, beforeEach } from '@jest/globals'
-import { getObjectById } from '../../../app/api/files.js'
+import { jest } from '@jest/globals'
 
 global.fetch = jest.fn()
 
@@ -17,6 +16,7 @@ describe('Get Object (Attachment) by ID', () => {
   })
 
   test('should fetch the object by ID and return a Buffer', async () => {
+    const { getObjectById } = await import('../../../app/api/files.js')
     const mockId = '550e8400-e29b-41d4-a716-446655440000'
     const mockArrayBuffer = new ArrayBuffer(8)
     const mockBuffer = Buffer.from(mockArrayBuffer)
@@ -33,6 +33,7 @@ describe('Get Object (Attachment) by ID', () => {
   })
 
   test('should throw an error if the response is not ok', async () => {
+    const { getObjectById } = await import('../../../app/api/files.js')
     const mockId = '550e8400-e29b-41d4-a716-446655440001'
 
     fetch.mockResolvedValueOnce({
@@ -46,6 +47,7 @@ describe('Get Object (Attachment) by ID', () => {
   })
 
   test('should handle fetch errors gracefully', async () => {
+    const { getObjectById } = await import('../../../app/api/files.js')
     const mockId = '550e8400-e29b-41d4-a716-446655440002'
     const mockError = new Error('Network Error')
 
