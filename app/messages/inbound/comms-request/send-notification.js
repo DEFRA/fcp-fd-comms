@@ -5,7 +5,6 @@ import { logCreatedNotification, logRejectedNotification } from '../../../repos/
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 import { checkDuplicateNotification } from '../../../jobs/check-notify-status/check-duplicate-notification.js'
 
-let statusCode
 const trySendViaNotify = async (message, emailAddress) => {
   try {
     const duplicateError = await checkDuplicateNotification(message, emailAddress)
@@ -23,7 +22,7 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    statusCode = error.response?.data?.status_code
+    const statusCode = error.response?.data?.status_code
     console.error('Error sending email with code:', statusCode)
     return [null, error]
   }
