@@ -18,7 +18,8 @@ jest.unstable_mockModule('../../../app/data/index.js', () => ({
 const {
   logCreatedNotification,
   logRejectedNotification,
-  updateNotificationStatus
+  updateNotificationStatus,
+  findNotificationByIdAndEmail
 } = await import('../../../app/repos/notification-log.js')
 
 describe('Notification Log Repository', () => {
@@ -96,4 +97,58 @@ describe('Notification Log Repository', () => {
       expect(notification.completed).toEqual(new Date('2024-01-01T15:00:00.000Z'))
     }
   )
+
+  describe('findNotificationByIdAndEmail', () => {
+    test('should return existing notification when found', async () => {
+      const mockNotification = {
+        notifyResponseId: '123456789',
+        message: {
+          id: 'test-message-id'
+        },
+        recipient: 'test@example.com',
+        status: 'created'
+      }
+
+      mockFindOne.mockResolvedValue(mockNotification)
+
+      const result = await findNotificationByIdAndEmail('test-message-id', 'test@example.com')
+
+      expect(mockFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+      expect(result).toEqual(mockNotification)
+    })
+
+    test('should return null when notification is not found', async () => {
+      mockFindOne.mockResolvedValue(null)
+
+      const result = await findNotificationByIdAndEmail('test-message-id', 'test@example.com')
+
+      expect(mockFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+      expect(result).toBeNull()
+    })
+
+    test('should handle database errors appropriately', async () => {
+      const mockError = new Error('Database connection failed')
+      mockFindOne.mockRejectedValue(mockError)
+
+      await expect(findNotificationByIdAndEmail('test-message-id', 'test@example.com'))
+        .rejects.toThrow('Database connection failed')
+
+      expect(mockFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+    })
+  })
 })

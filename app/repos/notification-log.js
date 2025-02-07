@@ -54,9 +54,20 @@ const updateNotificationStatus = async (notificationId, status) => {
   await notification.save()
 }
 
+const findNotificationByIdAndEmail = async (messageId, recipient) => {
+  const existingNotification = await db.notifyApiRequestSuccess.findOne({
+    where: {
+      'message.id': messageId,
+      recipient
+    }
+  })
+  return existingNotification
+}
+
 export {
   logCreatedNotification,
   logRejectedNotification,
   getPendingNotifications,
-  updateNotificationStatus
+  updateNotificationStatus,
+  findNotificationByIdAndEmail
 }

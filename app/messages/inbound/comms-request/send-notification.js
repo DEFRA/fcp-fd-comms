@@ -1,13 +1,16 @@
 import crypto from 'crypto'
-
 import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
-
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
+import { checkDuplicateNotification } from '../../../jobs/check-notify-status/check-duplicate-notification.js'
 
+let statusCode
 const trySendViaNotify = async (message, emailAddress) => {
   try {
+    const duplicateError = await checkDuplicateNotification(message, emailAddress)
+    if (duplicateError) throw duplicateError
+
     const response = await notifyClient.sendEmail(
       message.data.notifyTemplateId,
       emailAddress, {
@@ -18,10 +21,8 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    const status = error.response.data.status_code
-
-    console.error('Error sending email with code:', status)
-
+    statusCode = error.response?.data?.status_code
+    console.error('Error sending email with code:', statusCode)
     return [null, error]
   }
 }
@@ -41,12 +42,11 @@ const sendNotification = async (message) => {
       } else {
         const status = notifyStatus.INTERNAL_FAILURE
         const notifyErrorData = notifyError.response.data
-
         await publishStatus(message, emailAddress, status, notifyErrorData)
         await logRejectedNotification(message, emailAddress, notifyError)
       }
     } catch (error) {
-      console.error('Error logging notification: ', error)
+      console.error('Error logging notification:', error)
     }
   }
 }
