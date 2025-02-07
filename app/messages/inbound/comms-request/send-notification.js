@@ -9,7 +9,9 @@ let statusCode
 const trySendViaNotify = async (message, emailAddress) => {
   try {
     const duplicateError = await checkDuplicateNotification(message, emailAddress)
-    if (duplicateError) throw duplicateError
+    if (duplicateError) {
+      throw duplicateError
+    }
 
     const response = await notifyClient.sendEmail(
       message.data.notifyTemplateId,
