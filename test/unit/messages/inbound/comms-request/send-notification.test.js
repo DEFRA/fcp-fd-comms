@@ -2,8 +2,6 @@ import { jest, test } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
-const mockFindSuccessNotificationByIdAndEmail = jest.fn()
-const mockFindFailNotificationByIdAndEmail = jest.fn()
 const mockGetNotifyStatus = jest.fn()
 
 jest.unstable_mockModule('../../../../../app/jobs/check-notify-status/get-notify-status.js', () => ({
@@ -39,8 +37,6 @@ console.log = jest.fn()
 describe('Send Notification', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockFindSuccessNotificationByIdAndEmail.mockResolvedValue(null)
-    mockFindFailNotificationByIdAndEmail.mockResolvedValue(null)
     mockGetNotifyStatus.mockResolvedValue(null)
     mockSendEmail.mockResolvedValue({
       data: {
