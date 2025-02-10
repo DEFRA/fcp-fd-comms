@@ -2,7 +2,8 @@ import { jest, test } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
-const mockfindNotificationByIdAndEmail = jest.fn()
+const mockFindSuccessNotificationByIdAndEmail = jest.fn()
+const mockFindFailNotificationByIdAndEmail = jest.fn()
 const mockGetNotifyStatus = jest.fn()
 
 jest.unstable_mockModule('../../../../../app/jobs/check-notify-status/get-notify-status.js', () => ({
@@ -17,8 +18,7 @@ jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
 
 jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => ({
   logCreatedNotification: jest.fn(),
-  logRejectedNotification: jest.fn(),
-  findNotificationByIdAndEmail: mockfindNotificationByIdAndEmail
+  logRejectedNotification: jest.fn()
 }))
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
@@ -39,88 +39,14 @@ console.log = jest.fn()
 describe('Send Notification', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockfindNotificationByIdAndEmail.mockResolvedValue(null)
+    mockFindSuccessNotificationByIdAndEmail.mockResolvedValue(null)
+    mockFindFailNotificationByIdAndEmail.mockResolvedValue(null)
     mockGetNotifyStatus.mockResolvedValue(null)
     mockSendEmail.mockResolvedValue({
       data: {
         id: 'mock-notify-response-id'
       }
     })
-  })
-
-  test('should allow sending when existing notification has non-active status', async () => {
-    const existingNotification = {
-      notifyResponseId: 'existing-notify-id',
-      status: 'permanent-failure'
-    }
-    mockfindNotificationByIdAndEmail.mockResolvedValue(existingNotification)
-    const message = {
-      id: 'message-id-123',
-      data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        }
-      }
-    }
-    await sendNotification(message)
-    expect(mockfindNotificationByIdAndEmail).toHaveBeenCalledWith('message-id-123', 'mock-email@test.com')
-    expect(mockSendEmail).toHaveBeenCalled()
-    expect(logRejectedNotification).not.toHaveBeenCalled()
-  })
-
-  test('should check for duplicate notifications before sending', async () => {
-    const message = {
-      id: 'message-id-123',
-      data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        }
-      }
-    }
-
-    await sendNotification(message)
-
-    expect(mockfindNotificationByIdAndEmail).toHaveBeenCalledWith('message-id-123', 'mock-email@test.com')
-    expect(mockSendEmail).toHaveBeenCalled()
-  })
-
-  test('should not send email if duplicate notification exists and is active', async () => {
-    const existingNotification = {
-      notifyResponseId: 'existing-notify-id',
-      status: 'created'
-    }
-    mockfindNotificationByIdAndEmail.mockResolvedValue(existingNotification)
-    const message = {
-      id: 'message-id-123',
-      data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        }
-      }
-    }
-    await sendNotification(message)
-    expect(mockfindNotificationByIdAndEmail).toHaveBeenCalledWith('message-id-123', 'mock-email@test.com')
-    expect(mockSendEmail).not.toHaveBeenCalled()
-    expect(logRejectedNotification).toHaveBeenCalledWith(
-      message,
-      'mock-email@test.com',
-      expect.objectContaining({
-        response: {
-          data: {
-            status_code: 409
-          }
-        }
-      })
-    )
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {

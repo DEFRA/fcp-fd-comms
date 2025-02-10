@@ -1,6 +1,10 @@
 import { expect, jest, test } from '@jest/globals'
 import commsMessage from '../../../../mocks/comms-message.js'
 
+jest.unstable_mockModule('../../../../../app/utils/check-duplicate-notification.js', () => ({
+  checkDuplicateNotification: jest.fn()
+}))
+
 const mockReceiver = {
   completeMessage: jest.fn(),
   abandonMessage: jest.fn(),
@@ -20,14 +24,63 @@ const { publishReceived } = await import('../../../../../app/messages/outbound/n
 const { publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/handler.js')
+const { checkDuplicateNotification } = await import('../../../../../app/utils/check-duplicate-notification.js')
 
 describe('Handle Message', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
+  test('should abandon message when duplicate notification is detected', async () => {
+    const message = { body: commsMessage }
+    const duplicateError = new Error('Duplicate notification detected')
+    duplicateError.response = {
+      data: {
+        status_code: 409,
+        message: 'Duplicate notification detected'
+      }
+    }
+    checkDuplicateNotification.mockRejectedValue(duplicateError)
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
+    expect(sendNotification).not.toHaveBeenCalled()
+  })
+
+  test('should continue processing when notification is not a duplicate', async () => {
+    const message = { body: commsMessage }
+    checkDuplicateNotification.mockResolvedValue(null)
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(checkDuplicateNotification).toHaveBeenCalledWith(message.body, message.body.data.commsAddresses)
+    expect(publishReceived).toHaveBeenCalled()
+    expect(sendNotification).toHaveBeenCalled()
+    expect(mockReceiver.completeMessage).toHaveBeenCalled()
+  })
+  test('should continue processing when notification had previous failure', async () => {
+    const message = { body: commsMessage }
+    checkDuplicateNotification.mockResolvedValue(null)
+    await handleCommsRequest(message, mockReceiver)
+    expect(checkDuplicateNotification).toHaveBeenCalledWith(message.body, message.body.data.commsAddresses)
+    expect(publishReceived).toHaveBeenCalled()
+    expect(sendNotification).toHaveBeenCalled()
+    expect(mockReceiver.completeMessage).toHaveBeenCalled()
+  })
+  test('should log error when duplicate check fails', async () => {
+    const message = { body: commsMessage }
+    const consoleErrorSpy = jest.spyOn(console, 'error')
+    const error = new Error('Database error')
+    checkDuplicateNotification.mockRejectedValue(error)
+
+    await handleCommsRequest(message, mockReceiver)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error handling message: ', error)
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
+  })
 
   test('should call publishReceived', async () => {
     const message = { body: commsMessage }
+    checkDuplicateNotification.mockResolvedValue(null)
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -36,6 +89,7 @@ describe('Handle Message', () => {
 
   test('should call sendNotification', async () => {
     const message = { body: commsMessage }
+    checkDuplicateNotification.mockResolvedValue(null)
 
     await handleCommsRequest(message, mockReceiver)
 
@@ -44,6 +98,7 @@ describe('Handle Message', () => {
 
   test('should call completeMessage', async () => {
     const message = { body: commsMessage }
+    checkDuplicateNotification.mockResolvedValue(null)
 
     await handleCommsRequest(message, mockReceiver)
 

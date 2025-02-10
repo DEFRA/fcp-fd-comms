@@ -2,6 +2,7 @@ import { jest } from '@jest/globals'
 
 const mockCreate = jest.fn()
 const mockFindOne = jest.fn()
+const mockFailureFindOne = jest.fn()
 
 jest.unstable_mockModule('../../../app/data/index.js', () => ({
   default: {
@@ -10,7 +11,8 @@ jest.unstable_mockModule('../../../app/data/index.js', () => ({
       findOne: mockFindOne
     },
     notifyApiRequestFailure: {
-      create: mockCreate
+      create: mockCreate,
+      findOne: mockFailureFindOne
     }
   }
 }))
@@ -19,7 +21,8 @@ const {
   logCreatedNotification,
   logRejectedNotification,
   updateNotificationStatus,
-  findNotificationByIdAndEmail
+  findSuccessNotificationByIdAndEmail,
+  findFailNotificationByIdAndEmail
 } = await import('../../../app/repos/notification-log.js')
 
 describe('Notification Log Repository', () => {
@@ -98,7 +101,7 @@ describe('Notification Log Repository', () => {
     }
   )
 
-  describe('findNotificationByIdAndEmail', () => {
+  describe('findSuccessNotificationByIdAndEmail', () => {
     test('should return existing notification when found', async () => {
       const mockNotification = {
         notifyResponseId: '123456789',
@@ -111,7 +114,7 @@ describe('Notification Log Repository', () => {
 
       mockFindOne.mockResolvedValue(mockNotification)
 
-      const result = await findNotificationByIdAndEmail('test-message-id', 'test@example.com')
+      const result = await findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com')
 
       expect(mockFindOne).toHaveBeenCalledWith({
         where: {
@@ -125,7 +128,7 @@ describe('Notification Log Repository', () => {
     test('should return null when notification is not found', async () => {
       mockFindOne.mockResolvedValue(null)
 
-      const result = await findNotificationByIdAndEmail('test-message-id', 'test@example.com')
+      const result = await findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com')
 
       expect(mockFindOne).toHaveBeenCalledWith({
         where: {
@@ -140,10 +143,63 @@ describe('Notification Log Repository', () => {
       const mockError = new Error('Database connection failed')
       mockFindOne.mockRejectedValue(mockError)
 
-      await expect(findNotificationByIdAndEmail('test-message-id', 'test@example.com'))
+      await expect(findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com'))
         .rejects.toThrow('Database connection failed')
 
       expect(mockFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+    })
+  })
+
+  describe('findFailNotificationByIdAndEmail', () => {
+    test('should return existing failed notification when found', async () => {
+      const mockNotification = {
+        message: {
+          id: 'test-message-id'
+        },
+        recipient: 'test@example.com',
+        error: 'some error'
+      }
+
+      mockFailureFindOne.mockResolvedValue(mockNotification)
+
+      const result = await findFailNotificationByIdAndEmail('test-message-id', 'test@example.com')
+
+      expect(mockFailureFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+      expect(result).toEqual(mockNotification)
+    })
+
+    test('should return null when failed notification is not found', async () => {
+      mockFailureFindOne.mockResolvedValue(null)
+
+      const result = await findFailNotificationByIdAndEmail('test-message-id', 'test@example.com')
+
+      expect(mockFailureFindOne).toHaveBeenCalledWith({
+        where: {
+          'message.id': 'test-message-id',
+          recipient: 'test@example.com'
+        }
+      })
+      expect(result).toBeNull()
+    })
+
+    test('should handle database errors appropriately', async () => {
+      const mockError = new Error('Database connection failed')
+      mockFailureFindOne.mockRejectedValue(mockError)
+
+      await expect(findFailNotificationByIdAndEmail('test-message-id', 'test@example.com'))
+        .rejects.toThrow('Database connection failed')
+
+      expect(mockFailureFindOne).toHaveBeenCalledWith({
         where: {
           'message.id': 'test-message-id',
           recipient: 'test@example.com'

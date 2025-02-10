@@ -4,6 +4,7 @@ import {
 } from '../../../schemas/comms-request/index.js'
 import { publishInvalidRequest, publishReceived } from '../../outbound/notification-status/publish.js'
 import { sendNotification } from './send-notification.js'
+import { checkDuplicateNotification } from '../../../utils/check-duplicate-notification.js'
 
 const handleCommsRequest = async (message, receiver) => {
   const commsRequest = message.body
@@ -24,7 +25,7 @@ const handleCommsRequest = async (message, receiver) => {
 
       return
     }
-
+    await checkDuplicateNotification(validated, validated.data.commsAddresses)
     await publishReceived(validated)
     await sendNotification(validated)
 
