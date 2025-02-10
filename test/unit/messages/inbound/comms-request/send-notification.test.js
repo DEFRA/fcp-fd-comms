@@ -39,7 +39,6 @@ console.log = jest.fn()
 describe('Send Notification', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    // Set default behavior for non-duplicate cases
     mockfindNotificationByIdAndEmail.mockResolvedValue(null)
     mockGetNotifyStatus.mockResolvedValue(null)
     mockSendEmail.mockResolvedValue({
@@ -52,10 +51,9 @@ describe('Send Notification', () => {
   test('should allow sending when existing notification has non-active status', async () => {
     const existingNotification = {
       notifyResponseId: 'existing-notify-id',
-      status: 'previous-status'
+      status: 'permanent-failure'
     }
     mockfindNotificationByIdAndEmail.mockResolvedValue(existingNotification)
-    mockGetNotifyStatus.mockResolvedValue({ status: 'permanent-failure' })
     const message = {
       id: 'message-id-123',
       data: {
@@ -69,7 +67,6 @@ describe('Send Notification', () => {
     }
     await sendNotification(message)
     expect(mockfindNotificationByIdAndEmail).toHaveBeenCalledWith('message-id-123', 'mock-email@test.com')
-    expect(mockGetNotifyStatus).toHaveBeenCalledWith('existing-notify-id')
     expect(mockSendEmail).toHaveBeenCalled()
     expect(logRejectedNotification).not.toHaveBeenCalled()
   })
@@ -99,8 +96,6 @@ describe('Send Notification', () => {
       status: 'created'
     }
     mockfindNotificationByIdAndEmail.mockResolvedValue(existingNotification)
-    mockGetNotifyStatus.mockResolvedValue({ status: 'sending' })
-
     const message = {
       id: 'message-id-123',
       data: {
@@ -112,11 +107,8 @@ describe('Send Notification', () => {
         }
       }
     }
-
     await sendNotification(message)
-
     expect(mockfindNotificationByIdAndEmail).toHaveBeenCalledWith('message-id-123', 'mock-email@test.com')
-    expect(mockGetNotifyStatus).toHaveBeenCalledWith('existing-notify-id')
     expect(mockSendEmail).not.toHaveBeenCalled()
     expect(logRejectedNotification).toHaveBeenCalledWith(
       message,
