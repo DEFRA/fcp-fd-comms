@@ -3,7 +3,7 @@ import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
-import { checkDuplicateNotification } from '../../../jobs/check-notify-status/check-duplicate-notification.js'
+import { checkDuplicateNotification } from '../../../utils/check-duplicate-notification.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
   try {
