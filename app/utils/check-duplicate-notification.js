@@ -26,6 +26,7 @@ const checkDuplicateNotification = async (message, emailAddresses) => {
       }
     }
   }
+  return null
 }
 
 export { checkDuplicateNotification }
