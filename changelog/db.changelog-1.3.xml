@@ -11,6 +11,20 @@
             tableName="notifyApiRequestSuccess"/>
     </changeSet>
 
+    <changeSet  author="Defra"  id="2">
+        <modifyDataType
+            columnName="statusUpdatedAt"
+            newDataType="TIMESTAMPTZ"
+            tableName="notifyApiRequestSuccess"/>
+    </changeSet>
+
+    <changeSet  author="Defra"  id="2">
+        <modifyDataType
+            columnName="completed"
+            newDataType="TIMESTAMPTZ"
+            tableName="notifyApiRequestSuccess"/>
+    </changeSet>
+
     <changeSet  author="Defra"  id="3">
         <modifyDataType
             columnName="createdAt"
