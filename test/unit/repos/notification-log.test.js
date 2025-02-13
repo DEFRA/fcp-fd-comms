@@ -158,7 +158,7 @@ describe('Notification Log Repository', () => {
       mockFindOne.mockResolvedValue(mockNotification)
 
       const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
-      expect(result).toBeUndefined()
+      expect(result).toBe(false)
     })
 
     test('should handle database errors appropriately', async () => {
@@ -180,7 +180,7 @@ describe('Notification Log Repository', () => {
       mockFindOne.mockResolvedValue(null)
 
       const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
-      expect(result).toBeUndefined()
+      expect(result).toBeNull()
     })
   })
 })

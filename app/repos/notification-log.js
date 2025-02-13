@@ -64,9 +64,7 @@ const checkDuplicateNotification = async (messageId, recipient) => {
     }
   })
 
-  if (existing && nonFailureStatuses.includes(existing.status)) {
-    return true
-  }
+  return existing && nonFailureStatuses.includes(existing.status)
 }
 
 export {
