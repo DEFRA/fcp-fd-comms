@@ -2,9 +2,9 @@ import { publishReceived } from '../../outbound/notification-status/publish.js'
 import { sendNotification } from './send-notification.js'
 
 const handleCommsRequest = async (message, receiver) => {
-  const commsRequest = message.body
-
   try {
+    const commsRequest = message.body
+
     await publishReceived(commsRequest)
     await sendNotification(commsRequest)
 
