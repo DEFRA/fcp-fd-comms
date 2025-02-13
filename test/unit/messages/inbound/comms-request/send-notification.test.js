@@ -16,7 +16,8 @@ jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
 
 jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => ({
   logCreatedNotification: jest.fn(),
-  logRejectedNotification: jest.fn()
+  logRejectedNotification: jest.fn(),
+  checkDuplicateNotification: jest.fn().mockResolvedValue(false)
 }))
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
@@ -25,7 +26,8 @@ jest.unstable_mockModule('../../../../../app/messages/outbound/notification-stat
 
 const {
   logCreatedNotification,
-  logRejectedNotification
+  logRejectedNotification,
+  checkDuplicateNotification
 } = await import('../../../../../app/repos/notification-log.js')
 
 const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
@@ -33,6 +35,7 @@ const { publishStatus } = await import('../../../../../app/messages/outbound/not
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 
 console.log = jest.fn()
+console.warn = jest.fn()
 
 describe('Send Notification', () => {
   beforeEach(() => {
@@ -43,6 +46,27 @@ describe('Send Notification', () => {
         id: 'mock-notify-response-id'
       }
     })
+  })
+  test('should skip sending when duplicate notification is detected', async () => {
+    const message = {
+      id: 'message-id',
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        }
+      }
+    }
+
+    checkDuplicateNotification.mockResolvedValueOnce(true)
+
+    await sendNotification(message)
+
+    expect(checkDuplicateNotification).toHaveBeenCalledWith('message-id', 'mock-email@test.com')
+    expect(mockSendEmail).not.toHaveBeenCalled()
+    expect(console.warn).toHaveBeenCalledWith('Duplicate notification detected:', true)
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {

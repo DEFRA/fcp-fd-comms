@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
-import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
+import { logCreatedNotification, logRejectedNotification, checkDuplicateNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
@@ -28,6 +28,13 @@ const sendNotification = async (message) => {
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
+    const duplicate = await checkDuplicateNotification(message.id, emailAddress)
+
+    if (duplicate) {
+      console.warn('Duplicate notification detected:', duplicate)
+      continue
+    }
+
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
     try {

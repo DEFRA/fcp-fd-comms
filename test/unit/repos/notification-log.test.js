@@ -17,12 +17,19 @@ jest.unstable_mockModule('../../../app/data/index.js', () => ({
   }
 }))
 
+jest.unstable_mockModule('../../../app/constants/notify-statuses.js', () => ({
+  default: {
+    CREATED: 'created',
+    SENDING: 'sending',
+    DELIVERED: 'delivered'
+  }
+}))
+
 const {
   logCreatedNotification,
   logRejectedNotification,
   updateNotificationStatus,
-  findSuccessNotificationByIdAndEmail,
-  findFailNotificationByIdAndEmail
+  checkDuplicateNotification
 } = await import('../../../app/repos/notification-log.js')
 
 describe('Notification Log Repository', () => {
@@ -101,8 +108,8 @@ describe('Notification Log Repository', () => {
     }
   )
 
-  describe('findSuccessNotificationByIdAndEmail', () => {
-    test('should return existing notification when found', async () => {
+  describe('checkDuplicateNotification', () => {
+    test('should return true if notification exists with status "created"', async () => {
       const mockNotification = {
         notifyResponseId: '123456789',
         message: {
@@ -111,10 +118,9 @@ describe('Notification Log Repository', () => {
         recipient: 'test@example.com',
         status: 'created'
       }
-
       mockFindOne.mockResolvedValue(mockNotification)
 
-      const result = await findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com')
+      const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
 
       expect(mockFindOne).toHaveBeenCalledWith({
         where: {
@@ -122,28 +128,44 @@ describe('Notification Log Repository', () => {
           recipient: 'test@example.com'
         }
       })
-      expect(result).toEqual(mockNotification)
+      expect(result).toBe(true)
     })
 
-    test('should return null when notification is not found', async () => {
-      mockFindOne.mockResolvedValue(null)
+    test('should return true if notification exists with status "sending"', async () => {
+      const mockNotification = {
+        status: 'sending'
+      }
+      mockFindOne.mockResolvedValue(mockNotification)
 
-      const result = await findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com')
+      const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
+      expect(result).toBe(true)
+    })
 
-      expect(mockFindOne).toHaveBeenCalledWith({
-        where: {
-          'message.id': 'test-message-id',
-          recipient: 'test@example.com'
-        }
-      })
-      expect(result).toBeNull()
+    test('should return true if notification exists with status "delivered"', async () => {
+      const mockNotification = {
+        status: 'delivered'
+      }
+      mockFindOne.mockResolvedValue(mockNotification)
+
+      const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
+      expect(result).toBe(true)
+    })
+
+    test('should return undefined if notification exists with failure status', async () => {
+      const mockNotification = {
+        status: 'permanent-failure'
+      }
+      mockFindOne.mockResolvedValue(mockNotification)
+
+      const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
+      expect(result).toBeUndefined()
     })
 
     test('should handle database errors appropriately', async () => {
       const mockError = new Error('Database connection failed')
       mockFindOne.mockRejectedValue(mockError)
 
-      await expect(findSuccessNotificationByIdAndEmail('test-message-id', 'test@example.com'))
+      await expect(checkDuplicateNotification('test-message-id', 'test@example.com'))
         .rejects.toThrow('Database connection failed')
 
       expect(mockFindOne).toHaveBeenCalledWith({
@@ -153,58 +175,12 @@ describe('Notification Log Repository', () => {
         }
       })
     })
-  })
 
-  describe('findFailNotificationByIdAndEmail', () => {
-    test('should return existing failed notification when found', async () => {
-      const mockNotification = {
-        message: {
-          id: 'test-message-id'
-        },
-        recipient: 'test@example.com',
-        error: 'some error'
-      }
+    test('should return undefined when notification is not found', async () => {
+      mockFindOne.mockResolvedValue(null)
 
-      mockFailureFindOne.mockResolvedValue(mockNotification)
-
-      const result = await findFailNotificationByIdAndEmail('test-message-id', 'test@example.com')
-
-      expect(mockFailureFindOne).toHaveBeenCalledWith({
-        where: {
-          'message.id': 'test-message-id',
-          recipient: 'test@example.com'
-        }
-      })
-      expect(result).toEqual(mockNotification)
-    })
-
-    test('should return null when failed notification is not found', async () => {
-      mockFailureFindOne.mockResolvedValue(null)
-
-      const result = await findFailNotificationByIdAndEmail('test-message-id', 'test@example.com')
-
-      expect(mockFailureFindOne).toHaveBeenCalledWith({
-        where: {
-          'message.id': 'test-message-id',
-          recipient: 'test@example.com'
-        }
-      })
-      expect(result).toBeNull()
-    })
-
-    test('should handle database errors appropriately', async () => {
-      const mockError = new Error('Database connection failed')
-      mockFailureFindOne.mockRejectedValue(mockError)
-
-      await expect(findFailNotificationByIdAndEmail('test-message-id', 'test@example.com'))
-        .rejects.toThrow('Database connection failed')
-
-      expect(mockFailureFindOne).toHaveBeenCalledWith({
-        where: {
-          'message.id': 'test-message-id',
-          recipient: 'test@example.com'
-        }
-      })
+      const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
+      expect(result).toBeUndefined()
     })
   })
 })
