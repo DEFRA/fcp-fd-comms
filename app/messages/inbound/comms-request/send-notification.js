@@ -31,7 +31,7 @@ const sendNotification = async (message) => {
     const duplicate = await checkDuplicateNotification(message.id, emailAddress)
 
     if (duplicate) {
-      console.warn('Duplicate notification detected:', duplicate)
+      console.warn('Duplicate notification detected')
       continue
     }
 

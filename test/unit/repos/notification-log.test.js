@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals'
+import notifyStatus from '../../../app/constants/notify-statuses.js'
 
 const mockCreate = jest.fn()
 const mockFindOne = jest.fn()
@@ -14,14 +15,6 @@ jest.unstable_mockModule('../../../app/data/index.js', () => ({
       create: mockCreate,
       findOne: mockFailureFindOne
     }
-  }
-}))
-
-jest.unstable_mockModule('../../../app/constants/notify-statuses.js', () => ({
-  default: {
-    CREATED: 'created',
-    SENDING: 'sending',
-    DELIVERED: 'delivered'
   }
 }))
 
@@ -50,7 +43,7 @@ describe('Notification Log Repository', () => {
       createdAt: expect.any(Date),
       notifyResponseId: '123456789',
       message,
-      status: 'created',
+      status: notifyStatus.CREATED,
       statusUpdatedAt: expect.any(Date),
       completed: null,
       recipient: 'mock-email@test.gov.uk'
@@ -75,7 +68,7 @@ describe('Notification Log Repository', () => {
     async (status) => {
       const notification = {
         save: jest.fn(),
-        status: 'created',
+        status: notifyStatus.CREATED,
         statusUpdatedAt: new Date(),
         completed: null
       }
@@ -95,7 +88,7 @@ describe('Notification Log Repository', () => {
 
       const notification = {
         save: jest.fn(),
-        status: 'created',
+        status: notifyStatus.CREATED,
         statusUpdatedAt: new Date(),
         completed: null
       }
@@ -116,7 +109,7 @@ describe('Notification Log Repository', () => {
           id: 'test-message-id'
         },
         recipient: 'test@example.com',
-        status: 'created'
+        status: notifyStatus.CREATED
       }
       mockFindOne.mockResolvedValue(mockNotification)
 
@@ -133,7 +126,7 @@ describe('Notification Log Repository', () => {
 
     test('should return true if notification exists with status "sending"', async () => {
       const mockNotification = {
-        status: 'sending'
+        status: notifyStatus.SENDING
       }
       mockFindOne.mockResolvedValue(mockNotification)
 
@@ -143,7 +136,7 @@ describe('Notification Log Repository', () => {
 
     test('should return true if notification exists with status "delivered"', async () => {
       const mockNotification = {
-        status: 'delivered'
+        status: notifyStatus.DELIVERED
       }
       mockFindOne.mockResolvedValue(mockNotification)
 
@@ -151,9 +144,9 @@ describe('Notification Log Repository', () => {
       expect(result).toBe(true)
     })
 
-    test('should return undefined if notification exists with failure status', async () => {
+    test('should return false if notification exists with failure status', async () => {
       const mockNotification = {
-        status: 'permanent-failure'
+        status: notifyStatus.PERMANENT_FAILURE
       }
       mockFindOne.mockResolvedValue(mockNotification)
 
@@ -176,11 +169,11 @@ describe('Notification Log Repository', () => {
       })
     })
 
-    test('should return undefined when notification is not found', async () => {
+    test('should return false when notification is not found', async () => {
       mockFindOne.mockResolvedValue(null)
 
       const result = await checkDuplicateNotification('test-message-id', 'test@example.com')
-      expect(result).toBeNull()
+      expect(result).toBe(false)
     })
   })
 })

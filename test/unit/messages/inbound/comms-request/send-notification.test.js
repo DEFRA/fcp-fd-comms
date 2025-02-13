@@ -35,11 +35,15 @@ const { publishStatus } = await import('../../../../../app/messages/outbound/not
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
 
 console.log = jest.fn()
-console.warn = jest.fn()
 
 describe('Send Notification', () => {
+  let consoleWarnSpy
+  let consoleErrorSpy
+
   beforeEach(() => {
     jest.clearAllMocks()
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
     mockGetNotifyStatus.mockResolvedValue(null)
     mockSendEmail.mockResolvedValue({
       data: {
@@ -47,6 +51,12 @@ describe('Send Notification', () => {
       }
     })
   })
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
+  })
+
   test('should skip sending when duplicate notification is detected', async () => {
     const message = {
       id: 'message-id',
@@ -66,7 +76,7 @@ describe('Send Notification', () => {
 
     expect(checkDuplicateNotification).toHaveBeenCalledWith('message-id', 'mock-email@test.com')
     expect(mockSendEmail).not.toHaveBeenCalled()
-    expect(console.warn).toHaveBeenCalledWith('Duplicate notification detected:', true)
+    expect(consoleWarnSpy).toHaveBeenCalledWith('Duplicate notification detected')
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {
@@ -150,7 +160,6 @@ describe('Send Notification', () => {
 
   test('should log an error message when sendEmail fails', async () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
-    const consoleSpy = jest.spyOn(console, 'error')
 
     const message = {
       data: {
@@ -181,9 +190,8 @@ describe('Send Notification', () => {
 
     await sendNotification(message)
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
 
-    consoleSpy.mockRestore()
     uuidSpy.mockRestore()
   })
 
