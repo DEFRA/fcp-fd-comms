@@ -1,16 +1,5 @@
 import Joi from 'joi'
-import { sbi, crn } from '../common/index.js'
-import environments from '../../constants/environments.js'
-
-const validateTestEmail = [
-  environments.DEVELOPMENT,
-  environments.TEST
-].includes(process.env.NODE_ENV)
-  ? Joi.alternatives().try(
-    Joi.string().email(),
-    Joi.string().valid('temp-fail@simulator.notify', 'perm-fail@simulator.notify')
-  )
-  : Joi.string().email()
+import { sbi, crn, commsAddress } from '../common/index.js'
 
 const v3 = Joi.object({
   id: Joi.string().uuid().required(),
@@ -26,8 +15,8 @@ const v3 = Joi.object({
     notifyTemplateId: Joi.string().uuid().required(),
     commsType: Joi.string().valid('email').required(),
     commsAddresses: Joi.alternatives().conditional(Joi.array(), {
-      then: Joi.array().items(validateTestEmail).min(1).max(10).required(),
-      otherwise: validateTestEmail.required()
+      then: Joi.array().items(commsAddress).min(1).max(10).required(),
+      otherwise: commsAddress.required()
     }).required(),
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),

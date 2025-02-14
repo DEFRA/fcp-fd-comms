@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, test } from '@jest/globals'
+import { beforeEach, describe, expect, test, jest } from '@jest/globals'
 
 import { validate } from '../../../../app/schemas/validate.js'
 import { v3 } from '../../../../app/schemas/comms-request/index.js'
+import environments from '../../../../app/constants/environments.js'
 
 import commsMessage from '../../../mocks/comms-message.js'
 
@@ -244,8 +245,16 @@ describe('comms request schema v3 validation', () => {
   })
 
   describe('commsAddresses', () => {
+    const originalEnv = process.env.NODE_ENV
+
     beforeEach(() => {
       mockV3Message.data.commsAddresses = 'test@example.com'
+      jest.resetModules()
+    })
+
+    afterEach(() => {
+      process.env.NODE_ENV = originalEnv
+      jest.resetModules()
     })
 
     test('missing commsAddresses should return error', async () => {
@@ -360,6 +369,76 @@ describe('comms request schema v3 validation', () => {
       expect(error).toContainEqual({
         error: 'ValidationError',
         message: '"data.commsAddresses" must be a valid email'
+      })
+    })
+
+    describe('environment specific validation', () => {
+      const simulatorEmails = [
+        'temp-fail@simulator.notify',
+        'perm-fail@simulator.notify'
+      ]
+
+      const validateWithEnv = async (message, environment) => {
+        process.env.NODE_ENV = environment
+        jest.resetModules()
+        const { v3 } = await import('../../../../app/schemas/comms-request/index.js')
+        return validate(v3, message)
+      }
+
+      test.each([
+        environments.DEVELOPMENT,
+        environments.TEST
+      ])('should allow simulator emails in %s environment', async (environment) => {
+        for (const email of simulatorEmails) {
+          mockV3Message.data.commsAddresses = email
+          const [value, error] = await validateWithEnv(mockV3Message, environment)
+          expect(error).toBeNull()
+          expect(value).toBeTruthy()
+        }
+
+        mockV3Message.data.commsAddresses = simulatorEmails
+        const [value, error] = await validateWithEnv(mockV3Message, environment)
+        expect(error).toBeNull()
+        expect(value).toBeTruthy()
+      })
+
+      test('should reject simulator emails in production environment', async () => {
+        for (const email of simulatorEmails) {
+          mockV3Message.data.commsAddresses = email
+          const [value, error] = await validateWithEnv(mockV3Message, environments.PRODUCTION)
+          expect(value).toBeNull()
+          expect(error).toBeTruthy()
+          expect(error).toContainEqual({
+            error: 'ValidationError',
+            message: '"data.commsAddresses" must be a valid email'
+          })
+        }
+      })
+
+      test('should allow mixing regular and simulator emails in non-production', async () => {
+        const mixedEmails = [
+          'test@example.com',
+          'temp-fail@simulator.notify',
+          'another@example.com',
+          'perm-fail@simulator.notify'
+        ]
+
+        for (const environment of [environments.DEVELOPMENT, environments.TEST]) {
+          mockV3Message.data.commsAddresses = mixedEmails
+          const [value, error] = await validateWithEnv(mockV3Message, environment)
+          expect(error).toBeNull()
+          expect(value).toBeTruthy()
+        }
+      })
+
+      test('should always allow valid emails regardless of environment', async () => {
+        mockV3Message.data.commsAddresses = 'valid@example.com'
+
+        for (const environment of Object.values(environments)) {
+          const [value, error] = await validateWithEnv(mockV3Message, environment)
+          expect(error).toBeNull()
+          expect(value).toBeTruthy()
+        }
       })
     })
   })
