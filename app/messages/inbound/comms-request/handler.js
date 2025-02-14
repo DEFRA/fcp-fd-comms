@@ -21,13 +21,22 @@ const handleCommsRequest = async (message, receiver) => {
       }
 
       await receiver.deadLetterMessage(message)
-
       return
     }
-    await publishReceived(validated)
-    await sendNotification(validated)
 
-    await receiver.completeMessage(message)
+    await publishReceived(validated)
+
+    try {
+      await sendNotification(validated, receiver)
+      await receiver.completeMessage(message)
+    } catch (error) {
+      if (error.message === 'NOTIFY_RETRY_ERROR') {
+        console.log('Abandoning message for retry due to notify 500 error')
+        await receiver.abandonMessage(message)
+        return
+      }
+      throw error
+    }
   } catch (error) {
     console.error('Error handling message: ', error)
     await receiver.abandonMessage(message)

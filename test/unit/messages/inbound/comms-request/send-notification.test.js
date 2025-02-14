@@ -39,6 +39,7 @@ console.log = jest.fn()
 describe('Send Notification', () => {
   let consoleWarnSpy
   let consoleErrorSpy
+  let mockReceiver
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -50,6 +51,11 @@ describe('Send Notification', () => {
         id: 'mock-notify-response-id'
       }
     })
+    mockReceiver = {
+      abandonMessage: jest.fn(),
+      completeMessage: jest.fn(),
+      deadLetterMessage: jest.fn()
+    }
   })
 
   afterEach(() => {
@@ -72,7 +78,7 @@ describe('Send Notification', () => {
 
     checkDuplicateNotification.mockResolvedValueOnce(true)
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(checkDuplicateNotification).toHaveBeenCalledWith('message-id', 'mock-email@test.com')
     expect(mockSendEmail).not.toHaveBeenCalled()
@@ -94,7 +100,7 @@ describe('Send Notification', () => {
       }
     }
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(mockSendEmail).toHaveBeenCalled()
     expect(mockSendEmail).toHaveBeenCalledWith(
@@ -127,7 +133,7 @@ describe('Send Notification', () => {
       }
     }
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(mockSendEmail).toHaveBeenCalledTimes(2)
 
@@ -188,7 +194,7 @@ describe('Send Notification', () => {
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
 
@@ -214,7 +220,7 @@ describe('Send Notification', () => {
       }
     })
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(logCreatedNotification).toHaveBeenCalledTimes(1)
     expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', 'mock-notify-response-id')
@@ -239,7 +245,7 @@ describe('Send Notification', () => {
       }
     })
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'sending')
@@ -273,7 +279,7 @@ describe('Send Notification', () => {
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(logRejectedNotification).toHaveBeenCalledTimes(1)
     expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError)
@@ -309,9 +315,43 @@ describe('Send Notification', () => {
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
+    await sendNotification(message, mockReceiver)
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
+  })
+
+  test('should log an internal failure and abandon message when notify returns a 500 status code', async () => {
+    const message = {
+      id: 'message-id',
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        }
+      }
+    }
+
+    const mockError = {
+      response: {
+        status: 500,
+        data: {
+          errors: [
+            {
+              error: 'mock-error'
+            }
+          ]
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await sendNotification(message, mockReceiver)
+
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Internal failure sending notification:', mockError)
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
   })
 })
