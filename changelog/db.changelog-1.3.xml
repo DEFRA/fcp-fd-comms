@@ -4,28 +4,28 @@
         <tagDatabase tag="v1.3.0"/>
     </changeSet>
 
-    <changeSet  author="Defra"  id="2">
+    <changeSet author="Defra" id="2">
         <modifyDataType
             columnName="createdAt"
             newDataType="TIMESTAMPTZ"
             tableName="notifyApiRequestSuccess"/>
     </changeSet>
 
-    <changeSet  author="Defra"  id="3">
+    <changeSet author="Defra" id="3">
         <modifyDataType
             columnName="statusUpdatedAt"
             newDataType="TIMESTAMPTZ"
             tableName="notifyApiRequestSuccess"/>
     </changeSet>
 
-    <changeSet  author="Defra"  id="4">
+    <changeSet author="Defra" id="4">
         <modifyDataType
             columnName="completed"
             newDataType="TIMESTAMPTZ"
             tableName="notifyApiRequestSuccess"/>
     </changeSet>
 
-    <changeSet  author="Defra"  id="5">
+    <changeSet author="Defra" id="5">
         <modifyDataType
             columnName="createdAt"
             newDataType="TIMESTAMPTZ"
