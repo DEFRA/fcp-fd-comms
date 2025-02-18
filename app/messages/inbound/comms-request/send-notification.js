@@ -41,31 +41,34 @@ const handleNotifyError = async (message, emailAddress, notifyError, receiver) =
   await logRejectedNotification(message, emailAddress, notifyError)
 }
 
+const processEmailAddress = async (message, emailAddress, receiver) => {
+  const [response, notifyError] = await trySendViaNotify(message, emailAddress)
+
+  if (response) {
+    await publishStatus(message, emailAddress, notifyStatus.SENDING)
+    await logCreatedNotification(message, emailAddress, response.data.id)
+    return
+  }
+
+  if (!notifyError) return
+
+  try {
+    await handleNotifyError(message, emailAddress, notifyError, receiver)
+  } catch (error) {
+    if (error.message !== 'Technical failure - message abandoned for retry') {
+      console.error('Error processing notification:', error)
+    }
+    throw error // Rethrow to trigger Service Bus retry
+  }
+}
+
 const sendNotification = async (message, receiver) => {
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const [response, notifyError] = await trySendViaNotify(message, emailAddress)
-
-    if (response) {
-      await publishStatus(message, emailAddress, notifyStatus.SENDING)
-      await logCreatedNotification(message, emailAddress, response.data.id)
-      continue
-    }
-
-    if (notifyError) {
-      try {
-        await handleNotifyError(message, emailAddress, notifyError, receiver)
-      } catch (error) {
-        if (error.message === 'Technical failure - message abandoned for retry') {
-          throw error
-        }
-        console.error('Error processing notification:', error)
-        throw error // Rethrow to trigger Service Bus retry
-      }
-    }
+    await processEmailAddress(message, emailAddress, receiver)
   }
 }
 
