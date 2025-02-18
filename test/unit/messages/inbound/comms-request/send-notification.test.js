@@ -1,4 +1,4 @@
-import { jest, test } from '@jest/globals'
+import { beforeEach, jest, test, expect } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
@@ -18,20 +18,30 @@ jest.unstable_mockModule('../../../../../app/messages/outbound/notification-stat
   publishStatus: jest.fn()
 }))
 
-const {
-  logCreatedNotification,
-  logRejectedNotification
-} = await import('../../../../../app/repos/notification-log.js')
-
-const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
-
-const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
-
-console.log = jest.fn()
+let logCreatedNotification, logRejectedNotification, publishStatus, sendNotification
 
 describe('Send Notification', () => {
-  beforeEach(() => {
+  let mockNotifyReceiver
+  let consoleErrorSpy
+
+  beforeEach(async () => {
     jest.clearAllMocks()
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    mockNotifyReceiver = {
+      abandonMessage: jest.fn(),
+      completeMessage: jest.fn(),
+      deadLetterMessage: jest.fn()
+    }
+
+    const notificationLog = await import('../../../../../app/repos/notification-log.js')
+    logCreatedNotification = notificationLog.logCreatedNotification
+    logRejectedNotification = notificationLog.logRejectedNotification
+
+    const notificationStatus = await import('../../../../../app/messages/outbound/notification-status/publish.js')
+    publishStatus = notificationStatus.publishStatus
+
+    const notificationSender = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
+    sendNotification = notificationSender.sendNotification
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {
@@ -146,7 +156,7 @@ describe('Send Notification', () => {
 
     await sendNotification(message)
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
+    expect(consoleSpy).toHaveBeenCalledWith('Error sending email:', 400, undefined)
 
     consoleSpy.mockRestore()
     uuidSpy.mockRestore()
@@ -270,5 +280,38 @@ describe('Send Notification', () => {
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
+  })
+
+  test('should log an internal failure and abandon message when notify returns a 500 status code', async () => {
+    const message = {
+      id: 'message-id',
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        }
+      }
+    }
+
+    const mockError = {
+      response: {
+        status: 500,
+        data: {
+          errors: [
+            {
+              error: 'mock-error'
+            }
+          ]
+        }
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await expect(sendNotification(message, mockNotifyReceiver)).rejects.toThrow('Technical failure - message abandoned for retry')
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Internal failure sending notification:', mockError)
+    expect(mockNotifyReceiver.abandonMessage).toHaveBeenCalledWith(message)
   })
 })

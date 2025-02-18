@@ -18,15 +18,29 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    const status = error.response.data.status_code
-
-    console.error('Error sending email with code:', status)
-
+    const statusCode = error.response?.data?.status_code
+    console.error('Error sending email:', statusCode, undefined)
     return [null, error]
   }
 }
 
-const sendNotification = async (message) => {
+const handleNotifyError = async (message, emailAddress, notifyError, receiver) => {
+  if (notifyError?.response?.status === 500) {
+    console.error('Internal failure sending notification:', notifyError)
+    if (receiver) {
+      await receiver.abandonMessage(message)
+    }
+    throw new Error('Technical failure - message abandoned for retry')
+  }
+
+  const status = notifyStatus.INTERNAL_FAILURE
+  const notifyErrorData = notifyError?.response?.data || {}
+
+  await publishStatus(message, emailAddress, status, notifyErrorData)
+  await logRejectedNotification(message, emailAddress, notifyError)
+}
+
+const sendNotification = async (message, receiver) => {
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
     : [message.data.commsAddresses]
@@ -38,15 +52,15 @@ const sendNotification = async (message) => {
       if (response) {
         await publishStatus(message, emailAddress, notifyStatus.SENDING)
         await logCreatedNotification(message, emailAddress, response.data.id)
-      } else {
-        const status = notifyStatus.INTERNAL_FAILURE
-        const notifyErrorData = notifyError.response.data
-
-        await publishStatus(message, emailAddress, status, notifyErrorData)
-        await logRejectedNotification(message, emailAddress, notifyError)
+      } else if (notifyError) {
+        await handleNotifyError(message, emailAddress, notifyError, receiver)
       }
     } catch (error) {
-      console.error('Error logging notification: ', error)
+      if (error.message === 'Technical failure - message abandoned for retry') {
+        throw error
+      }
+      console.error('Error processing notification:', error)
+      throw error // Rethrow to trigger Service Bus retry
     }
   }
 }

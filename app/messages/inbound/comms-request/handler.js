@@ -6,9 +6,17 @@ const handleCommsRequest = async (message, receiver) => {
     const commsRequest = message.body
 
     await publishReceived(commsRequest)
-    await sendNotification(commsRequest)
-
-    await receiver.completeMessage(message)
+    try {
+      await sendNotification(message, receiver)
+      await receiver.completeMessage(message)
+    } catch (error) {
+      if (error.message === 'NOTIFY_RETRY_ERROR') {
+        console.log('Abandoning message for retry due to notify 500 error')
+        await receiver.abandonMessage(message)
+        return
+      }
+      throw error
+    }
   } catch (error) {
     console.error('Error handling message: ', error)
     await receiver.deadLetterMessage(message)
