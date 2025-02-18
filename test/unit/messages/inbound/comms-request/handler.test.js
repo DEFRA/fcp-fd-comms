@@ -39,7 +39,7 @@ describe('Handle Message', () => {
 
     await handleCommsRequest(message, mockReceiver)
 
-    expect(sendNotification).toHaveBeenCalledWith(message.body)
+    expect(sendNotification).toHaveBeenCalledWith(message.body, mockReceiver)
   })
 
   test('should call completeMessage', async () => {

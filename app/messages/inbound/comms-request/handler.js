@@ -4,10 +4,9 @@ import { sendNotification } from './send-notification.js'
 const handleCommsRequest = async (message, receiver) => {
   try {
     const commsRequest = message.body
-
     await publishReceived(commsRequest)
     try {
-      await sendNotification(message, receiver)
+      await sendNotification(commsRequest, receiver)
       await receiver.completeMessage(message)
     } catch (error) {
       if (error.message === 'NOTIFY_RETRY_ERROR') {
