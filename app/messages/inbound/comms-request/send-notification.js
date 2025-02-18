@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { StatusCodes } from 'http-status-codes'
 
 import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
@@ -25,7 +26,7 @@ const trySendViaNotify = async (message, emailAddress) => {
 }
 
 const handleNotifyError = async (message, emailAddress, notifyError, receiver) => {
-  if (notifyError?.response?.status === 500) {
+  if (notifyError?.response?.status === StatusCodes.INTERNAL_SERVER_ERROR) {
     console.error('Internal failure sending notification:', notifyError)
     if (receiver) {
       await receiver.abandonMessage(message)
@@ -48,19 +49,22 @@ const sendNotification = async (message, receiver) => {
   for (const emailAddress of emailAddresses) {
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
-    try {
-      if (response) {
-        await publishStatus(message, emailAddress, notifyStatus.SENDING)
-        await logCreatedNotification(message, emailAddress, response.data.id)
-      } else if (notifyError) {
+    if (response) {
+      await publishStatus(message, emailAddress, notifyStatus.SENDING)
+      await logCreatedNotification(message, emailAddress, response.data.id)
+      continue
+    }
+
+    if (notifyError) {
+      try {
         await handleNotifyError(message, emailAddress, notifyError, receiver)
+      } catch (error) {
+        if (error.message === 'Technical failure - message abandoned for retry') {
+          throw error
+        }
+        console.error('Error processing notification:', error)
+        throw error // Rethrow to trigger Service Bus retry
       }
-    } catch (error) {
-      if (error.message === 'Technical failure - message abandoned for retry') {
-        throw error
-      }
-      console.error('Error processing notification:', error)
-      throw error // Rethrow to trigger Service Bus retry
     }
   }
 }
