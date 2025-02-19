@@ -7,11 +7,12 @@ import notifyStatus from '../../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 
-// Temporary flag for testing 500 error handling - set to true to simulate the error
-const SIMULATE_500_ERROR = true
+// Temporary flags for testing error handling - set to true to simulate the errors
+const SIMULATE_500_ERROR = false
+const SIMULATE_400_ERROR = false
 
 const sendNotification = async (message, receiver) => {
-  console.log('sendNotification called with message:', message)
+  console.log('sendNotification called')
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
     : [message.data.commsAddresses]
@@ -39,6 +40,8 @@ const processEmailAddress = async (message, emailAddress, receiver) => {
   } catch (error) {
     if (error.message !== 'Technical failure - message abandoned for retry') {
       console.error('Error processing notification:', error)
+    } else {
+      console.log('Message will be retried by Service Bus')
     }
     throw error // Rethrow to trigger Service Bus retry
   }
@@ -58,6 +61,21 @@ const trySendViaNotify = async (message, emailAddress) => {
       }
     }
     console.error('Simulated 500 error:', error)
+    return [null, error]
+  }
+
+  // Temporary code for testing 400 error handling
+  if (SIMULATE_400_ERROR) {
+    const error = new Error('Bad request - invalid input data')
+    error.response = {
+      status: StatusCodes.BAD_REQUEST,
+      data: {
+        errors: [{
+          error: 'Simulated 400 error for testing'
+        }]
+      }
+    }
+    console.error('Simulated 400 error:', error)
     return [null, error]
   }
 
@@ -83,9 +101,15 @@ const handleNotifyError = async (message, emailAddress, notifyError, receiver) =
   if (notifyError?.response?.status === StatusCodes.INTERNAL_SERVER_ERROR) {
     console.error('Internal failure sending notification:', notifyError)
     if (receiver) {
+      // Abandon the message to trigger a retry by the Service Bus
       await receiver.abandonMessage(message)
     }
     throw new Error('Technical failure - message abandoned for retry')
+  }
+
+  // Dead letter the message for non-500 errors to prevent retries
+  if (receiver) {
+    await receiver.deadLetterMessage(message)
   }
 
   const status = notifyStatus.INTERNAL_FAILURE
