@@ -1,11 +1,7 @@
 import { expect, jest, test } from '@jest/globals'
 import commsMessage from '../../../../mocks/comms-message.js'
 
-const mockReceiver = {
-  completeMessage: jest.fn(),
-  abandonMessage: jest.fn(),
-  deadLetterMessage: jest.fn()
-}
+let mockReceiver
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
   publishReceived: jest.fn(),
@@ -22,7 +18,22 @@ const { sendNotification } = await import('../../../../../app/messages/inbound/c
 const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/handler.js')
 
 describe('Handle Message', () => {
+  let consoleLogSpy
+  let consoleErrorSpy
+
   beforeEach(() => {
+    mockReceiver = {
+      completeMessage: jest.fn(),
+      abandonMessage: jest.fn(),
+      deadLetterMessage: jest.fn()
+    }
+    consoleLogSpy = jest.spyOn(console, 'log')
+    consoleErrorSpy = jest.spyOn(console, 'error')
+  })
+
+  afterEach(() => {
+    consoleLogSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
     jest.clearAllMocks()
   })
 
@@ -134,8 +145,6 @@ describe('Handle Message', () => {
   test.skip('should console error if no request id', async () => {
     const message = { body: 'invalid' }
 
-    const consoleErrorSpy = jest.spyOn(console, 'error')
-
     await handleCommsRequest(message, mockReceiver)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith('Invalid comms request received. Request ID:', undefined)
@@ -161,13 +170,63 @@ describe('Handle Message', () => {
       }
     }
 
-    const consoleErrorSpy = jest.spyOn(console, 'error')
-
     await handleCommsRequest(message, mockReceiver)
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'Invalid comms request received. Request ID:',
       '79389915-7275-457a-b8ca-8bf206b2e67b'
     )
+  })
+
+  test('should abandon message when sendNotification throws NOTIFY_RETRY_ERROR', async () => {
+    const message = {
+      body: {
+        data: {
+          commsAddresses: ['mock-email@test.com']
+        }
+      }
+    }
+
+    publishReceived.mockResolvedValueOnce()
+
+    const error = new Error('NOTIFY_RETRY_ERROR')
+    error.response = {
+      status: 500,
+      data: {
+        errors: [{
+          error: 'Internal server error'
+        }]
+      }
+    }
+
+    sendNotification.mockRejectedValueOnce(error)
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(mockReceiver.abandonMessage).toHaveBeenCalledWith(message)
+    expect(mockReceiver.completeMessage).not.toHaveBeenCalled()
+    expect(mockReceiver.deadLetterMessage).not.toHaveBeenCalled()
+  })
+
+  test('should rethrow non-NOTIFY_RETRY_ERROR errors from sendNotification', async () => {
+    const message = {
+      body: {
+        data: {
+          commsAddresses: ['mock-email@test.com']
+        }
+      }
+    }
+
+    publishReceived.mockResolvedValueOnce()
+
+    const error = new Error('Some other error')
+    sendNotification.mockRejectedValueOnce(error)
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(mockReceiver.abandonMessage).not.toHaveBeenCalled()
+    expect(mockReceiver.completeMessage).not.toHaveBeenCalled()
+    expect(mockReceiver.deadLetterMessage).toHaveBeenCalledWith(message)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error handling message: ', error)
   })
 })

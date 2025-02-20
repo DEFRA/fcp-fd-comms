@@ -12,6 +12,7 @@ const SIMULATE_500_ERROR = false
 const SIMULATE_400_ERROR = false
 
 const sendNotification = async (message, receiver) => {
+  console.log('---')
   console.log('sendNotification called')
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
@@ -22,16 +23,15 @@ const sendNotification = async (message, receiver) => {
   }
 }
 
-const processEmailAddress = async (message, emailAddress, receiver) => {
-  console.log('\n' + '-'.repeat(50))
-  console.log(`Processing email for ${emailAddress}`)
+const processEmailAddress = async (message, emailAddress, _receiver) => {
+  console.log('\n---')
+  console.log('\nProcessing email for', emailAddress)
   const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
   if (response) {
     console.log(`Email sent successfully to ${emailAddress} (ID: ${response.data.id})`)
     await publishStatus(message, emailAddress, notifyStatus.SENDING)
     await logCreatedNotification(message, emailAddress, response.data.id)
-    console.log('-'.repeat(50))
     return
   }
 
@@ -42,7 +42,6 @@ const processEmailAddress = async (message, emailAddress, receiver) => {
   } catch (error) {
     if (error.message === 'NOTIFY_RETRY_ERROR') {
       console.log(`Message for ${emailAddress} will be retried`)
-      console.log('-'.repeat(50))
     }
     throw error
   }
