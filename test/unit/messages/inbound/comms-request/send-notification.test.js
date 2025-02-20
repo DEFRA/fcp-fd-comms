@@ -1,5 +1,6 @@
 import { beforeEach, jest, test, expect } from '@jest/globals'
 import crypto from 'crypto'
+import { StatusCodes } from 'http-status-codes'
 
 const mockSendEmail = jest.fn()
 
@@ -117,24 +118,20 @@ describe('Send Notification', () => {
   test('should log an error message when sendEmail fails', async () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
     const message = createMessage('mock-email@test.com')
-    const mockError = {
-      response: {
-        data: {
-          status_code: 400,
-          errors: [
-            {
-              error: 'mock-error'
-            }
-          ]
-        }
+    const mockError = new Error('Bad request - invalid input data')
+    mockError.response = {
+      status: StatusCodes.BAD_REQUEST,
+      data: {
+        errors: [{
+          error: 'mock-error'
+        }]
       }
     }
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
-
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email:', 400, undefined)
+    await expect(sendNotification(message)).rejects.toThrow(mockError)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email:', undefined, 'Bad request - invalid input data')
 
     uuidSpy.mockRestore()
   })
@@ -165,94 +162,76 @@ describe('Send Notification', () => {
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'sending')
   })
 
-  test('should call logRejectedNotification when sendEmail fails', async () => {
+  test('should call logRejectedNotification when sendEmail fails with non-500 error', async () => {
     const message = createMessage('mock-email@test.com')
-    const mockError = {
-      response: {
-        data: {
-          status_code: 400,
-          errors: [
-            {
-              error: 'mock-error'
-            }
-          ]
-        }
+    const mockError = new Error('Bad request - invalid input data')
+    mockError.response = {
+      status: StatusCodes.BAD_REQUEST,
+      data: {
+        errors: [{
+          error: 'mock-error'
+        }]
       }
     }
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
-
+    await expect(sendNotification(message)).rejects.toThrow(mockError)
     expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError)
   })
 
   test('should call publishStatus with an error when email fails to send', async () => {
     const message = createMessage('mock-email@test.com')
-    const mockError = {
-      response: {
-        data: {
-          error: {
-            status_code: 400,
-            errors: [
-              {
-                error: 'mock-error'
-              }
-            ]
-          }
-        }
+    const mockError = new Error('Bad request - invalid input data')
+    mockError.response = {
+      status: StatusCodes.BAD_REQUEST,
+      data: {
+        errors: [{
+          error: 'mock-error'
+        }]
       }
     }
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message)
-
-    expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
+    await expect(sendNotification(message)).rejects.toThrow(mockError)
+    expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', StatusCodes.BAD_REQUEST, mockError.response.data)
   })
 
-  test('should log an internal failure and abandon message when notify returns a 500 status code', async () => {
+  test('should throw NOTIFY_RETRY_ERROR and abandon message when notify returns a 500 status code', async () => {
     const message = createMessage('mock-email@test.com')
-    const mockError = {
-      response: {
-        status: 500,
-        data: {
-          errors: [
-            {
-              error: 'mock-error'
-            }
-          ]
-        }
+    const mockError = new Error('Internal server error')
+    mockError.response = {
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      data: {
+        errors: [{
+          error: 'mock-error'
+        }]
       }
     }
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await expect(sendNotification(message, mockNotifyReceiver)).rejects.toThrow('Technical failure - message abandoned for retry')
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Internal failure sending notification:', mockError)
-    expect(mockNotifyReceiver.abandonMessage).toHaveBeenCalledWith(message)
+    await expect(sendNotification(message, mockNotifyReceiver)).rejects.toThrow('NOTIFY_RETRY_ERROR')
     expect(logRejectedNotification).not.toHaveBeenCalled()
   })
 
   test('should handle non-500 errors without retrying', async () => {
     const message = createMessage('mock-email@test.com')
-    const mockError = {
-      response: {
-        status: 400,
-        data: {
-          errors: [
-            {
-              error: 'mock-error'
-            }
-          ]
-        }
+    const mockError = new Error('Bad request - invalid input data')
+    mockError.response = {
+      status: StatusCodes.BAD_REQUEST,
+      data: {
+        errors: [{
+          error: 'mock-error'
+        }]
       }
     }
 
     mockSendEmail.mockRejectedValue(mockError)
 
-    await sendNotification(message, mockNotifyReceiver)
-    expect(mockNotifyReceiver.abandonMessage).not.toHaveBeenCalled()
+    await expect(sendNotification(message)).rejects.toThrow(mockError)
     expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError)
+    expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', StatusCodes.BAD_REQUEST, mockError.response.data)
   })
 })
