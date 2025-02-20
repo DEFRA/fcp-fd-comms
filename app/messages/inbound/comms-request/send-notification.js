@@ -23,35 +23,35 @@ const sendNotification = async (message, receiver) => {
 }
 
 const processEmailAddress = async (message, emailAddress, receiver) => {
-  console.log('Processing email address:', emailAddress)
+  console.log('\n' + '-'.repeat(50))
+  console.log(`Processing email for ${emailAddress}`)
   const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
   if (response) {
-    console.log('Email sent successfully:', response.data.id)
+    console.log(`Email sent successfully to ${emailAddress} (ID: ${response.data.id})`)
     await publishStatus(message, emailAddress, notifyStatus.SENDING)
     await logCreatedNotification(message, emailAddress, response.data.id)
+    console.log('-'.repeat(50))
     return
   }
 
   if (!notifyError) { return }
 
   try {
-    await handleNotifyError(message, emailAddress, notifyError, receiver)
+    await handleNotifyError(message, emailAddress, notifyError)
   } catch (error) {
-    if (error.message !== 'Technical failure - message abandoned for retry') {
-      console.error('Error processing notification:', error)
-    } else {
-      console.log('Message will be retried by Service Bus')
+    if (error.message === 'NOTIFY_RETRY_ERROR') {
+      console.log(`Message for ${emailAddress} will be retried`)
+      console.log('-'.repeat(50))
     }
-    throw error // Rethrow to trigger Service Bus retry
+    throw error
   }
 }
 
 const trySendViaNotify = async (message, emailAddress) => {
-  console.log('Attempting to send email via Notify for:', emailAddress)
   // Temporary code for testing 500 error handling
   if (SIMULATE_500_ERROR) {
-    const error = new Error('Technical failure - message abandoned for retry')
+    const error = new Error('NOTIFY_RETRY_ERROR')
     error.response = {
       status: StatusCodes.INTERNAL_SERVER_ERROR,
       data: {
@@ -60,7 +60,7 @@ const trySendViaNotify = async (message, emailAddress) => {
         }]
       }
     }
-    console.error('Simulated 500 error:', error)
+    console.log(`Simulated 500 error for ${emailAddress}`)
     return [null, error]
   }
 
@@ -91,32 +91,25 @@ const trySendViaNotify = async (message, emailAddress) => {
     return [response, null]
   } catch (error) {
     const statusCode = error.response?.data?.status_code
-    console.error('Error sending email:', statusCode, undefined)
+    console.error('Error sending email:', statusCode, error.message)
     return [null, error]
   }
 }
 
-const handleNotifyError = async (message, emailAddress, notifyError, receiver) => {
-  console.error('Handling Notify error for:', emailAddress, 'Error:', notifyError)
-  if (notifyError?.response?.status === StatusCodes.INTERNAL_SERVER_ERROR) {
-    console.error('Internal failure sending notification:', notifyError)
-    if (receiver) {
-      // Abandon the message to trigger a retry by the Service Bus
-      await receiver.abandonMessage(message)
-    }
-    throw new Error('Technical failure - message abandoned for retry')
+const handleNotifyError = async (message, emailAddress, notifyError) => {
+  const status = notifyError?.response?.status
+
+  if (status === StatusCodes.INTERNAL_SERVER_ERROR) {
+    console.log(`500 error for ${emailAddress} - Will retry`)
+    throw new Error('NOTIFY_RETRY_ERROR')
   }
 
-  // Dead letter the message for non-500 errors to prevent retries
-  if (receiver) {
-    await receiver.deadLetterMessage(message)
-  }
-
-  const status = notifyStatus.INTERNAL_FAILURE
+  console.log(`${status} error for ${emailAddress} - Logging failure`)
   const notifyErrorData = notifyError?.response?.data || {}
 
   await publishStatus(message, emailAddress, status, notifyErrorData)
   await logRejectedNotification(message, emailAddress, notifyError)
+  throw notifyError
 }
 
 export { sendNotification }
