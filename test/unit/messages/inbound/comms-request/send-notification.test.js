@@ -64,6 +64,7 @@ describe('Send Notification', () => {
   test('should send an email with the correct arguments to a single email address', async () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
     const message = createMessage('mock-email@test.com')
+    mockSendEmail.mockResolvedValue({ data: { id: 'mock-notify-response-id' } })
 
     await sendNotification(message)
 
