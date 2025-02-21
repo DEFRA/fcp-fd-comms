@@ -1,6 +1,5 @@
 import Joi from 'joi'
-
-import { sbi, crn } from '../common/index.js'
+import { sbi, crn, commsAddress } from '../common/index.js'
 
 const v3 = Joi.object({
   id: Joi.string().uuid().required(),
@@ -16,8 +15,8 @@ const v3 = Joi.object({
     notifyTemplateId: Joi.string().uuid().required(),
     commsType: Joi.string().valid('email').required(),
     commsAddresses: Joi.alternatives().conditional(Joi.array(), {
-      then: Joi.array().items(Joi.string().email()).min(1).max(10).required(),
-      otherwise: Joi.string().email().required()
+      then: Joi.array().items(commsAddress).min(1).max(10).required(),
+      otherwise: commsAddress.required()
     }).required(),
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),

@@ -2,6 +2,11 @@ import { jest, test } from '@jest/globals'
 import crypto from 'crypto'
 
 const mockSendEmail = jest.fn()
+const mockGetNotifyStatus = jest.fn()
+
+jest.unstable_mockModule('../../../../../app/jobs/check-notify-status/get-notify-status.js', () => ({
+  getNotifyStatus: mockGetNotifyStatus
+}))
 
 jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
   default: {
@@ -11,7 +16,8 @@ jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
 
 jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => ({
   logCreatedNotification: jest.fn(),
-  logRejectedNotification: jest.fn()
+  logRejectedNotification: jest.fn(),
+  checkDuplicateNotification: jest.fn().mockResolvedValue(false)
 }))
 
 jest.unstable_mockModule('../../../../../app/messages/outbound/notification-status/publish.js', () => ({
@@ -20,7 +26,8 @@ jest.unstable_mockModule('../../../../../app/messages/outbound/notification-stat
 
 const {
   logCreatedNotification,
-  logRejectedNotification
+  logRejectedNotification,
+  checkDuplicateNotification
 } = await import('../../../../../app/repos/notification-log.js')
 
 const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
@@ -30,8 +37,46 @@ const { sendNotification } = await import('../../../../../app/messages/inbound/c
 console.log = jest.fn()
 
 describe('Send Notification', () => {
+  let consoleWarnSpy
+  let consoleErrorSpy
+
   beforeEach(() => {
     jest.clearAllMocks()
+    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
+    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    mockGetNotifyStatus.mockResolvedValue(null)
+    mockSendEmail.mockResolvedValue({
+      data: {
+        id: 'mock-notify-response-id'
+      }
+    })
+  })
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
+  })
+
+  test('should skip sending when duplicate notification is detected', async () => {
+    const message = {
+      id: 'message-id',
+      data: {
+        notifyTemplateId: 'mock-notify-template-id',
+        commsAddresses: 'mock-email@test.com',
+        personalisation: {
+          reference: 'mock-reference',
+          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
+        }
+      }
+    }
+
+    checkDuplicateNotification.mockResolvedValueOnce(true)
+
+    await sendNotification(message)
+
+    expect(checkDuplicateNotification).toHaveBeenCalledWith('message-id', 'mock-email@test.com')
+    expect(mockSendEmail).not.toHaveBeenCalled()
+    expect(consoleWarnSpy).toHaveBeenCalledWith('Duplicate notification detected')
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {
@@ -115,7 +160,6 @@ describe('Send Notification', () => {
 
   test('should log an error message when sendEmail fails', async () => {
     const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
-    const consoleSpy = jest.spyOn(console, 'error')
 
     const message = {
       data: {
@@ -146,9 +190,8 @@ describe('Send Notification', () => {
 
     await sendNotification(message)
 
-    expect(consoleSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
 
-    consoleSpy.mockRestore()
     uuidSpy.mockRestore()
   })
 

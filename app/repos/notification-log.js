@@ -1,6 +1,12 @@
 import db from '../data/index.js'
 import notifyStatus from '../constants/notify-statuses.js'
 
+const nonFailureStatuses = [
+  notifyStatus.CREATED,
+  notifyStatus.SENDING,
+  notifyStatus.DELIVERED
+]
+
 const logCreatedNotification = async (message, recipient, notificationId) => {
   await db.notifyApiRequestSuccess.create({
     createdAt: new Date(),
@@ -54,9 +60,21 @@ const updateNotificationStatus = async (notificationId, status) => {
   await notification.save()
 }
 
+const checkDuplicateNotification = async (messageId, recipient) => {
+  const existing = await db.notifyApiRequestSuccess.findOne({
+    where: {
+      'message.id': messageId,
+      recipient
+    }
+  })
+
+  return nonFailureStatuses.includes(existing?.status)
+}
+
 export {
   logCreatedNotification,
   logRejectedNotification,
   getPendingNotifications,
-  updateNotificationStatus
+  updateNotificationStatus,
+  checkDuplicateNotification
 }
