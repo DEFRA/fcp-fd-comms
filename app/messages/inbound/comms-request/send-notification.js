@@ -8,7 +8,7 @@ import { publishStatus } from '../../outbound/notification-status/publish.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
   try {
-    const response = await notifyClient.sendEmail(
+    const { data } = await notifyClient.sendEmail(
       message.data.notifyTemplateId,
       emailAddress, {
         personalisation: message.data.personalisation,
@@ -16,13 +16,17 @@ const trySendViaNotify = async (message, emailAddress) => {
       }
     )
 
-    return [response, null]
+    return [data, null]
   } catch (error) {
-    const status = error.response.data.status_code
+    if (!error.response) {
+      throw error
+    }
 
-    console.error('Error sending email with code:', status)
+    const { data } = error.response
 
-    return [null, error]
+    console.error('Error sending email with code:', data.status_code)
+
+    return [null, data]
   }
 }
 
@@ -32,18 +36,19 @@ const sendNotification = async (message) => {
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const [response, notifyError] = await trySendViaNotify(message, emailAddress)
+    const [response, error] = await trySendViaNotify(message, emailAddress)
 
     try {
       if (response) {
         await publishStatus(message, emailAddress, notifyStatus.SENDING)
-        await logCreatedNotification(message, emailAddress, response.data.id)
+        await logCreatedNotification(message, emailAddress, response.id)
       } else {
-        const status = notifyStatus.INTERNAL_FAILURE
-        const notifyErrorData = notifyError.response.data
+        const status = error.status_code === 500
+          ? notifyStatus.TECHNICAL_FAILURE
+          : notifyStatus.INTERNAL_FAILURE
 
-        await publishStatus(message, emailAddress, status, notifyErrorData)
-        await logRejectedNotification(message, emailAddress, notifyError)
+        await publishStatus(message, emailAddress, status, error)
+        await logRejectedNotification(message, emailAddress, error)
       }
     } catch (error) {
       console.error('Error logging notification: ', error)

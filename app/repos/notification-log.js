@@ -13,11 +13,11 @@ const logCreatedNotification = async (message, recipient, notificationId) => {
   })
 }
 
-const logRejectedNotification = async (message, recipient, notifyError) => {
+const logRejectedNotification = async (message, recipient, error) => {
   await db.notifyApiRequestFailure.create({
     createdAt: new Date(),
     message,
-    error: notifyError.response.data,
+    error,
     recipient
   })
 }
