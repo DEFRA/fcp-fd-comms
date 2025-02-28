@@ -18,6 +18,7 @@ data:
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
   CHECK_NOTIFY_STATUS_CRON_PATTERN: {{ .Values.container.checkNotifyStatusCronPattern | quote }}
+  RETRY_TECH_FAILURES_CRON_PATTERN: {{ .Values.container.retryTechFailuresCronPattern | quote }}
   POSTGRES_DB: {{ quote .Values.postgresService.postgresDb }}
   POSTGRES_HOST: {{ quote .Values.postgresService.postgresqlHost }}
   POSTGRES_PORT: {{ quote .Values.postgresService.postgresPort }}
