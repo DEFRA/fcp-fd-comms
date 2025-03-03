@@ -175,6 +175,7 @@ describe('Send Notification', () => {
 
     const mockError = {
       response: {
+        status: 400,
         data: {
           status_code: 400,
           errors: [
@@ -260,6 +261,7 @@ describe('Send Notification', () => {
 
     const mockError = {
       response: {
+        status: 400,
         data: {
           status_code: 400,
           errors: [
@@ -294,6 +296,7 @@ describe('Send Notification', () => {
 
     const mockError = {
       response: {
+        status: 400,
         data: {
           error: {
             status_code: 400,
