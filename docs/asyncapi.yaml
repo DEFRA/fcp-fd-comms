@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door Communications
-  version: 3.3.0
+  version: 3.3.1
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -207,25 +207,28 @@ components:
 
     commsAddresses:
       oneOf:
-        - type: string
-          description: Contact email address
-          example: "mrMegaFarmer@strawberryFortFarm.co.uk"
-          minLength: 1
-          maxLength: 320
-          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
         - type: array
           title: an array of strings
           description: List of contact email addresses
-          example: ["mrMegaFarmer@strawberryFortFarm.co.uk", "msMegaFarmer@bluberryCottageFarm.com"]
+          example: [
+            "example-customer1@example.com",
+            "example-customer2@example.com"
+          ]
           minItems: 1
           maxItems: 10
           items:
             type: string
             description: Contact email address
-            example: "mrMegaFarmer@strawberryFortFarm.co.uk"
+            example: "example-customer1@example.com"
             minLength: 1
             maxLength: 320
             pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
+        - type: string
+          description: Contact email address
+          example: "example-customer1@example.com"
+          minLength: 1
+          maxLength: 320
+          pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})?$"
 
     personalisation:
       type: object
