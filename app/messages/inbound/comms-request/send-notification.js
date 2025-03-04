@@ -42,6 +42,42 @@ const trySendViaNotify = async (message, emailAddress) => {
   }
 }
 
+const handleSuccessfulNotification = async (message, emailAddress, id) => {
+  try {
+    await publishStatus(message, emailAddress, notifyStatus.SENDING)
+    await logCreatedNotification(message, emailAddress, id)
+  } catch (error) {
+    console.error('Error logging successful notification:', error)
+  }
+}
+
+const handleFailedNotification = async (message, emailAddress, notifyError) => {
+  const serverError = isServerErrorCode(notifyError?.status)
+
+  const status = serverError === true
+    ? notifyStatus.TECHNICAL_FAILURE
+    : notifyStatus.INTERNAL_FAILURE
+
+  try {
+    const errorData = notifyError.response?.data
+
+    await publishStatus(message, emailAddress, status, errorData)
+    await logRejectedNotification(message, emailAddress, errorData)
+  } catch (error) {
+    console.error('Error logging failed notification:', error)
+  }
+
+  if (serverError) {
+    console.log(`Scheduling notification retry for message: ${message.id}`)
+
+    try {
+      await publishRetryRequest(message, emailAddress, notifyConfig.get('messageDelay'))
+    } catch (error) {
+      console.error('Error scheduling notification retry:', error)
+    }
+  }
+}
+
 const sendNotification = async (message) => {
   const emailAddresses = Array.isArray(message.data.commsAddresses)
     ? message.data.commsAddresses
@@ -57,26 +93,10 @@ const sendNotification = async (message) => {
 
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
-    try {
-      if (response) {
-        await publishStatus(message, emailAddress, notifyStatus.SENDING)
-        await logCreatedNotification(message, emailAddress, response.data.id)
-      } else {
-        let status = notifyStatus.INTERNAL_FAILURE
-
-        if (isServerErrorCode(notifyError.response.status)) {
-          status = notifyStatus.TECHNICAL_FAILURE
-
-          await publishRetryRequest(message, emailAddress, notifyConfig.get('messageDelay'))
-        }
-
-        const errorData = notifyError.response?.data
-
-        await publishStatus(message, emailAddress, status, errorData)
-        await logRejectedNotification(message, emailAddress, errorData)
-      }
-    } catch (error) {
-      console.error('Error logging notification:', error)
+    if (response) {
+      await handleSuccessfulNotification(message, emailAddress, response.data.id)
+    } else if (notifyError) {
+      await handleFailedNotification(message, emailAddress, notifyError)
     }
   }
 }
