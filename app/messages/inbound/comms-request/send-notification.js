@@ -1,4 +1,3 @@
-import crypto from 'crypto'
 import { backOff } from 'exponential-backoff'
 
 import { notifyConfig } from '../../../config/index.js'
@@ -9,6 +8,7 @@ import notifyStatus from '../../../constants/notify-statuses.js'
 import { logCreatedNotification, logRejectedNotification, checkDuplicateNotification } from '../../../repos/notification-log.js'
 import { isServerErrorCode } from '../../../utils/errors.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
+import { publishRetryRequest } from '../../outbound/notification-retry/publish.js'
 
 const trySendViaNotify = async (message, emailAddress) => {
   try {
@@ -16,17 +16,17 @@ const trySendViaNotify = async (message, emailAddress) => {
       message.data.notifyTemplateId,
       emailAddress, {
         personalisation: message.data.personalisation,
-        reference: crypto.randomUUID()
+        reference: message.correlationId ?? message.id
       }
     ), {
-      maxDelay: notifyConfig.get('retries.maxDelay'),
-      numOfAttempts: notifyConfig.get('retries.maxRetries'),
-      startingDelay: notifyConfig.get('retries.startingDelay'),
-      retry: (e) => {
-        const code = e.response?.status
+      maxDelay: notifyConfig.get('apiRetries.maxDelay'),
+      numOfAttempts: notifyConfig.get('apiRetries.maxRetries'),
+      startingDelay: notifyConfig.get('apiRetries.startingDelay'),
+      retry: (error) => {
+        const code = error.response?.status
 
         if (isServerErrorCode(code)) {
-          console.warn(`Retrying due to Notify API error: ${code}`)
+          console.warn('Retrying due to GOV Notify error code:', code)
           return true
         }
 
@@ -36,7 +36,7 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    console.error('Error sending email with code:', error.response?.status)
+    console.error('Failed to send email via GOV Notify. Error code:', error.response?.status)
 
     return [null, error]
   }
@@ -64,14 +64,16 @@ const sendNotification = async (message) => {
       } else {
         let status = notifyStatus.INTERNAL_FAILURE
 
-        if (isServerErrorCode(notifyError.response?.status)) {
+        if (isServerErrorCode(notifyError.response.status)) {
           status = notifyStatus.TECHNICAL_FAILURE
+
+          await publishRetryRequest(message, emailAddress, notifyConfig.get('messageDelay'))
         }
 
-        const notifyErrorData = notifyError.response.data
+        const errorData = notifyError.response?.data
 
-        await publishStatus(message, emailAddress, status, notifyErrorData)
-        await logRejectedNotification(message, emailAddress, notifyError)
+        await publishStatus(message, emailAddress, status, errorData)
+        await logRejectedNotification(message, emailAddress, errorData)
       }
     } catch (error) {
       console.error('Error logging notification:', error)

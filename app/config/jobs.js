@@ -8,14 +8,6 @@ const jobs = convict({
       default: '*/30 * * * * *',
       env: 'CHECK_NOTIFY_STATUS_CRON_PATTERN'
     }
-  },
-  retryTechFailures: {
-    cronPattern: {
-      doc: 'Cron expression for retrying technical failures.',
-      format: String,
-      default: '*/30 * * * * *',
-      env: 'RETRY_TECH_FAILURES_CRON_PATTERN'
-    }
   }
 })
 

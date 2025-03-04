@@ -30,7 +30,11 @@ const publishStatus = async (message, recipient, status, error) => {
 const publishReceived = async (message) => {
   const sender = new MessageSender(config)
 
-  const receivedMessage = buildReceivedMessage(message, commEvents.RECEIVED)
+  const type = message.type !== commEvents.RETRY
+    ? commEvents.RECEIVED
+    : commEvents.RETRY
+
+  const receivedMessage = buildReceivedMessage(message, type)
 
   await sender.sendMessage(receivedMessage)
 }

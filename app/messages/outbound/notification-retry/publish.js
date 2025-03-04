@@ -1,28 +1,33 @@
 import { MessageSender } from 'ffc-messaging'
 
 import { messageConfig } from '../../../config/index.js'
+import commEvents from '../../../constants/comm-events.js'
 
 const config = {
   ...messageConfig.get('messageQueue'),
   ...messageConfig.get('receiverSubscription')
 }
 
-const publishRetryRequest = async (message, recipient) => {
+const publishRetryRequest = async (message, recipient, delay) => {
   const sender = new MessageSender(config)
 
   const retryMessage = {
     body: {
       ...message,
+      type: commEvents.RETRY,
       data: {
         ...message.data,
+        correlationId: message.data.correlationId ?? message.id,
         commsAddresses: recipient
       }
     },
     source: message.source,
-    type: message.type
+    type: commEvents.RETRY
   }
 
-  await sender.sendMessage(retryMessage)
+  const enriched = sender.enrichMessage(retryMessage)
+
+  await sender.scheduleMessage(enriched, new Date(Date.now() + delay))
 }
 
 export { publishRetryRequest }

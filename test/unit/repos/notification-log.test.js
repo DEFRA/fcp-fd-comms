@@ -53,7 +53,7 @@ describe('Notification Log Repository', () => {
   test('should log rejected notification', async () => {
     const message = { data: 'test message' }
 
-    await logRejectedNotification(message, 'mock-email@test.gov.uk', { response: { data: 'test error' } })
+    await logRejectedNotification(message, 'mock-email@test.gov.uk', 'test error')
 
     expect(mockCreate).toHaveBeenCalledWith({
       createdAt: expect.any(Date),

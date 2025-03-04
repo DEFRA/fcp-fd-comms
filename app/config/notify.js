@@ -22,22 +22,31 @@ const notify = convict({
       env: 'USE_MOCK_API_SERVER'
     }
   },
-  retries: {
+  apiRetries: {
     maxRetries: {
-      doc: 'Number of retries for Notify API calls.',
+      doc: 'Maximum number of retries for Notify API calls.',
       format: 'int',
-      default: 10
+      default: 10,
+      env: 'NOTIFY_API_MAX_RETRIES'
     },
     maxDelay: {
-      doc: 'Maximum delay between retries for Notify API calls.',
+      doc: 'Maximum delay between retries for Notify API calls in milliseconds.',
       format: 'int',
-      default: 10000
+      default: 10000,
+      env: 'NOTIFY_API_MAX_DELAY'
     },
     startingDelay: {
-      doc: 'Starting delay between retries for Notify API calls.',
+      doc: 'Starting delay between retries for Notify API calls in milliseconds.',
       format: 'int',
-      default: 500
+      default: 500,
+      env: 'NOTIFY_API_STARTING_DELAY'
     }
+  },
+  messageRetryDelay: {
+    doc: 'Delay to schedule messages for retry in milliseconds.',
+    format: 'int',
+    default: 30000,
+    env: 'MESSAGE_RETRY_DELAY'
   }
 })
 

@@ -1,12 +1,10 @@
-import { jest, test } from '@jest/globals'
-import crypto from 'crypto'
+import { afterAll, beforeEach, describe, jest, test } from '@jest/globals'
+
+import commsMessage from '../../../../mocks/comms-message.js'
+
+jest.setTimeout(100000)
 
 const mockSendEmail = jest.fn()
-const mockGetNotifyStatus = jest.fn()
-
-jest.unstable_mockModule('../../../../../app/jobs/check-notify-status/get-notify-status.js', () => ({
-  getNotifyStatus: mockGetNotifyStatus
-}))
 
 jest.unstable_mockModule('../../../../../app/clients/notify-client.js', () => ({
   default: {
@@ -24,6 +22,10 @@ jest.unstable_mockModule('../../../../../app/messages/outbound/notification-stat
   publishStatus: jest.fn()
 }))
 
+jest.unstable_mockModule('../../../../../app/messages/outbound/notification-retry/publish.js', () => ({
+  publishRetryRequest: jest.fn()
+}))
+
 const {
   logCreatedNotification,
   logRejectedNotification,
@@ -32,41 +34,41 @@ const {
 
 const { publishStatus } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 
-const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
-
-console.log = jest.fn()
-
 describe('Send Notification', () => {
-  let consoleWarnSpy
-  let consoleErrorSpy
+  const originalEnv = process.env
+
+  const consoleWarnSpy = jest.spyOn(console, 'warn')
+  const consoleErrorSpy = jest.spyOn(console, 'error')
+
+  let sendNotification
+
+  beforeAll(async () => {
+    process.env = {
+      ...originalEnv,
+      NOTIFY_API_MAX_DELAY: 100
+    }
+
+    const handler = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
+
+    sendNotification = handler.sendNotification
+  })
 
   beforeEach(() => {
     jest.clearAllMocks()
-    consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation()
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-    mockGetNotifyStatus.mockResolvedValue(null)
+
     mockSendEmail.mockResolvedValue({
       data: {
-        id: 'mock-notify-response-id'
+        id: '6ac51d8a-3488-4a17-ba35-b42381646317'
       }
     })
   })
 
-  afterEach(() => {
-    consoleWarnSpy.mockRestore()
-    consoleErrorSpy.mockRestore()
-  })
-
   test('should skip sending when duplicate notification is detected', async () => {
     const message = {
-      id: 'message-id',
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        }
+        ...commsMessage.data,
+        commsAddresses: 'test@example.com'
       }
     }
 
@@ -74,23 +76,22 @@ describe('Send Notification', () => {
 
     await sendNotification(message)
 
-    expect(checkDuplicateNotification).toHaveBeenCalledWith('message-id', 'mock-email@test.com')
+    expect(checkDuplicateNotification).toHaveBeenCalledWith('79389915-7275-457a-b8ca-8bf206b2e67b', 'test@example.com')
     expect(mockSendEmail).not.toHaveBeenCalled()
     expect(consoleWarnSpy).toHaveBeenCalledWith('Duplicate notification detected')
   })
 
   test('should send an email with the correct arguments to a single email address', async () => {
-    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
-
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
+        ...commsMessage.data,
+        notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         commsAddresses: 'mock-email@test.com',
         personalisation: {
-          reference: 'mock-reference',
+          reference: 'test-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        }
       }
     }
 
@@ -98,32 +99,31 @@ describe('Send Notification', () => {
 
     expect(mockSendEmail).toHaveBeenCalled()
     expect(mockSendEmail).toHaveBeenCalledWith(
-      'mock-notify-template-id',
+      'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
       'mock-email@test.com',
       {
         personalisation: {
-          reference: 'mock-reference',
+          reference: 'test-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
         },
-        reference: 'mock-uuid'
+        reference: '79389915-7275-457a-b8ca-8bf206b2e67b'
       }
     )
-
-    uuidSpy.mockRestore()
   })
 
   test('should send emails with the correct arguments to multiple email addresses', async () => {
-    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
-
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: ['mock-email1@test.com', 'mock-email2@test.com'],
+        ...commsMessage.data,
+        commsAddresses: [
+          'mock-email1@test.com',
+          'mock-email2@test.com'
+        ],
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        }
       }
     }
 
@@ -132,46 +132,32 @@ describe('Send Notification', () => {
     expect(mockSendEmail).toHaveBeenCalledTimes(2)
 
     expect(mockSendEmail).toHaveBeenNthCalledWith(1,
-      'mock-notify-template-id',
+      'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
       'mock-email1@test.com',
       {
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
         },
-        reference: 'mock-uuid'
+        reference: '79389915-7275-457a-b8ca-8bf206b2e67b'
       }
     )
 
     expect(mockSendEmail).toHaveBeenNthCalledWith(2,
-      'mock-notify-template-id',
+      'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
       'mock-email2@test.com',
       {
         personalisation: {
           reference: 'mock-reference',
           agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
         },
-        reference: 'mock-uuid'
+        reference: '79389915-7275-457a-b8ca-8bf206b2e67b'
       }
     )
-
-    uuidSpy.mockRestore()
   })
 
   test('should log an error message when sendEmail fails', async () => {
-    const uuidSpy = jest.spyOn(crypto, 'randomUUID').mockReturnValue('mock-uuid')
-
-    const message = {
-      data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
-      }
-    }
+    const message = commsMessage
 
     const mockError = {
       response: {
@@ -191,54 +177,36 @@ describe('Send Notification', () => {
 
     await sendNotification(message)
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error sending email with code:', 400)
-
-    uuidSpy.mockRestore()
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to send email via GOV Notify. Error code:', 400)
   })
 
   test('should call logCreatedNotification when sendEmail is successful', async () => {
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        ...commsMessage.data,
+        commsAddresses: [
+          'mock-email@test.com'
+        ]
       }
     }
-
-    mockSendEmail.mockResolvedValue({
-      data: {
-        id: 'mock-notify-response-id'
-      }
-    })
 
     await sendNotification(message)
 
     expect(logCreatedNotification).toHaveBeenCalledTimes(1)
-    expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', 'mock-notify-response-id')
+    expect(logCreatedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', '6ac51d8a-3488-4a17-ba35-b42381646317')
   })
 
   test('should call publishStatus when an email is sent', async () => {
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        ...commsMessage.data,
+        commsAddresses: [
+          'mock-email@test.com'
+        ]
       }
     }
-
-    mockSendEmail.mockResolvedValue({
-      data: {
-        id: 'mock-id'
-      }
-    })
 
     await sendNotification(message)
 
@@ -248,14 +216,12 @@ describe('Send Notification', () => {
 
   test('should call logRejectedNotification when sendEmail fails', async () => {
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        ...commsMessage.data,
+        commsAddresses: [
+          'mock-email@test.com'
+        ]
       }
     }
 
@@ -278,19 +244,17 @@ describe('Send Notification', () => {
     await sendNotification(message)
 
     expect(logRejectedNotification).toHaveBeenCalledTimes(1)
-    expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError)
+    expect(logRejectedNotification).toHaveBeenCalledWith(message, 'mock-email@test.com', mockError.response.data)
   })
 
   test('should call publishStatus with an error when email fails to send', async () => {
     const message = {
+      ...commsMessage,
       data: {
-        notifyTemplateId: 'mock-notify-template-id',
-        commsAddresses: 'mock-email@test.com',
-        personalisation: {
-          reference: 'mock-reference',
-          agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
-        },
-        reference: 'mock-uuid'
+        ...commsMessage.data,
+        commsAddresses: [
+          'mock-email@test.com'
+        ]
       }
     }
 
@@ -316,5 +280,58 @@ describe('Send Notification', () => {
 
     expect(publishStatus).toHaveBeenCalledTimes(1)
     expect(publishStatus).toHaveBeenCalledWith(message, 'mock-email@test.com', 'internal-failure', mockError.response.data)
+  })
+
+  test('should retry a maximum of 10 times on a 5xx error', async () => {
+    const message = commsMessage
+
+    const mockError = {
+      response: {
+        status: 500
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await sendNotification(message)
+
+    expect(mockSendEmail).toHaveBeenCalledTimes(10)
+  })
+
+  test('400 errors should not be retried', async () => {
+    const message = commsMessage
+
+    const mockError = {
+      response: {
+        status: 400
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await sendNotification(message)
+
+    expect(mockSendEmail).toHaveBeenCalledTimes(1)
+  })
+
+  test('should not retry greater than 5xx errors', async () => {
+    const message = commsMessage
+
+    const mockError = {
+      response: {
+        status: 600
+      }
+    }
+
+    mockSendEmail.mockRejectedValue(mockError)
+
+    await sendNotification(message)
+
+    expect(mockSendEmail).toHaveBeenCalledTimes(1)
+  })
+
+  afterAll(() => {
+    consoleWarnSpy.mockRestore()
+    consoleErrorSpy.mockRestore()
   })
 })
