@@ -95,7 +95,7 @@ const sendNotification = async (message) => {
 
     if (response) {
       await handleSuccessfulNotification(message, emailAddress, response.data.id)
-    } else if (notifyError) {
+    } else {
       await handleFailedNotification(message, emailAddress, notifyError)
     }
   }
