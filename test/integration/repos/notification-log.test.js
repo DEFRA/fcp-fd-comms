@@ -44,7 +44,7 @@ describe('Notification log repository', () => {
   })
 
   test('log failed notification should create a new record', async () => {
-    const error = { response: { data: 'Error message' } }
+    const error = 'Error message'
     const recipient = 'mock-email@test.gov.uk'
     jest.setSystemTime(new Date('2021-01-01'))
 

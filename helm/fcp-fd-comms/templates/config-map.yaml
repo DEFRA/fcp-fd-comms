@@ -18,6 +18,10 @@ data:
   PORT: {{ .Values.container.port | quote }}
   APPINSIGHTS_CLOUDROLE: {{ .Chart.Name | quote }}
   CHECK_NOTIFY_STATUS_CRON_PATTERN: {{ .Values.container.checkNotifyStatusCronPattern | quote }}
+  NOTIFY_API_MAX_RETRIES: {{ .Values.container.notifyApiMaxRetries | quote }}
+  NOTIFY_API_MAX_DELAY: {{ .Values.container.notifyApiMaxDelay | quote }}
+  NOTIFY_API_STARTING_DELAY: {{ .Values.container.notifyApiStartingDelay | quote }}
+  MESSAGE_RETRY_DELAY: {{ .Values.container.messageRetryDelay | quote }}
   POSTGRES_DB: {{ quote .Values.postgresService.postgresDb }}
   POSTGRES_HOST: {{ quote .Values.postgresService.postgresqlHost }}
   POSTGRES_PORT: {{ quote .Values.postgresService.postgresPort }}

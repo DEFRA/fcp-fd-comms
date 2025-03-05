@@ -31,6 +31,10 @@ container:
   dataTopicAddress: fcp-fd-data
   notifyApiKey:
   checkNotifyStatusCronPattern: '*/30 * * * * *'
+  notifyApiMaxRetries:
+  notifyApiMaxDelay:
+  notifyApiStartingDelay:
+  messageRetryDelay:
 
 livenessProbe:
   path: /healthz

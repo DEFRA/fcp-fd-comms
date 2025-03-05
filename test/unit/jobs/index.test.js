@@ -36,6 +36,7 @@ describe('Cron job setup', () => {
     jest.clearAllMocks()
 
     delete process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN
+    delete process.env.RETRY_TECHNICAL_FAILURES_CRON_PATTERN
   })
 
   test('check notify status cron job should be created', async () => {
@@ -45,7 +46,6 @@ describe('Cron job setup', () => {
 
     await import('../../../app/jobs/index.js')
 
-    expect(mockCronJob).toHaveBeenCalledTimes(1)
     expect(mockCronJob).toHaveBeenCalledWith('*/30 * * * * *', expect.any(Function))
   })
 

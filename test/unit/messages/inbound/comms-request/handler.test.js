@@ -1,4 +1,4 @@
-import { expect, jest, test } from '@jest/globals'
+import { afterAll, expect, jest, test } from '@jest/globals'
 import commsMessage from '../../../../mocks/comms-message.js'
 
 const mockReceiver = {
@@ -16,14 +16,22 @@ jest.unstable_mockModule('../../../../../app/messages/inbound/comms-request/send
   sendNotification: jest.fn()
 }))
 
+jest.unstable_mockModule('../../../../../app/repos/notification-log.js', () => ({
+  checkDuplicateNotification: jest.fn()
+}))
+
 const { publishReceived } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 const { publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 const { sendNotification } = await import('../../../../../app/messages/inbound/comms-request/send-notification.js')
+const { checkDuplicateNotification } = await import('../../../../../app/repos/notification-log.js')
+
 const { handleCommsRequest } = await import('../../../../../app/messages/inbound/comms-request/handler.js')
 
 describe('Handle Message', () => {
+  const consoleWarnSpy = jest.spyOn(console, 'warn')
+
   beforeEach(() => {
-    jest.clearAllMocks()
+    jest.resetAllMocks()
   })
 
   test('should call publishReceived', async () => {
@@ -169,5 +177,31 @@ describe('Handle Message', () => {
       'Invalid comms request received. Request ID:',
       '79389915-7275-457a-b8ca-8bf206b2e67b'
     )
+  })
+
+  test('should skip sending when duplicate notification is detected', async () => {
+    const message = {
+      body: {
+        ...commsMessage,
+        id: '79389915-7275-457a-b8ca-8bf206b2e67b',
+        data: {
+          ...commsMessage.data,
+          commsAddresses: 'test@example.com'
+        }
+      }
+    }
+
+    checkDuplicateNotification.mockResolvedValueOnce(true)
+
+    await handleCommsRequest(message, mockReceiver)
+
+    expect(checkDuplicateNotification).toHaveBeenCalledWith('79389915-7275-457a-b8ca-8bf206b2e67b')
+    expect(consoleWarnSpy).toHaveBeenCalledWith('Duplicate notification request received with id: 79389915-7275-457a-b8ca-8bf206b2e67b')
+    expect(sendNotification).not.toHaveBeenCalled()
+    expect(mockReceiver.completeMessage).toHaveBeenCalledWith(message)
+  })
+
+  afterAll(() => {
+    consoleWarnSpy.mockRestore()
   })
 })
