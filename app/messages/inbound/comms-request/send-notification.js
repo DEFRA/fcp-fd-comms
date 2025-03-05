@@ -5,7 +5,7 @@ import { notifyConfig } from '../../../config/index.js'
 import notifyClient from '../../../clients/notify-client.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
 
-import { logCreatedNotification, logRejectedNotification, checkDuplicateNotification } from '../../../repos/notification-log.js'
+import { logCreatedNotification, logRejectedNotification } from '../../../repos/notification-log.js'
 import { isServerErrorCode } from '../../../utils/errors.js'
 import { publishStatus } from '../../outbound/notification-status/publish.js'
 import { publishRetryRequest } from '../../outbound/notification-retry/publish.js'
@@ -38,13 +38,18 @@ const trySendViaNotify = async (message, emailAddress) => {
   } catch (error) {
     console.error('Failed to send email via GOV Notify. Error code:', error.response?.status)
 
-    return [null, error]
+    return [null, error.response]
   }
 }
 
 const handleSuccessfulNotification = async (message, emailAddress, id) => {
   try {
     await publishStatus(message, emailAddress, notifyStatus.SENDING)
+  } catch (error) {
+    console.error('Error publishing notification status to data layer:', error)
+  }
+
+  try {
     await logCreatedNotification(message, emailAddress, id)
   } catch (error) {
     console.error('Error logging successful notification:', error)
@@ -58,20 +63,25 @@ const handleFailedNotification = async (message, emailAddress, notifyError) => {
     ? notifyStatus.TECHNICAL_FAILURE
     : notifyStatus.INTERNAL_FAILURE
 
-  try {
-    const errorData = notifyError.response?.data
+  const errorData = notifyError?.data
 
+  try {
     await publishStatus(message, emailAddress, status, errorData)
+  } catch (error) {
+    console.error('Error publishing notification status to data layer:', error)
+  }
+
+  try {
     await logRejectedNotification(message, emailAddress, errorData)
   } catch (error) {
-    console.error('Error logging failed notification:', error)
+    console.error('Error logging rejected notification:', error)
   }
 
   if (serverError) {
     console.log(`Scheduling notification retry for message: ${message.id}`)
 
     try {
-      await publishRetryRequest(message, emailAddress, notifyConfig.get('messageDelay'))
+      await publishRetryRequest(message, emailAddress, notifyConfig.get('messageRetryDelay'))
     } catch (error) {
       console.error('Error scheduling notification retry:', error)
     }
@@ -84,13 +94,6 @@ const sendNotification = async (message) => {
     : [message.data.commsAddresses]
 
   for (const emailAddress of emailAddresses) {
-    const duplicate = await checkDuplicateNotification(message.id, emailAddress)
-
-    if (duplicate) {
-      console.warn('Duplicate notification detected')
-      continue
-    }
-
     const [response, notifyError] = await trySendViaNotify(message, emailAddress)
 
     if (response) {
