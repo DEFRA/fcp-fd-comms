@@ -8,13 +8,12 @@ const handleCommsRequest = async (message, receiver) => {
 
     const duplicate = await checkDuplicateNotification(commsRequest?.id)
 
-    if (duplicate) {
+    if (!duplicate) {
+      await publishReceived(commsRequest)
+      await sendNotification(commsRequest)
+    } else {
       console.warn(`Duplicate notification request received with id: ${commsRequest?.id}`)
-      return await receiver.completeMessage(message)
     }
-
-    await publishReceived(commsRequest)
-    await sendNotification(commsRequest)
 
     await receiver.completeMessage(message)
   } catch (error) {
