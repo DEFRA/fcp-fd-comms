@@ -14,6 +14,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
   const retryMessage = {
     body: {
       ...message,
+      id: crypto.randomUUID(),
       type: commEvents.RETRY,
       data: {
         ...message.data,
