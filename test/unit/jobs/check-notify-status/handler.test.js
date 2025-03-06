@@ -35,7 +35,7 @@ describe('Check notify status job handler', () => {
       MESSAGE_RETRY_DELAY: 120000
     }
 
-    const handler = await import('../../../../app/jobs/check-notify-status/index.js')
+    const handler = await import('../../../../app/jobs/check-notify-status/handler.js')
 
     checkNotifyStatusHandler = handler.checkNotifyStatusHandler
   })
