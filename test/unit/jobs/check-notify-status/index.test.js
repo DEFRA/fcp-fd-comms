@@ -1,4 +1,4 @@
-import { beforeEach, jest, test } from '@jest/globals'
+import { beforeAll, beforeEach, jest, test } from '@jest/globals'
 
 import commsMessage from '../../../mocks/comms-message.js'
 
@@ -15,13 +15,31 @@ jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/
   publishStatus: jest.fn()
 }))
 
+jest.unstable_mockModule('../../../../app/messages/outbound/notification-retry/publish.js', () => ({
+  publishRetryRequest: jest.fn()
+}))
+
 const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
 const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/publish.js')
-
-const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
+const { publishRetryRequest } = await import('../../../../app/messages/outbound/notification-retry/publish.js')
 
 describe('Check notify status job handler', () => {
+  const originalEnv = process.env
+
+  let checkNotifyStatusHandler
+
+  beforeAll(async () => {
+    process.env = {
+      ...originalEnv,
+      MESSAGE_RETRY_DELAY: 120000
+    }
+
+    const handler = await import('../../../../app/jobs/check-notify-status/index.js')
+
+    checkNotifyStatusHandler = handler.checkNotifyStatusHandler
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -158,5 +176,20 @@ describe('Check notify status job handler', () => {
     await checkNotifyStatusHandler()
 
     expect(publishStatus).not.toHaveBeenCalled()
+  })
+
+  test.each([
+    'technical-failure',
+    'temporary-failure'
+  ])('should schedule retry if status has changed to %s', async (newStatus) => {
+    getPendingNotifications.mockReturnValue([
+      { id: 1, message: commsMessage, recipient: 'mock-email@test.com', status: 'sending' }
+    ])
+
+    getNotifyStatus.mockReturnValue({ id: 1, status: newStatus })
+
+    await checkNotifyStatusHandler()
+
+    expect(publishRetryRequest).toHaveBeenCalledWith(commsMessage, 'mock-email@test.com', 120000)
   })
 })
