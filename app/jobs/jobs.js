@@ -2,7 +2,7 @@ import semaphore from 'semaphore'
 import { CronJob } from 'cron'
 
 import { jobsConfig } from '../config/index.js'
-import { checkNotifyStatusHandler } from './check-notify-status/index.js'
+import { checkNotifyStatusHandler } from './check-notify-status/handler.js'
 
 const statusCheckMutex = semaphore(1)
 

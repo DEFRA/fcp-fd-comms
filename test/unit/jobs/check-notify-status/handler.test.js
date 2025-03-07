@@ -1,4 +1,4 @@
-import { beforeEach, jest, test } from '@jest/globals'
+import { beforeAll, beforeEach, describe, jest, test } from '@jest/globals'
 
 import commsMessage from '../../../mocks/comms-message.js'
 
@@ -15,13 +15,31 @@ jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/
   publishStatus: jest.fn()
 }))
 
+jest.unstable_mockModule('../../../../app/messages/outbound/notification-retry/publish.js', () => ({
+  publishRetryRequest: jest.fn()
+}))
+
 const { getPendingNotifications, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
 const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/publish.js')
-
-const { checkNotifyStatusHandler } = await import('../../../../app/jobs/check-notify-status/index.js')
+const { publishRetryRequest } = await import('../../../../app/messages/outbound/notification-retry/publish.js')
 
 describe('Check notify status job handler', () => {
+  const originalEnv = process.env
+
+  let checkNotifyStatusHandler
+
+  beforeAll(async () => {
+    process.env = {
+      ...originalEnv,
+      MESSAGE_RETRY_DELAY: 120000
+    }
+
+    const handler = await import('../../../../app/jobs/check-notify-status/handler.js')
+
+    checkNotifyStatusHandler = handler.checkNotifyStatusHandler
+  })
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
@@ -158,5 +176,101 @@ describe('Check notify status job handler', () => {
     await checkNotifyStatusHandler()
 
     expect(publishStatus).not.toHaveBeenCalled()
+  })
+
+  describe('technical failure retries', () => {
+    beforeAll(() => {
+      jest.useFakeTimers()
+    })
+
+    test('should schedule retry on technical-failure within retry window', async () => {
+      jest.setSystemTime(new Date('2023-01-02T11:00:00Z'))
+
+      const message = {
+        ...commsMessage,
+        time: '2023-01-01T12:00:00Z'
+      }
+
+      getPendingNotifications.mockReturnValue([
+        { id: 1, message, recipient: 'mock-email@test.com', status: 'sending' }
+      ])
+
+      getNotifyStatus.mockReturnValue({ id: 1, status: 'technical-failure' })
+
+      await checkNotifyStatusHandler()
+
+      expect(publishRetryRequest).toHaveBeenCalledWith(message, 'mock-email@test.com', 120000)
+    })
+
+    test('should not schedule retry on technical-failure outside retry window', async () => {
+      jest.setSystemTime(new Date('2023-01-02T13:00:00Z'))
+
+      const message = {
+        ...commsMessage,
+        time: '2023-01-01T12:00:00Z'
+      }
+
+      getPendingNotifications.mockReturnValue([
+        { id: 1, message, recipient: 'mock-email@test.com', status: 'sending' }
+      ])
+
+      getNotifyStatus.mockReturnValue({ id: 1, status: 'technical-failure' })
+
+      await checkNotifyStatusHandler()
+
+      expect(publishRetryRequest).not.toHaveBeenCalled()
+    })
+
+    afterAll(() => {
+      jest.useRealTimers()
+    })
+  })
+
+  describe('temporary failure retries', () => {
+    beforeAll(() => {
+      jest.useFakeTimers()
+    })
+
+    test('should schedule retry on temporary-failure within retry window', async () => {
+      jest.setSystemTime(new Date('2023-01-02T11:30:00Z'))
+
+      const message = {
+        ...commsMessage,
+        time: '2023-01-02T11:00:00Z'
+      }
+
+      getPendingNotifications.mockReturnValue([
+        { id: 1, message, recipient: 'mock-email@test.com', status: 'sending' }
+      ])
+
+      getNotifyStatus.mockReturnValue({ id: 1, status: 'temporary-failure' })
+
+      await checkNotifyStatusHandler()
+
+      expect(publishRetryRequest).toHaveBeenCalledWith(message, 'mock-email@test.com', 120000)
+    })
+
+    test('should not schedule retry on temporary-failure outside retry window', async () => {
+      jest.setSystemTime(new Date('2023-01-02T12:01:00Z'))
+
+      const message = {
+        ...commsMessage,
+        time: '2023-01-02T11:00:00Z'
+      }
+
+      getPendingNotifications.mockReturnValue([
+        { id: 1, message, recipient: 'mock-email@test.com', status: 'sending' }
+      ])
+
+      getNotifyStatus.mockReturnValue({ id: 1, status: 'temporary-failure' })
+
+      await checkNotifyStatusHandler()
+
+      expect(publishRetryRequest).not.toHaveBeenCalled()
+    })
+  })
+
+  afterAll(() => {
+    jest.useRealTimers()
   })
 })

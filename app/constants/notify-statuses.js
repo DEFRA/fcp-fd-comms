@@ -17,4 +17,9 @@ export const finishedStatus = [
   notifyStatus.TECHNICAL_FAILURE
 ]
 
+export const retryableStatus = [
+  notifyStatus.TEMPORARY_FAILURE,
+  notifyStatus.TECHNICAL_FAILURE
+]
+
 export default notifyStatus
