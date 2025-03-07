@@ -42,11 +42,25 @@ const notify = convict({
       env: 'NOTIFY_API_STARTING_DELAY'
     }
   },
-  messageRetryDelay: {
-    doc: 'Delay to schedule messages for retry in milliseconds.',
-    format: 'int',
-    default: 120000,
-    env: 'MESSAGE_RETRY_DELAY'
+  messageRetries: {
+    technicalFailureTimeout: {
+      doc: 'Timeout in milliseconds for technical failure retries.',
+      format: 'int',
+      default: 24 * 60 * 60 * 1000,
+      env: 'NOTIFY_TECHNICAL_FAILURE_TIMEOUT'
+    },
+    temporaryFailureTimeout: {
+      doc: 'Timeout in milliseconds for temporary failure retries.',
+      format: 'int',
+      default: 1 * 60 * 60 * 1000,
+      env: 'NOTIFY_TEMPORARY_FAILURE_TIMEOUT'
+    },
+    retryDelay: {
+      doc: 'Delay to schedule messages for retry in milliseconds.',
+      format: 'int',
+      default: 15 * 60 * 1000,
+      env: 'MESSAGE_RETRY_DELAY'
+    }
   }
 })
 

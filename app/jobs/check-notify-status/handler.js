@@ -4,6 +4,7 @@ import { publishStatus } from '../../messages/outbound/notification-status/publi
 import { finishedStatus, retryableStatus } from '../../constants/notify-statuses.js'
 import { publishRetryRequest } from '../../messages/outbound/notification-retry/publish.js'
 import { notifyConfig } from '../../config/index.js'
+import { shouldRetryMessage } from '../../utils/errors.js'
 
 const checkNotifyStatusHandler = async () => {
   console.log('Checking notify status')
@@ -31,9 +32,11 @@ const checkNotifyStatusHandler = async () => {
 
       await updateNotificationStatus(notification.id, status)
 
-      if (retryableStatus.includes(status)) {
+      const intialCreation = new Date(notification.message.time)
+
+      if (retryableStatus.includes(status) && shouldRetryMessage(intialCreation, status)) {
         console.log(`Scheduling notification retry for message: ${notification.message.id}`)
-        await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetryDelay'))
+        await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetries.retryDelay'))
       }
 
       updates += 1

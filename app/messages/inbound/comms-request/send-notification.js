@@ -81,7 +81,7 @@ const handleFailedNotification = async (message, emailAddress, notifyError) => {
     console.log(`Scheduling notification retry for message: ${message.id}`)
 
     try {
-      await publishRetryRequest(message, emailAddress, notifyConfig.get('messageRetryDelay'))
+      await publishRetryRequest(message, emailAddress, notifyConfig.get('messageRetries.retryDelay'))
     } catch (error) {
       console.error('Error scheduling notification retry:', error)
     }
