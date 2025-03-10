@@ -16,6 +16,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
       ...message,
       id: crypto.randomUUID(),
       type: commEvents.RETRY,
+      time: new Date().toISOString(),
       data: {
         ...message.data,
         correlationId: message.data.correlationId ?? message.id,
