@@ -30,6 +30,7 @@
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
     "cron": "3.1.8",
+    "date-fns": "^4.1.0",
     "exponential-backoff": "^3.1.2",
     "ffc-messaging": "2.10.1",
     "hapi-pino": "12.1.0",

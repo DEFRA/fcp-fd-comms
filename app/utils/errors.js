@@ -1,27 +1,30 @@
+import { addHours } from 'date-fns'
+
+import notifyStatus, { retryableStatus } from '../constants/notify-statuses.js'
 import { notifyConfig } from '../config/index.js'
-
-import notifyStatus from '../constants/notify-statuses.js'
-
-const temporaryFailureTimeout = notifyConfig.get('messageRetries.temporaryFailureTimeout')
-const technicalFailureTimeout = notifyConfig.get('messageRetries.technicalFailureTimeout')
 
 const isServerErrorCode = (code) => {
   return code >= 500 && code < 600
 }
 
-const shouldRetryMessage = (date, errorType) => {
-  if (errorType === notifyStatus.TEMPORARY_FAILURE) {
-    return new Date() - date < temporaryFailureTimeout
+const checkRetryable = (status, requestTime) => {
+  if (!retryableStatus.includes(status)) {
+    return false
   }
 
-  if (errorType === notifyStatus.TECHNICAL_FAILURE) {
-    return new Date() - date < technicalFailureTimeout
+  if (status === notifyStatus.TECHNICAL_FAILURE) {
+    return true
   }
 
-  throw new Error(`Unknown error type: ${errorType}`)
+  const timeoutDate = addHours(
+    requestTime,
+    notifyConfig.get('messageRetries.temporaryFailureTimeout')
+  )
+
+  return Date.now() < timeoutDate
 }
 
 export {
   isServerErrorCode,
-  shouldRetryMessage
+  checkRetryable
 }
