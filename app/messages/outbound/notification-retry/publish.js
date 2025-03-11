@@ -17,6 +17,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
       ...message,
       id: crypto.randomUUID(),
       type: commEvents.RETRY,
+      time: new Date().toISOString(),
       data: {
         ...message.data,
         correlationId: message.data.correlationId ?? message.id,
@@ -29,7 +30,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
 
   const enriched = sender.enrichMessage(retryMessage)
 
-  await sender.scheduleMessage(enriched, addMinutes(new Date(), delay))
+  await sender.scheduleMessage(enriched, addMinutes(Date.now(), delay))
 }
 
 export { publishRetryRequest }

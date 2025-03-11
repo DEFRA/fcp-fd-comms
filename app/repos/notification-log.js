@@ -44,7 +44,12 @@ const getOriginalNotificationRequest = async (correlationId) => {
     }
   })
 
-  return notification
+  return notification.map((notification) => ({
+    id: notification.notifyResponseId,
+    status: notification.status,
+    message: notification.message,
+    recipient: notification.recipient
+  }))
 }
 
 const updateNotificationStatus = async (notificationId, status) => {

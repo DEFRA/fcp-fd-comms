@@ -1,11 +1,42 @@
-import { finishedStatus } from '../../constants/notify-statuses.js'
+import { finishedStatus, retryableStatus } from '../../constants/notify-statuses.js'
 
 import { notifyConfig } from '../../config/index.js'
 import { getNotifyStatus } from './get-notify-status.js'
-import { getPendingNotifications, updateNotificationStatus } from '../../repos/notification-log.js'
+import {
+  getOriginalNotificationRequest,
+  getPendingNotifications,
+  updateNotificationStatus
+} from '../../repos/notification-log.js'
 import { publishStatus } from '../../messages/outbound/notification-status/publish.js'
 import { checkRetryable } from '../../utils/errors.js'
 import { publishRetryRequest } from '../../messages/outbound/notification-retry/publish.js'
+
+const processStatusUpdate = async (notification, status) => {
+  await updateNotificationStatus(notification.id, status)
+
+  if (finishedStatus.includes(status)) {
+    await publishStatus(notification.message, notification.recipient, status)
+  }
+
+  if (!retryableStatus.includes(status)) {
+    return
+  }
+
+  const correlationId = notification.message.data.correlationId
+
+  let intialCreation = new Date(notification.createdAt)
+
+  if (correlationId) {
+    const { createdAt } = await getOriginalNotificationRequest(correlationId)
+
+    intialCreation = new Date(createdAt)
+  }
+
+  if (checkRetryable(status, intialCreation)) {
+    console.log(`Scheduling notification retry for message: ${notification.message.id}`)
+    await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetries.retryDelay'))
+  }
+}
 
 const checkNotifyStatusHandler = async () => {
   console.log('Checking notify status')
@@ -27,20 +58,7 @@ const checkNotifyStatusHandler = async () => {
         continue
       }
 
-      if (finishedStatus.includes(status)) {
-        await publishStatus(notification.message, notification.recipient, status)
-      }
-
-      await updateNotificationStatus(notification.id, status)
-
-      const intialCreation = notification.message.data.correlationId ? 
-        (await getOriginalNotificationRequest(id)).createdAt :
-        new Date(notification.createdAt)
-
-      if (checkRetryable(status, intialCreation)) {
-        console.log(`Scheduling notification retry for message: ${notification.message.id}`)
-        await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetries.retryDelay'))
-      }
+      await processStatusUpdate(notification, status)
 
       updates += 1
     } catch (error) {

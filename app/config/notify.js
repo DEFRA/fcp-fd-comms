@@ -52,7 +52,7 @@ const notify = convict({
     retryDelay: {
       doc: 'Delay to schedule messages for retry in minutes.',
       format: 'int',
-      default: 15 * 60 * 1000,
+      default: 15,
       env: 'MESSAGE_RETRY_DELAY'
     }
   }
