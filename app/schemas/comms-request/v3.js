@@ -21,7 +21,8 @@ const v3 = Joi.object({
     personalisation: Joi.object().unknown().required(),
     reference: Joi.string().required(),
     oneClickUnsubscribeUrl: Joi.string().uri().optional(),
-    emailReplyToId: Joi.string().uuid().required()
+    emailReplyToId: Joi.string().uuid().required(),
+    correlationId: Joi.string().uuid().optional()
   }).required()
 }).label('body').required()
 

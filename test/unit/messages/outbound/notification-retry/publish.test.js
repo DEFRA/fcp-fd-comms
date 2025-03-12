@@ -74,6 +74,21 @@ describe('Notification retry publisher', () => {
     )
   })
 
+  test('should send retry message with new id', async () => {
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
+
+    await publishRetryRequest(commsMessage, 'test@example.com', 300000)
+
+    expect(mockSender).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          id: expect.not.stringMatching(commsMessage.id)
+        })
+      }),
+      expect.any(Date)
+    )
+  })
+
   afterAll(() => {
     jest.useRealTimers()
   })
