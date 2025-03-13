@@ -26,7 +26,7 @@ jest.unstable_mockModule('semaphore', () => ({
 
 const mockCheckNotifyStatusHandler = jest.fn()
 
-jest.unstable_mockModule('../../../app/jobs/check-notify-status/index.js', () => ({
+jest.unstable_mockModule('../../../app/jobs/check-notify-status/handler.js', () => ({
   checkNotifyStatusHandler: mockCheckNotifyStatusHandler
 }))
 
@@ -44,13 +44,13 @@ describe('Cron job setup', () => {
 
     process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN = '*/30 * * * * *'
 
-    await import('../../../app/jobs/index.js')
+    await import('../../../app/jobs/jobs.js')
 
     expect(mockCronJob).toHaveBeenCalledWith('*/30 * * * * *', expect.any(Function))
   })
 
   test('start jobs should start jobs', async () => {
-    const { startJobs } = await import('../../../app/jobs/index.js')
+    const { startJobs } = await import('../../../app/jobs/jobs.js')
 
     startJobs()
 
@@ -58,7 +58,7 @@ describe('Cron job setup', () => {
   })
 
   test('stop jobs should stop jobs', async () => {
-    const { stopJobs } = await import('../../../app/jobs/index.js')
+    const { stopJobs } = await import('../../../app/jobs/jobs.js')
 
     stopJobs()
 
@@ -70,7 +70,7 @@ describe('Cron job setup', () => {
 
     process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN = '*/30 * * * * *'
 
-    await import('../../../app/jobs/index.js')
+    await import('../../../app/jobs/jobs.js')
 
     await mockCronJob.mock.calls[0][1]()
 
@@ -84,7 +84,7 @@ describe('Cron job setup', () => {
 
     process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN = '*/30 * * * * *'
 
-    await import('../../../app/jobs/index.js')
+    await import('../../../app/jobs/jobs.js')
 
     await mockCronJob.mock.calls[0][1]()
 
@@ -99,7 +99,7 @@ describe('Cron job setup', () => {
 
     process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN = '*/30 * * * * *'
 
-    await import('../../../app/jobs/index.js')
+    await import('../../../app/jobs/jobs.js')
 
     await mockCronJob.mock.calls[0][1]()
 
@@ -114,7 +114,7 @@ describe('Cron job setup', () => {
 
     process.env.CHECK_NOTIFY_STATUS_CRON_PATTERN = '*/30 * * * * *'
 
-    await import('../../../app/jobs/index.js')
+    await import('../../../app/jobs/jobs.js')
 
     await mockCronJob.mock.calls[0][1]()
 

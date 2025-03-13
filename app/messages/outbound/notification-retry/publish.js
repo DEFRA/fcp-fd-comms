@@ -1,4 +1,5 @@
 import { MessageSender } from 'ffc-messaging'
+import { addMinutes } from 'date-fns'
 
 import { messageConfig } from '../../../config/index.js'
 import commEvents from '../../../constants/comm-events.js'
@@ -29,7 +30,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
 
   const enriched = sender.enrichMessage(retryMessage)
 
-  await sender.scheduleMessage(enriched, new Date(Date.now() + delay))
+  await sender.scheduleMessage(enriched, addMinutes(Date.now(), delay))
 }
 
 export { publishRetryRequest }

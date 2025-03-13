@@ -37,6 +37,21 @@ const getPendingNotifications = async () => {
   }))
 }
 
+const getOriginalNotificationRequest = async (correlationId) => {
+  const notification = await db.notifyApiRequestSuccess.findOne({
+    where: {
+      'message.id': correlationId
+    }
+  })
+
+  return notification.map((n) => ({
+    id: n.notifyResponseId,
+    status: n.status,
+    message: n.message,
+    recipient: n.recipient
+  }))
+}
+
 const updateNotificationStatus = async (notificationId, status) => {
   const notification = await db.notifyApiRequestSuccess.findOne({
     where: {
@@ -74,6 +89,7 @@ export {
   logCreatedNotification,
   logRejectedNotification,
   getPendingNotifications,
+  getOriginalNotificationRequest,
   updateNotificationStatus,
   checkDuplicateNotification
 }
