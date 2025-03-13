@@ -1,7 +1,7 @@
 asyncapi: 3.0.0
 info:
   title: Single Front Door Communications
-  version: 3.3.1
+  version: 3.3.2
   description: Publish communications to users via the Single Front Door
 
 channels:
@@ -133,6 +133,8 @@ components:
           $ref: "#/components/schemas/oneClickUnsubscribeUrl"
         emailReplyToId:
           $ref: "#/components/schemas/emailReplyToId"
+        correlationId:
+          $ref: "#/components/schemas/correlationId"
 
     commsEventData:
       type: object
