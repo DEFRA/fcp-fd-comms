@@ -33,8 +33,10 @@ const processStatusUpdate = async (notification, status) => {
   }
 
   if (checkRetryable(status, intialCreation)) {
-    console.log(`Scheduling notification retry for message: ${notification.message.id}`)
+    console.log(`Scheduling notification retry for request: ${correlationId || notification.message.id}`)
     await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetries.retryDelay'))
+  } else {
+    console.log(`Retry window expired for request: ${correlationId || notification.message.id}`)
   }
 }
 

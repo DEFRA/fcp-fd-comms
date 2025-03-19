@@ -32,6 +32,7 @@ const getPendingNotifications = async () => {
   return pending.map((notification) => ({
     id: notification.notifyResponseId,
     status: notification.status,
+    createdAt: notification.createdAt,
     message: notification.message,
     recipient: notification.recipient
   }))
@@ -44,12 +45,13 @@ const getOriginalNotificationRequest = async (correlationId) => {
     }
   })
 
-  return notification.map((n) => ({
-    id: n.notifyResponseId,
-    status: n.status,
-    message: n.message,
-    recipient: n.recipient
-  }))
+  return {
+    id: notification.notifyResponseId,
+    createdAt: notification.createdAt,
+    status: notification.status,
+    message: notification.message,
+    recipient: notification.recipient
+  }
 }
 
 const updateNotificationStatus = async (notificationId, status) => {

@@ -219,7 +219,7 @@ describe('Check notify status job handler', () => {
     test.each(
       [
         '2025-01-01T11:00:00.000Z',
-        '2025-01-08T10:59:00.000Z'
+        '2025-01-08T10:44:59.000Z'
       ]
     )('should schedule retry on temporary-failure within retry window (%s)', async (time) => {
       jest.setSystemTime(new Date(time))
@@ -241,8 +241,13 @@ describe('Check notify status job handler', () => {
       expect(publishRetryRequest).toHaveBeenCalledWith(commsMessage, 'mock-email@test.com', 15)
     })
 
-    test('should not schedule retry on temporary-failure outside retry window', async () => {
-      jest.setSystemTime(new Date('2025-01-08T11:00:01.000Z'))
+    test.each(
+      [
+        '2025-01-08T10:45:00.000Z',
+        '2025-01-08T11:00:00.000Z'
+      ]
+    )('should not schedule retry on temporary-failure outside retry window (%s)', async (time) => {
+      jest.setSystemTime(new Date(time))
 
       getPendingNotifications.mockReturnValue([
         {
