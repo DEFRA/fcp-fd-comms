@@ -168,6 +168,21 @@ describe('Check notify status job handler', () => {
     expect(publishStatus).toHaveBeenCalledWith(commsMessage, 'mock-email@test.gov.uk', newStatus)
   })
 
+  test.each([
+    'created',
+    'sending'
+  ])('should not call publish event if status has changed to %s', async (newStatus) => {
+    getPendingNotifications.mockReturnValue([
+      { id: 1, message: commsMessage, recipient: 'mock-email@test.gov.uk', status: 'pending' }
+    ])
+
+    getNotifyStatus.mockReturnValue({ id: 1, status: newStatus })
+
+    await checkNotifyStatusHandler()
+
+    expect(publishStatus).not.toHaveBeenCalled()
+  })
+
   test('should not publish status if status is sending', async () => {
     getPendingNotifications.mockReturnValue([
       { id: 1, message: commsMessage, status: 'sending' }
