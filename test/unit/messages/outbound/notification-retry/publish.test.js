@@ -24,7 +24,7 @@ describe('Notification retry publisher', () => {
   test('should send retry request with correct delay', async () => {
     jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
-    await publishRetryRequest(commsMessage, 'test@example.com', 300000)
+    await publishRetryRequest(commsMessage, 'test@example.com', 5)
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.any(Object),
@@ -35,7 +35,7 @@ describe('Notification retry publisher', () => {
   test('should send message with correlationId set to message id if not provided', async () => {
     jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
 
-    await publishRetryRequest(commsMessage, 'test@example.com', 300000)
+    await publishRetryRequest(commsMessage, 'test@example.com', 5)
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -60,7 +60,7 @@ describe('Notification retry publisher', () => {
       }
     }
 
-    await publishRetryRequest(message, 'test@example.com', 300000)
+    await publishRetryRequest(message, 'test@example.com', 5)
 
     expect(mockSender).toHaveBeenCalledWith(
       expect.objectContaining({

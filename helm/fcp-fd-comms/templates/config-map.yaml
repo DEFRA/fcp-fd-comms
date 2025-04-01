@@ -26,4 +26,5 @@ data:
   POSTGRES_HOST: {{ quote .Values.postgresService.postgresqlHost }}
   POSTGRES_PORT: {{ quote .Values.postgresService.postgresPort }}
   POSTGRES_SCHEMA: {{ quote .Values.postgresService.postgresSchema }}
+  NOTIFY_TEMPORARY_FAILURE_TIMEOUT: {{ .Values.container.notifyTemporaryFailureTimeout | quote }}
 {{- end -}}

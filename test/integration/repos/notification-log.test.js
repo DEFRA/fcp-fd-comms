@@ -5,7 +5,8 @@ import {
   logCreatedNotification,
   logRejectedNotification,
   getPendingNotifications,
-  updateNotificationStatus
+  updateNotificationStatus,
+  getOriginalNotificationRequest
 } from '../../../app/repos/notification-log.js'
 
 import commsMessage from '../../mocks/comms-message.js'
@@ -92,6 +93,7 @@ describe('Notification log repository', () => {
 
     expect(result[0]).toEqual({
       id: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
+      createdAt: new Date('2021-01-01T14:00:00.000Z'),
       message: commsMessage,
       status: 'created',
       recipient: 'mock-email-1@test.gov.uk'
@@ -99,6 +101,7 @@ describe('Notification log repository', () => {
 
     expect(result[1]).toEqual({
       id: '21df4efa-c4a8-4007-8f8a-3cf30b652955',
+      createdAt: new Date('2021-01-01T14:00:00.000Z'),
       message: commsMessage,
       status: 'sending',
       recipient: 'mock-email-2@test.gov.uk'
@@ -147,6 +150,54 @@ describe('Notification log repository', () => {
     await expect(func)
       .rejects
       .toThrow()
+  })
+
+  test('get original notification request should return the first appearance of a correlation id', async () => {
+    await db.notifyApiRequestSuccess.create({
+      notifyResponseId: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
+      createdAt: new Date('2021-01-01T14:00:00.000Z'),
+      statusUpdatedAt: new Date('2021-01-01T14:00:00.000Z'),
+      message: {
+        ...commsMessage,
+        id: 'ff2732c9-50c1-4520-90a7-e524da20f08a',
+        time: new Date('2021-01-01T14:00:00.000Z').toISOString()
+      },
+      status: 'temporary-failure',
+      completed: null,
+      recipient: 'mock-email@test.gov.uk'
+    })
+
+    await db.notifyApiRequestSuccess.create({
+      notifyResponseId: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
+      createdAt: new Date('2021-01-01T14:10:00.000Z'),
+      statusUpdatedAt: new Date('2021-01-01T14:10:00.000Z'),
+      message: {
+        ...commsMessage,
+        id: '1183ce2f-ab1c-48d0-8903-282986ffc974',
+        time: new Date('2021-01-01T14:10:00.000Z').toISOString(),
+        data: {
+          ...commsMessage.data,
+          correlationId: 'ff2732c9-50c1-4520-90a7-e524da20f08a'
+        }
+      },
+      status: 'temporary-failure',
+      completed: null,
+      recipient: 'mock-email@test.gov.uk'
+    })
+
+    const result = await getOriginalNotificationRequest('ff2732c9-50c1-4520-90a7-e524da20f08a')
+
+    expect(result).toEqual({
+      id: 'e7a60aa3-1677-47eb-9bb9-7405ad4f4a66',
+      createdAt: new Date('2021-01-01T14:00:00.000Z'),
+      message: {
+        ...commsMessage,
+        id: 'ff2732c9-50c1-4520-90a7-e524da20f08a',
+        time: new Date('2021-01-01T14:00:00.000Z').toISOString()
+      },
+      status: 'temporary-failure',
+      recipient: 'mock-email@test.gov.uk'
+    })
   })
 
   afterAll(async () => {

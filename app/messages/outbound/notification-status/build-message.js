@@ -12,7 +12,7 @@ const buildReceivedMessage = (message, type) => ({
       time: new Date(),
       data: {
         ...message.data,
-        correlationId: message.id
+        correlationId: message.data.correlationId ?? message.id
       },
       datacontenttype: 'application/json',
       specversion: '1.0'
@@ -33,7 +33,7 @@ const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
       data: {
         ...message.data,
         commsAddresses: recipient,
-        correlationId: message.id,
+        correlationId: message.data.correlationId ?? message.id,
         statusDetails
       },
       datacontenttype: 'application/json',
@@ -54,7 +54,7 @@ const buildInvalidMessage = (message, type, statusDetails) => ({
       time: new Date(),
       data: {
         ...message.data,
-        correlationId: message.id,
+        correlationId: message.data.correlationId ?? message.id,
         statusDetails
       },
       datacontenttype: 'application/json',

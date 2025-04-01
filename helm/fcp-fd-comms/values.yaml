@@ -34,6 +34,7 @@ container:
   notifyApiMaxRetries:
   notifyApiMaxDelay:
   notifyApiStartingDelay:
+  notifyTemporaryFailureTimeout:
   messageRetryDelay:
 
 livenessProbe:
