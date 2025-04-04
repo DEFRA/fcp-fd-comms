@@ -141,6 +141,8 @@ describe('Send notification', () => {
   })
 
   describe('Sending notifications', () => {
+    const defaultEmailReplyToId = 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
+
     test('should send an email with the correct arguments to a single email address', async () => {
       const message = {
         ...commsMessage,
@@ -148,6 +150,7 @@ describe('Send notification', () => {
           ...commsMessage.data,
           notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
           commsAddresses: 'mock-email@test.com',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -162,6 +165,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email@test.com',
         {
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -180,6 +184,7 @@ describe('Send notification', () => {
             'mock-email1@test.com',
             'mock-email2@test.com'
           ],
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -195,6 +200,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email1@test.com',
         {
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -207,6 +213,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email2@test.com',
         {
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -230,6 +237,74 @@ describe('Send notification', () => {
       await sendNotification(message)
 
       expect(mockSendEmail).toHaveBeenCalledTimes(10)
+    })
+
+    test('should send email with a different emailReplyToId correctly', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
+          commsAddresses: 'mock-email@test.com',
+          emailReplyToId: '12255162-A020-44C7-8313-9745EFB4046A',
+          personalisation: {
+            reference: 'ref1',
+            agreementSummaryLink: 'https://test.com/link1'
+          }
+        }
+      }
+
+      await sendNotification(message)
+
+      expect(mockSendEmail).toHaveBeenCalledWith(
+        'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
+        'mock-email@test.com',
+        {
+          emailReplyToId: '12255162-A020-44C7-8313-9745EFB4046A',
+          personalisation: {
+            reference: 'ref1',
+            agreementSummaryLink: 'https://test.com/link1'
+          },
+          reference: '79389915-7275-457a-b8ca-8bf206b2e67b'
+        }
+      )
+    })
+
+    test('should send different replyToId for multiple email addresses', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
+          commsAddresses: [
+            'email1@test.com',
+            'email2@test.com'
+          ],
+          emailReplyToId: '1DD6B46A-7C1F-4893-BFE2-56D8FB555CC4',
+          personalisation: {
+            reference: 'multi-ref',
+            agreementSummaryLink: 'https://test.com/multi'
+          }
+        }
+      }
+
+      await sendNotification(message)
+
+      expect(mockSendEmail).toHaveBeenNthCalledWith(1,
+        'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
+        'email1@test.com',
+        expect.objectContaining({
+          emailReplyToId: '1DD6B46A-7C1F-4893-BFE2-56D8FB555CC4'
+        })
+      )
+
+      expect(mockSendEmail).toHaveBeenNthCalledWith(2,
+        'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
+        'email2@test.com',
+        expect.objectContaining({
+          emailReplyToId: '1DD6B46A-7C1F-4893-BFE2-56D8FB555CC4'
+        })
+      )
     })
   })
 
