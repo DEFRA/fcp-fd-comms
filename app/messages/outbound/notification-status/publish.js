@@ -2,7 +2,13 @@ import { MessageSender } from 'ffc-messaging'
 
 import commEvents, { statusToEventMap } from '../../../constants/comm-events.js'
 
-import { buildUpdateMessage, buildReceivedMessage, buildInvalidMessage } from './build-message.js'
+import {
+  buildUpdateMessage,
+  buildRetryExpiryMessage,
+  buildReceivedMessage,
+  buildInvalidMessage
+} from './build-message.js'
+
 import { messageConfig } from '../../../config/index.js'
 import notifyStatus from '../../../constants/notify-statuses.js'
 
@@ -25,6 +31,14 @@ const publishStatus = async (message, recipient, status, error) => {
   const statusMessage = buildUpdateMessage(message, recipient, type, statusDetails)
 
   await sender.sendMessage(statusMessage)
+}
+
+const publishRetryExpiry = async (message, recipient) => {
+  const sender = new MessageSender(config)
+
+  const retryMessage = buildRetryExpiryMessage(message, commEvents.RETRY_EXPIRED, recipient)
+
+  await sender.sendMessage(retryMessage)
 }
 
 const publishReceived = async (message) => {
@@ -52,4 +66,9 @@ const publishInvalidRequest = async (message, errors) => {
   await sender.sendMessage(invalidMessage)
 }
 
-export { publishStatus, publishReceived, publishInvalidRequest }
+export {
+  publishStatus,
+  publishRetryExpiry,
+  publishReceived,
+  publishInvalidRequest
+}
