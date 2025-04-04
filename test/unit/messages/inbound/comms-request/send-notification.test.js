@@ -148,6 +148,7 @@ describe('Send notification', () => {
           ...commsMessage.data,
           notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
           commsAddresses: 'mock-email@test.com',
+          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -162,6 +163,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email@test.com',
         {
+          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -180,6 +182,7 @@ describe('Send notification', () => {
             'mock-email1@test.com',
             'mock-email2@test.com'
           ],
+          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -195,6 +198,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email1@test.com',
         {
+          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -207,6 +211,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email2@test.com',
         {
+          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
