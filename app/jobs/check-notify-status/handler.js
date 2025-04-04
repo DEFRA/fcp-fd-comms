@@ -7,7 +7,7 @@ import {
   getPendingNotifications,
   updateNotificationStatus
 } from '../../repos/notification-log.js'
-import { publishStatus } from '../../messages/outbound/notification-status/publish.js'
+import { publishRetryExpiry, publishStatus } from '../../messages/outbound/notification-status/publish.js'
 import { checkRetryable } from '../../utils/errors.js'
 import { publishRetryRequest } from '../../messages/outbound/notification-retry/publish.js'
 
@@ -37,6 +37,7 @@ const processStatusUpdate = async (notification, status) => {
     await publishRetryRequest(notification.message, notification.recipient, notifyConfig.get('messageRetries.retryDelay'))
   } else {
     console.log(`Retry window expired for request: ${correlationId || notification.message.id}`)
+    await publishRetryExpiry(notification.message, notification.recipient)
   }
 }
 

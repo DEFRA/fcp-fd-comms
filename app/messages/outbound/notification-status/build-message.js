@@ -44,6 +44,27 @@ const buildUpdateMessage = (message, recipient, type, statusDetails) => ({
   type
 })
 
+const buildRetryExpiryMessage = (message, type, recipient) => ({
+  body: {
+    id: crypto.randomUUID(),
+    commsMessage: {
+      id: crypto.randomUUID(),
+      source: SOURCE,
+      type,
+      time: new Date(),
+      data: {
+        ...message.data,
+        commsAddresses: recipient,
+        correlationId: message.data.correlationId ?? message.id
+      },
+      datacontenttype: 'application/json',
+      specversion: '1.0'
+    }
+  },
+  source: SOURCE,
+  type
+})
+
 const buildInvalidMessage = (message, type, statusDetails) => ({
   body: {
     id: crypto.randomUUID(),
@@ -67,6 +88,7 @@ const buildInvalidMessage = (message, type, statusDetails) => ({
 
 export {
   buildUpdateMessage,
+  buildRetryExpiryMessage,
   buildReceivedMessage,
   buildInvalidMessage
 }

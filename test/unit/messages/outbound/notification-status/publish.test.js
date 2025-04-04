@@ -13,7 +13,12 @@ jest.mock('ffc-messaging', () => {
   }
 })
 
-const { publishStatus, publishReceived, publishInvalidRequest } = await import('../../../../../app/messages/outbound/notification-status/publish.js')
+const {
+  publishStatus,
+  publishRetryExpiry,
+  publishReceived,
+  publishInvalidRequest
+} = await import('../../../../../app/messages/outbound/notification-status/publish.js')
 
 describe('Notification status publisher', () => {
   const recipient = 'mock-recipient@example.com'
@@ -293,6 +298,40 @@ describe('Notification status publisher', () => {
         }),
         source: 'fcp-fd-comms',
         type: 'uk.gov.fcp.sfd.notification.retry'
+      })
+    )
+
+    cryptoSpy.mockRestore()
+  })
+
+  test('should publish retry timeout event', async () => {
+    const cryptoSpy = jest.spyOn(crypto, 'randomUUID')
+
+    jest.setSystemTime(new Date('2024-11-18T15:00:00.000Z'))
+
+    cryptoSpy.mockReturnValue('a41192cf-5478-42ce-846f-64f1cf977535')
+
+    await publishRetryExpiry(commsMessage, commsMessage.data.commsAddresses)
+
+    expect(mockSender).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+          commsMessage: {
+            id: 'a41192cf-5478-42ce-846f-64f1cf977535',
+            source: 'fcp-fd-comms',
+            type: 'uk.gov.fcp.sfd.notification.retry.expired',
+            time: new Date('2024-11-18T15:00:00.000Z'),
+            datacontenttype: 'application/json',
+            specversion: '1.0',
+            data: {
+              ...commsMessage.data,
+              correlationId: commsMessage.id
+            }
+          }
+        }),
+        source: 'fcp-fd-comms',
+        type: 'uk.gov.fcp.sfd.notification.retry.expired'
       })
     )
 
