@@ -141,6 +141,8 @@ describe('Send notification', () => {
   })
 
   describe('Sending notifications', () => {
+    const defaultEmailReplyToId = 'f824cbfa-f75c-40bb-8407-8edb0cc469d3'
+
     test('should send an email with the correct arguments to a single email address', async () => {
       const message = {
         ...commsMessage,
@@ -148,7 +150,7 @@ describe('Send notification', () => {
           ...commsMessage.data,
           notifyTemplateId: 'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
           commsAddresses: 'mock-email@test.com',
-          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -163,7 +165,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email@test.com',
         {
-          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'test-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -182,7 +184,7 @@ describe('Send notification', () => {
             'mock-email1@test.com',
             'mock-email2@test.com'
           ],
-          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -198,7 +200,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email1@test.com',
         {
-          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
@@ -211,7 +213,7 @@ describe('Send notification', () => {
         'd29257ce-974f-4214-8bbe-69ce5f2bb7f3',
         'mock-email2@test.com',
         {
-          emailReplyToId: 'f824cbfa-f75c-40bb-8407-8edb0cc469d3',
+          emailReplyToId: defaultEmailReplyToId,
           personalisation: {
             reference: 'mock-reference',
             agreementSummaryLink: 'https://test.com/mock-agreeement-summary-link'
