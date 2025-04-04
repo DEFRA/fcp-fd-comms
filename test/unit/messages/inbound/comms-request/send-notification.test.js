@@ -268,7 +268,7 @@ describe('Send notification', () => {
       )
     })
 
-    test('should send different replyToIds for multiple email addresses if provided separately', async () => {
+    test('should send different replyToId for multiple email addresses', async () => {
       const message = {
         ...commsMessage,
         data: {
