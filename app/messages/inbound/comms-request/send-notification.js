@@ -16,7 +16,7 @@ const trySendViaNotify = async (message, emailAddress) => {
       message.data.notifyTemplateId,
       emailAddress, {
         personalisation: message.data.personalisation,
-        reference: message.correlationId ?? message.id,
+        reference: message.data.correlationId ?? message.id,
         emailReplyToId: message.data.emailReplyToId
       }
     ), {
