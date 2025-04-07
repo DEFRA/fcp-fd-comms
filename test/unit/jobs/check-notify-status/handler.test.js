@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, describe, jest, test } from '@jest/globals'
+import { beforeAll, beforeEach, describe, expect, jest, test } from '@jest/globals'
 
 import commsMessage from '../../../mocks/comms-message.js'
 
@@ -13,7 +13,8 @@ jest.unstable_mockModule('../../../../app/jobs/check-notify-status/get-notify-st
 }))
 
 jest.unstable_mockModule('../../../../app/messages/outbound/notification-status/publish.js', () => ({
-  publishStatus: jest.fn()
+  publishStatus: jest.fn(),
+  publishRetryExpiry: jest.fn()
 }))
 
 jest.unstable_mockModule('../../../../app/messages/outbound/notification-retry/publish.js', () => ({
@@ -22,7 +23,7 @@ jest.unstable_mockModule('../../../../app/messages/outbound/notification-retry/p
 
 const { getPendingNotifications, getOriginalNotificationRequest, updateNotificationStatus } = await import('../../../../app/repos/notification-log.js')
 const { getNotifyStatus } = await import('../../../../app/jobs/check-notify-status/get-notify-status.js')
-const { publishStatus } = await import('../../../../app/messages/outbound/notification-status/publish.js')
+const { publishStatus, publishRetryExpiry } = await import('../../../../app/messages/outbound/notification-status/publish.js')
 const { publishRetryRequest } = await import('../../../../app/messages/outbound/notification-retry/publish.js')
 
 describe('Check notify status job handler', () => {
@@ -313,6 +314,26 @@ describe('Check notify status job handler', () => {
       await checkNotifyStatusHandler()
 
       expect(publishRetryRequest).not.toHaveBeenCalled()
+    })
+
+    test('should publish event if retry window has expired', async () => {
+      jest.setSystemTime(new Date('2025-01-08T11:00:00.000Z'))
+
+      getPendingNotifications.mockReturnValue([
+        {
+          id: 1,
+          message: commsMessage,
+          recipient: 'mock-email@test.com',
+          createdAt: '2025-01-01T11:00:00.000Z',
+          status: 'sending'
+        }
+      ])
+
+      getNotifyStatus.mockReturnValue({ id: 1, status: 'temporary-failure' })
+
+      await checkNotifyStatusHandler()
+
+      expect(publishRetryExpiry).toHaveBeenCalledWith(commsMessage, 'mock-email@test.com')
     })
   })
 

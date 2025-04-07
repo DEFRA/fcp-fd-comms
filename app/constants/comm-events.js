@@ -7,7 +7,8 @@ const commEvents = {
   DELIVERED: 'uk.gov.fcp.sfd.notification.delivered',
   VALIDATION_FAILURE: 'uk.gov.fcp.sfd.notification.failure.validation',
   INTERNAL_FAILURE: 'uk.gov.fcp.sfd.notification.failure.internal',
-  PROVIDER_FAILURE: 'uk.gov.fcp.sfd.notification.failure.provider'
+  PROVIDER_FAILURE: 'uk.gov.fcp.sfd.notification.failure.provider',
+  RETRY_EXPIRED: 'uk.gov.fcp.sfd.notification.retry.expired'
 }
 
 export const statusToEventMap = {
