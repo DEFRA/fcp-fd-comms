@@ -30,9 +30,9 @@ const processStatusUpdate = async (notification, status) => {
   let intialCreation = new Date(createdAt)
 
   if (correlationId) {
-    const { createdAt } = await getOriginalNotificationRequest(correlationId)
+    const original = await getOriginalNotificationRequest(correlationId)
 
-    intialCreation = new Date(createdAt)
+    intialCreation = new Date(original.createdAt)
   }
 
   if (checkRetryable(status, intialCreation)) {
