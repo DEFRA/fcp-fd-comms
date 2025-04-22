@@ -576,7 +576,7 @@ describe('Send notification', () => {
       expect(mockSendEmail).toHaveBeenCalledTimes(1)
     })
 
-    test('should correctly combine multiple error messages', async () => {
+    test('should format multiple errors correctly', async () => {
       const message = {
         ...commsMessage,
         data: {
@@ -591,13 +591,63 @@ describe('Send notification', () => {
           data: {
             errors: [
               { error: 'ValidationError', message: 'id is not a valid UUID' },
-              {
-                error: 'AuthError', message: 'Error: Your system clock must be accurate to within 30 seconds'
-              },
-              {
-                error: 'AuthError',
-                message: 'Invalid token: API key not found'
-              }
+              { error: 'AuthError', message: 'Error: Your system clock must be accurate to within 30 seconds' },
+              { error: 'AuthError', message: 'Invalid token: API key not found' }
+            ]
+          }
+        }
+      }
+
+      mockSendEmail.mockRejectedValue(mockError)
+
+      await sendNotification(message)
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to send notification via GOV Notify. Error code: 400. Message: ' +
+        'id is not a valid UUID\n' +
+        'Error: Your system clock must be accurate to within 30 seconds\n' +
+        'Invalid token: API key not found\n'
+      )
+    })
+
+    test('should handle missing error fields gracefully', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          commsAddresses: ['test@example.com']
+        }
+      }
+      const mockError = {
+        response: {
+          status: 500
+        }
+      }
+
+      mockSendEmail.mockRejectedValue(mockError)
+
+      await sendNotification(message)
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to send notification via GOV Notify. Error code: 500. Message: '
+      )
+    })
+
+    test('should handle errors with error property instead of message', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          commsAddresses: ['test@example.com']
+        }
+      }
+
+      const mockError = {
+        response: {
+          status: 403,
+          data: {
+            errors: [
+              { error: 'AccessDenied' }
             ]
           }
         }
@@ -607,10 +657,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: 400. Message: ' +
-        'id is not a valid UUID\n' +
-        'Error: Your system clock must be accurate to within 30 seconds\n' +
-        'Invalid token: API key not found\n'
+        'Failed to send notification via GOV Notify. Error code: 403. Message: AccessDenied\n'
       )
     })
   })
