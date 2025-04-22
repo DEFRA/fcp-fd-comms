@@ -54,9 +54,8 @@ readinessProbe:
   timeoutSeconds: 5
 
 postgresService:
-  postgresDb: fcp_fd_comms
-  postgresExternalName:
-  postgresqlHost: fcp-fd-comms-postgres
+  postgresDb:
+  postgresqlHost:
   postgresPort: 5432
   postgresSchema: public
   postgresUser:
