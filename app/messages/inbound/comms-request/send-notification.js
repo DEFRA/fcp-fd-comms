@@ -37,11 +37,12 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    const errorMessage = error.response.data.errors.reduce((acc, err) => {
-      return acc + `Error Message: ${err.message}\n`
+    const errors = error.response?.data?.errors || []
+    const errorMessage = errors.reduce((acc, err) => {
+      return acc + `${err.message || err.error || JSON.stringify(err)}\n`
     }, '')
-
-    console.error(errorMessage)
+    const statusCode = error.response?.status || 'unknown'
+    console.error(`Failed to send notification via GOV Notify. Error code: ${statusCode}. Message: ${errorMessage}`)
 
     return [null, error.response]
   }
