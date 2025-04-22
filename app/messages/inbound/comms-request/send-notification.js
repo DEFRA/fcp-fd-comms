@@ -37,8 +37,8 @@ const trySendViaNotify = async (message, emailAddress) => {
 
     return [response, null]
   } catch (error) {
-    const errorMessage = error.response.data.errors.reduce((acc, error) => {
-      return acc + `Error Message: ${error.message}\n`
+    const errorMessage = error.response.data.errors.reduce((acc, err) => {
+      return acc + `Error Message: ${err.message}\n`
     }, '')
 
     console.error(errorMessage)
