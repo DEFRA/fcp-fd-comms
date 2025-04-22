@@ -564,7 +564,7 @@ describe('Send notification', () => {
         response: {
           status: 600,
           data: {
-            errors: [{ message: 'unknown-error' }]
+            errors: [{ error: 'ValidationError', message: 'id is not a valid UUID' }]
           }
         }
       }
