@@ -610,30 +610,7 @@ describe('Send notification', () => {
       )
     })
 
-    test('should handle missing error fields gracefully', async () => {
-      const message = {
-        ...commsMessage,
-        data: {
-          ...commsMessage.data,
-          commsAddresses: ['test@example.com']
-        }
-      }
-      const mockError = {
-        response: {
-          status: 500
-        }
-      }
-
-      mockSendEmail.mockRejectedValue(mockError)
-
-      await sendNotification(message)
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: 500. Message: '
-      )
-    })
-
-    test('should handle errors with error property instead of message', async () => {
+    test('should log non-govNotify errors', async () => {
       const message = {
         ...commsMessage,
         data: {
@@ -642,101 +619,15 @@ describe('Send notification', () => {
         }
       }
 
-      const mockError = {
-        response: {
-          status: 403,
-          data: {
-            errors: [
-              { error: 'AccessDenied' }
-            ]
-          }
-        }
-      }
-
-      mockSendEmail.mockRejectedValue(mockError)
-
-      await sendNotification(message)
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: 403. Message: AccessDenied\n'
-      )
-    })
-
-    test('should use "unknown" when status is missing', async () => {
-      const message = {
-        ...commsMessage,
-        data: {
-          ...commsMessage.data,
-          commsAddresses: ['test@example.com']
-        }
-      }
-      const mockError = {
-        response: {
-          data: {
-            errors: [
-              { message: 'Some error occurred' }
-            ]
-          }
-        }
-      }
-
-      mockSendEmail.mockRejectedValue(mockError)
-
-      await sendNotification(message)
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: unknown. Message: Some error occurred\n'
-      )
-    })
-    test('should fallback to JSON.stringify when both message and error are missing', async () => {
-      const message = {
-        ...commsMessage,
-        data: {
-          ...commsMessage.data,
-          commsAddresses: ['test@example.com']
-        }
-      }
-
-      const mockError = {
-        response: {
-          status: 418,
-          data: {
-            errors: [
-              { code: 'GOV-NOTIFY-NEW-CODE', reason: 'New description' }
-            ]
-          }
-        }
-      }
-
-      mockSendEmail.mockRejectedValue(mockError)
-
-      await sendNotification(message)
-
-      // Should stringify the error object when message and error properties are missing
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: 418. Message: {"code":"GOV-NOTIFY-NEW-CODE","reason":"New description"}\n'
-      )
-    })
-    test('should handle null response gracefully', async () => {
-      const message = {
-        ...commsMessage,
-        data: {
-          ...commsMessage.data,
-          commsAddresses: ['test@example.com']
-        }
-      }
-
-      // Error with no response property
       const mockError = new Error('Network error')
-      // Explicitly set response to null to test the optional chaining
       mockError.response = null
 
       mockSendEmail.mockRejectedValue(mockError)
 
-      await sendNotification(message)
+      await expect(sendNotification(message)).rejects.toThrow()
 
-      // Should use fallbacks for all properties
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to send notification via GOV Notify. Error code: unknown. Message: '
+        'Error sending notification via GOV Notify: Network error'
       )
     })
   })
