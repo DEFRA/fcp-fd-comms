@@ -94,19 +94,11 @@ describe('Send notification', () => {
           ]
         }
       }
-
       const mockError = {
         response: {
           status: 400,
           data: {
-            error: {
-              status_code: 400,
-              errors: [
-                {
-                  error: 'mock-error'
-                }
-              ]
-            }
+            errors: [{ message: 'mock-error-message' }]
           }
         }
       }
@@ -228,7 +220,10 @@ describe('Send notification', () => {
 
       const mockError = {
         response: {
-          status: 500
+          status: 500,
+          data: {
+            errors: [{ message: 'server-error' }]
+          }
         }
       }
 
@@ -529,12 +524,7 @@ describe('Send notification', () => {
         response: {
           status: 400,
           data: {
-            status_code: 400,
-            errors: [
-              {
-                error: 'mock-error'
-              }
-            ]
+            errors: [{ message: 'mock-error-message' }]
           }
         }
       }
@@ -543,7 +533,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to send email via GOV Notify. Error code:', 400)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error Message: mock-error-message\n')
     })
 
     test('400 errors should not be retried', async () => {
@@ -551,7 +541,10 @@ describe('Send notification', () => {
 
       const mockError = {
         response: {
-          status: 400
+          status: 400,
+          data: {
+            errors: [{ message: 'client-error' }]
+          }
         }
       }
 
@@ -564,10 +557,12 @@ describe('Send notification', () => {
 
     test('should not retry non 5xx errors', async () => {
       const message = commsMessage
-
       const mockError = {
         response: {
-          status: 600
+          status: 600,
+          data: {
+            errors: [{ message: 'unknown-error' }]
+          }
         }
       }
 
@@ -576,6 +571,34 @@ describe('Send notification', () => {
       await sendNotification(message)
 
       expect(mockSendEmail).toHaveBeenCalledTimes(1)
+    })
+
+    test('should correctly combine multiple error messages', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          commsAddresses: ['test@example.com']
+        }
+      }
+
+      const mockError = {
+        response: {
+          status: 400,
+          data: {
+            errors: [
+              { message: 'First error' },
+              { message: 'Second error' },
+              { message: 'Third error' }
+            ]
+          }
+        }
+      }
+
+      mockSendEmail.mockRejectedValue(mockError)
+
+      await sendNotification(message)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error Message: First error\nError Message: Second error\nError Message: Third error\n')
     })
   })
 
