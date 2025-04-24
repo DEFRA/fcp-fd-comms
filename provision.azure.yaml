@@ -5,6 +5,8 @@ resources:
       role: receiver
       subscriptions:
         - name: fcp-fd-comms
+    - name: fcp-fd-comms
+      role: sender
     - name: fcp-fd-data
       role: sender
   postgreSql:
