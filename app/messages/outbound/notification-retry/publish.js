@@ -6,7 +6,7 @@ import commEvents from '../../../constants/comm-events.js'
 
 const config = {
   ...messageConfig.get('messageQueue'),
-  ...messageConfig.get('commsRequestTopic'),
+  ...messageConfig.get('commsRequestTopic')
 }
 
 const publishRetryRequest = async (message, recipient, delay) => {
