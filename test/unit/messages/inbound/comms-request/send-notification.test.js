@@ -94,19 +94,11 @@ describe('Send notification', () => {
           ]
         }
       }
-
       const mockError = {
         response: {
           status: 400,
           data: {
-            error: {
-              status_code: 400,
-              errors: [
-                {
-                  error: 'mock-error'
-                }
-              ]
-            }
+            errors: [{ message: 'mock-error-message' }]
           }
         }
       }
@@ -228,7 +220,10 @@ describe('Send notification', () => {
 
       const mockError = {
         response: {
-          status: 500
+          status: 500,
+          data: {
+            errors: [{ message: 'server-error' }]
+          }
         }
       }
 
@@ -529,12 +524,10 @@ describe('Send notification', () => {
         response: {
           status: 400,
           data: {
-            status_code: 400,
-            errors: [
-              {
-                error: 'mock-error'
-              }
-            ]
+            errors: [{
+              error: 'ValidationError',
+              message: 'id is not a valid UUID'
+            }]
           }
         }
       }
@@ -543,7 +536,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to send email via GOV Notify. Error code:', 400)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to send notification via GOV Notify. Error code: 400. Message: id is not a valid UUID\n')
     })
 
     test('400 errors should not be retried', async () => {
@@ -551,7 +544,10 @@ describe('Send notification', () => {
 
       const mockError = {
         response: {
-          status: 400
+          status: 400,
+          data: {
+            errors: [{ message: 'client-error' }]
+          }
         }
       }
 
@@ -564,10 +560,12 @@ describe('Send notification', () => {
 
     test('should not retry non 5xx errors', async () => {
       const message = commsMessage
-
       const mockError = {
         response: {
-          status: 600
+          status: 600,
+          data: {
+            errors: [{ error: 'ValidationError', message: 'id is not a valid UUID' }]
+          }
         }
       }
 
@@ -576,6 +574,61 @@ describe('Send notification', () => {
       await sendNotification(message)
 
       expect(mockSendEmail).toHaveBeenCalledTimes(1)
+    })
+
+    test('should format multiple errors correctly', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          commsAddresses: ['test@example.com']
+        }
+      }
+
+      const mockError = {
+        response: {
+          status: 400,
+          data: {
+            errors: [
+              { error: 'ValidationError', message: 'id is not a valid UUID' },
+              { error: 'AuthError', message: 'Error: Your system clock must be accurate to within 30 seconds' },
+              { error: 'AuthError', message: 'Invalid token: API key not found' }
+            ]
+          }
+        }
+      }
+
+      mockSendEmail.mockRejectedValue(mockError)
+
+      await sendNotification(message)
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Failed to send notification via GOV Notify. Error code: 400. Message: ' +
+        'id is not a valid UUID\n' +
+        'Error: Your system clock must be accurate to within 30 seconds\n' +
+        'Invalid token: API key not found\n'
+      )
+    })
+
+    test('should log non-govNotify errors', async () => {
+      const message = {
+        ...commsMessage,
+        data: {
+          ...commsMessage.data,
+          commsAddresses: ['test@example.com']
+        }
+      }
+
+      const mockError = new Error('Network error')
+      mockError.response = null
+
+      mockSendEmail.mockRejectedValue(mockError)
+
+      await expect(sendNotification(message)).rejects.toThrow()
+
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error sending notification via GOV Notify: Network error'
+      )
     })
   })
 
