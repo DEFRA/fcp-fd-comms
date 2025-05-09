@@ -45,6 +45,10 @@ describe('Service Bus Configuration', () => {
         topic: 'mock-prd-topic-address',
         type: 'subscription'
       },
+      commsRequestTopic: {
+        address: 'mock-prd-topic-address',
+        type: 'topic'
+      },
       dataLayerTopic: {
         address: 'mock-dev-data-topic-address',
         type: 'topic'
@@ -80,6 +84,10 @@ describe('Service Bus Configuration', () => {
         address: 'mock-dev-subscription-address',
         topic: 'mock-dev-topic-address',
         type: 'subscription'
+      },
+      commsRequestTopic: {
+        address: 'mock-dev-topic-address',
+        type: 'topic'
       },
       dataLayerTopic: {
         address: 'mock-dev-data-topic-address',

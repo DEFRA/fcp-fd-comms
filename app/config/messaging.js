@@ -67,6 +67,19 @@ const messaging = convict({
       default: 'subscription'
     }
   },
+  commsRequestTopic: {
+    address: {
+      doc: 'Receiver topic address (i.e. name of topic for comms requests).',
+      format: String,
+      default: null,
+      env: 'COMMS_TOPIC_ADDRESS'
+    },
+    type: {
+      doc: 'Type of topic (value is "topic" by default as it is a data topic).',
+      format: String,
+      default: 'topic'
+    }
+  },
   dataLayerTopic: {
     address: {
       doc: 'Data topic address (i.e. name of topic for data messages).',
