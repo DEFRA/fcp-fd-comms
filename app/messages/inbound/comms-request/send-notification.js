@@ -60,13 +60,13 @@ const handleSuccessfulNotification = async (message, emailAddress, id) => {
   try {
     await publishStatus(message, emailAddress, notifyStatus.SENDING)
   } catch (error) {
-    console.error('Error publishing notification status to data layer:', error)
+    console.error(`Error publishing notification status to data layer: ${error.message}`)
   }
 
   try {
     await logCreatedNotification(message, emailAddress, id)
   } catch (error) {
-    console.error('Error logging successful notification:', error)
+    console.error(`Error logging successful notification: ${error.message}`)
   }
 }
 
@@ -82,13 +82,13 @@ const handleFailedNotification = async (message, emailAddress, notifyError) => {
   try {
     await publishStatus(message, emailAddress, status, errorData)
   } catch (error) {
-    console.error('Error publishing notification status to data layer:', error)
+    console.error(`Error publishing notification status to data layer: ${error.message}`)
   }
 
   try {
     await logRejectedNotification(message, emailAddress, errorData)
   } catch (error) {
-    console.error('Error logging rejected notification:', error)
+    console.error(`Error logging rejected notification: ${error.message}`)
   }
 
   if (serverError) {
@@ -97,7 +97,7 @@ const handleFailedNotification = async (message, emailAddress, notifyError) => {
     try {
       await publishRetryRequest(message, emailAddress, notifyConfig.get('messageRetries.retryDelay'))
     } catch (error) {
-      console.error('Error scheduling notification retry:', error)
+      console.error(`Error scheduling notification retry: ${error.message}`)
     }
   }
 }

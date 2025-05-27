@@ -17,7 +17,7 @@ const handleCommsRequest = async (message, receiver) => {
 
     await receiver.completeMessage(message)
   } catch (error) {
-    console.error('Error handling message: ', error)
+    console.error(`Error handling message: ${error.message}`)
     await receiver.deadLetterMessage(message)
   }
 }

@@ -45,12 +45,9 @@ const processStatusUpdate = async (notification, status) => {
 }
 
 const checkNotifyStatusHandler = async () => {
-  console.log('Checking notify status')
-
   const pending = await getPendingNotifications()
 
   if (pending.length === 0) {
-    console.log('No pending notifications')
     return
   }
 
@@ -72,7 +69,9 @@ const checkNotifyStatusHandler = async () => {
     }
   }
 
-  console.log(`Updated ${updates} notifications`)
+  if (updates > 0) {
+    console.log(`Updated ${updates} notifications`)
+  }
 }
 
 export { checkNotifyStatusHandler }

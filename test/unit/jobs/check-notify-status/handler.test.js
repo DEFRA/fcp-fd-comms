@@ -121,18 +121,6 @@ describe('Check notify status job handler', () => {
     expect(updateNotificationStatus).not.toHaveBeenCalled()
   })
 
-  test('should log when no pending notifications', async () => {
-    const consoleLogSpy = jest.spyOn(console, 'log')
-
-    getPendingNotifications.mockReturnValue([])
-
-    await checkNotifyStatusHandler()
-
-    expect(consoleLogSpy).toHaveBeenCalledWith('No pending notifications')
-
-    consoleLogSpy.mockRestore()
-  })
-
   test('should log error if get notify status fails', async () => {
     const consoleErrorSpy = jest.spyOn(console, 'error')
 
