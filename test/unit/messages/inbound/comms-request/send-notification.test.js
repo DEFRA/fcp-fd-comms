@@ -128,7 +128,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error publishing notification status to data layer:', mockError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error publishing notification status to data layer: mock-error')
     })
   })
 
@@ -371,7 +371,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error logging successful notification:', mockError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error logging successful notification: mock-error')
     })
 
     test('should log a error if rejected notification status fails to publish', async () => {
@@ -392,7 +392,7 @@ describe('Send notification', () => {
             status_code: 400,
             errors: [
               {
-                error: 'mock-error'
+                message: 'mock-error'
               }
             ]
           }
@@ -406,7 +406,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error publishing notification status to data layer:', mockError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error publishing notification status to data layer: mock-error')
     })
 
     test('should log a error if rejected notification log call fails', async () => {
@@ -427,7 +427,7 @@ describe('Send notification', () => {
             status_code: 400,
             errors: [
               {
-                error: 'mock-error'
+                message: 'mock-error'
               }
             ]
           }
@@ -441,7 +441,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error logging rejected notification:', mockError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error logging rejected notification: mock-error')
     })
 
     test('message should be scheduled for retry when a 5xx error is encountered', async () => {
@@ -500,7 +500,7 @@ describe('Send notification', () => {
             status_code: 500,
             errors: [
               {
-                error: 'mock-error'
+                message: 'mock-error'
               }
             ]
           }
@@ -514,7 +514,7 @@ describe('Send notification', () => {
 
       await sendNotification(message)
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Error scheduling notification retry:', mockError)
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error scheduling notification retry: mock-error')
     })
 
     test('should log an error message when sendEmail fails', async () => {
