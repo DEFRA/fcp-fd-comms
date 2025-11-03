@@ -1,4 +1,4 @@
-export default (sequelize, DataTypes) => {
+const notifyApiRequestFailure = (sequelize, DataTypes) => {
   return sequelize.define('notifyApiRequestFailure', {
     correlationId: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true, allowNull: false },
     createdAt: { type: DataTypes.DATE, allowNull: false },
@@ -12,3 +12,5 @@ export default (sequelize, DataTypes) => {
     timestamps: false
   })
 }
+
+export default notifyApiRequestFailure
