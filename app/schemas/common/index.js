@@ -1,9 +1,3 @@
-import sbi from './sbi.js'
-import crn from './crn.js'
-import commsAddress from './commsAddress.js'
-
-export {
-  sbi,
-  crn,
-  commsAddress
-}
+export { default as sbi } from './sbi.js'
+export { default as crn } from './crn.js'
+export { default as commsAddress } from './commsAddress.js'

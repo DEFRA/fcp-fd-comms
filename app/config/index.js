@@ -1,13 +1,5 @@
-import serverConfig from './server.js'
-import messageConfig from './messaging.js'
-import jobsConfig from './jobs.js'
-import databaseConfig from './database.js'
-import notifyConfig from './notify.js'
-
-export {
-  serverConfig,
-  messageConfig,
-  jobsConfig,
-  databaseConfig,
-  notifyConfig
-}
+export { default as serverConfig } from './server.js'
+export { default as messageConfig } from './messaging.js'
+export { default as jobsConfig } from './jobs.js'
+export { default as databaseConfig } from './database.js'
+export { default as notifyConfig } from './notify.js'

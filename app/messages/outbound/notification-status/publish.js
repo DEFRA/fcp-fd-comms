@@ -44,9 +44,9 @@ const publishRetryExpiry = async (message, recipient) => {
 const publishReceived = async (message) => {
   const sender = new MessageSender(config)
 
-  const type = message.type !== commEvents.RETRY
-    ? commEvents.RECEIVED
-    : commEvents.RETRY
+  const type = message.type === commEvents.RETRY
+    ? commEvents.RETRY
+    : commEvents.RECEIVED
 
   const receivedMessage = buildReceivedMessage(message, type)
 
