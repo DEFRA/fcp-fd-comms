@@ -3,12 +3,14 @@ import { afterAll, describe, expect, jest, test } from '@jest/globals'
 import commsMessage from '../../../../mocks/comms-message.js'
 
 const mockSender = jest.fn()
+const mockCloseConnection = jest.fn()
 
 jest.mock('ffc-messaging', () => {
   return {
     MessageSender: jest.fn(() => ({
       enrichMessage: jest.requireActual('ffc-messaging').MessageSender.prototype.enrichMessage,
-      scheduleMessage: mockSender
+      scheduleMessage: mockSender,
+      closeConnection: mockCloseConnection
     }))
   }
 })
@@ -87,6 +89,11 @@ describe('Notification retry publisher', () => {
       }),
       expect.any(Date)
     )
+  })
+
+  test('should close connection after sending retry request', async () => {
+    await publishRetryRequest(commsMessage, 'test@example.com', 300000)
+    expect(mockCloseConnection).toHaveBeenCalled()
   })
 
   afterAll(() => {

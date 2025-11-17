@@ -4,11 +4,14 @@ import crypto from 'crypto'
 import commsMessage from '../../../../mocks/comms-message'
 
 const mockSender = jest.fn()
+const mockCloseConnection = jest.fn()
 
 jest.mock('ffc-messaging', () => {
   return {
     MessageSender: jest.fn(() => ({
-      sendMessage: mockSender
+      sendMessage: mockSender,
+      closeConnection: mockCloseConnection
+
     }))
   }
 })
@@ -51,6 +54,7 @@ describe('Notification status publisher', () => {
             type: event
           })
         )
+        expect(mockCloseConnection).toHaveBeenCalled()
       }
     )
 
