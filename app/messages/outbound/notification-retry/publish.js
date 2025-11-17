@@ -31,6 +31,7 @@ const publishRetryRequest = async (message, recipient, delay) => {
   const enriched = sender.enrichMessage(retryMessage)
 
   await sender.scheduleMessage(enriched, addMinutes(Date.now(), delay))
+  await sender.closeConnection()
 }
 
 export { publishRetryRequest }

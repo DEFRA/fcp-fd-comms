@@ -31,6 +31,7 @@ const publishStatus = async (message, recipient, status, error) => {
   const statusMessage = buildUpdateMessage(message, recipient, type, statusDetails)
 
   await sender.sendMessage(statusMessage)
+  await sender.closeConnection()
 }
 
 const publishRetryExpiry = async (message, recipient) => {
@@ -39,6 +40,7 @@ const publishRetryExpiry = async (message, recipient) => {
   const retryMessage = buildRetryExpiryMessage(message, commEvents.RETRY_EXPIRED, recipient)
 
   await sender.sendMessage(retryMessage)
+  await sender.closeConnection()
 }
 
 const publishReceived = async (message) => {
@@ -51,6 +53,7 @@ const publishReceived = async (message) => {
   const receivedMessage = buildReceivedMessage(message, type)
 
   await sender.sendMessage(receivedMessage)
+  await sender.closeConnection()
 }
 
 const publishInvalidRequest = async (message, errors) => {
@@ -64,6 +67,7 @@ const publishInvalidRequest = async (message, errors) => {
   const invalidMessage = buildInvalidMessage(message, commEvents.VALIDATION_FAILURE, statusDetails)
 
   await sender.sendMessage(invalidMessage)
+  await sender.closeConnection()
 }
 
 export {
