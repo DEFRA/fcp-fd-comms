@@ -12,9 +12,9 @@ ARG PORT_DEBUG
 ENV PORT=${PORT}
 EXPOSE ${PORT} ${PORT_DEBUG}
 
-COPY --chown=node:node package*.json ./
+COPY --chown=root:root --chmod=644 package*.json ./
 RUN npm install
-COPY --chown=node:node . .
+COPY --chown=root:root --chmod=644 . .
 CMD [ "npm", "run", "start:watch" ]
 
 # Production
