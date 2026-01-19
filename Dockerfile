@@ -26,7 +26,7 @@ ARG PORT
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
-COPY --from=development --chown=root:root --chmod=644 /home/node/app/ ./app/
-COPY --from=development --chown=root:root --chmod=644 /home/node/package*.json ./
+COPY --from=development /home/node/app/ ./app/
+COPY --from=development /home/node/package*.json ./
 RUN npm ci --omit=dev
 CMD [ "node", "app" ]
